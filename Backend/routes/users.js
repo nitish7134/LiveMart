@@ -31,10 +31,8 @@ router.get('/profile', cors.cors, authenticate.verifyUser, (req, res) => {
 
 router.post('/signup', cors.corsWithOptions, async (req, res) => {
 
-  const { email, password } = req.body;
-
   try {
-    const user = new User({ email, password });
+    const user = new User(req.body.user);
     await user.save();
     const token = jwt.sign({ userId: user._id }, config.secretKey)
     res.send({ token })
@@ -85,8 +83,7 @@ router.get('/auth/google/callback', (req, res, next) => {
         res.cookie('jwt', token);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        //res.json({ success: true, status: 'Login Successful!', token: token });
-        res.redirect(config.appBaseUrl);
+        res.redirect(config.appBaseUrl+"?token:"+token);
       }
     });
   })(req, res);
@@ -112,7 +109,7 @@ router.get("/auth/facebook/callback", (req, res, next) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         //res.json({ success: true, status: 'Login Successful!', token: token });
-        res.redirect(config.appBaseUrl);
+        res.redirect(config.appBaseUrl+"?token:"+token);
       }
     });
   })(req, res);

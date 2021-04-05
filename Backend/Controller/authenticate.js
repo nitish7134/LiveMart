@@ -19,7 +19,7 @@ passport.deserializeUser(function (id, done) {
 });
 
 exports.getToken = function (user) {
-    return jwt.sign(user, config.secretKey);
+    return jwt.sign(user, config.jwtKey);
 };
 
 var opts = {};
@@ -29,7 +29,7 @@ var cookieExtractor = function (req) {
     return token;
 };
 opts.jwtFromRequest = cookieExtractor; //r'ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = config.secretKey;
+opts.secretOrKey = config.jwtKey;
 
 exports.jwtPassport = passport.use(new JwtStrategy(opts,
     (jwt_payload, done) => {
@@ -56,7 +56,7 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
             return res.status(401).send({ error: "you must be logged in" })
         }
         const token = authorization.replace("Bearer ", "");
-        jwt.verify(token, config.secretKey, async (err, payload) => {
+        jwt.verify(token, config.jwtKey, async (err, payload) => {
             if (err) {
                 return res.status(401).send({ error: "you must be logged in 2" })
             }
@@ -67,6 +67,23 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
         })
     }
 
+exports.verifyOTP = function (req, res, next) {
+    const { authorization } = req.headers;
+    //authorization === Bearer sfafsafa
+    if (!authorization) {
+        return res.status(401).send({ error: "OTP NOT VERIFIED" })
+    }
+    const token = authorization.replace("Bearer ", "");
+    jwt.verify(token, config.jwtKey, async (err, payload) => {
+        if (err) {
+            return res.status(401).send({ error: "OTP NOT VERIFIED" })
+        }
+        const { userId } = payload;
+        const user = await User.findById(userId)
+        req.user = user;
+        next();
+    })
+}
 exports.verifyAdmin = function (req, res, next) {
     User.findOne({ _id: req.user._id })
         .then((user) => {
@@ -89,7 +106,7 @@ exports.facebookPassport = passport.use(new FacebookStrategy({
     callbackURL: config.baseUrl + config.facebook.callbackURL,
     profileFields: ["email", "name"]
 }, (accessToken, refreshToken, profile, done) => {
-    console.log(JSON. stringify(profile))
+    console.log(JSON.stringify(profile))
     User.findOne({ email: profile.emails[0].value }, (err, user) => {
         if (err) {
             return done(err, false);

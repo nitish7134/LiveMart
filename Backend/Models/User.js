@@ -19,24 +19,29 @@ var User = new Schema({
         default: ''
     },
     role: {
-        type: Number,
+        type: string,
         required: true,
-        default: 0   //0 For Customer, 1 for Retailer, 2 for Wholesalers, -1 for Admin 
+        default: "customer"
     },
-    
+
     email: {
         type: String,
         unique: true,
+        required: true,
+        trim: true
+    },
+    phoneNo: {
+        type: String, trim: true, index: true, unique: true, sparse: true
     },
     password: {
         type: String,
-        required: true
     },
     facebookId: String,
     googleId: String,
     Notifications: [Notification],
     FeedbacksGiven: [{ Feedback: mongoose.Schema.ObjectId }],
-    FeedbacksReceived: [{ Feedback: mongoose.Schema.ObjectId }]
+    FeedbacksReceived: [{ Feedback: mongoose.Schema.ObjectId }],
+    cart: cart
 }, {
     timestamp: true
 });
@@ -77,21 +82,5 @@ User.methods.comparePassword = function (candidatePassword) {
             resolve(true)
         })
     })
-
 }
-
-var Customer = new Schema({
-    User: User,
-    Cart: Cart
-});
-var Retailer = new Schema({
-    User: User,
-    Cart: Cart
-})
-var Wholesaler = new Schema({
-    User: User,
-})
-
-module.exports = mongoose.model('Customer', Customer);
-module.exports = mongoose.model('Retailer', Retailer);
-module.exports = mongoose.model('Wholesaler', Wholesaler);
+module.exports = mongoose.model('User', User);
