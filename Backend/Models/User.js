@@ -23,10 +23,7 @@ var User = new Schema({
         required: true,
         default: 0   //0 For Customer, 1 for Retailer, 2 for Wholesalers, -1 for Admin 
     },
-    phoneNumber: {
-        type: String,
-        unique: true,
-    },
+    
     email: {
         type: String,
         unique: true,

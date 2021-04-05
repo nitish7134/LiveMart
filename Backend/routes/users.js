@@ -3,9 +3,13 @@ var router = express.Router();
 var User = require('../models/user');
 
 var passport = require('passport');
-var authenticate = require('../Middleware/authenticate');
+var authenticate = require('../Controller/authenticate');
 var cors = require('./cors');
 const config = require('../config');
+
+const _getRedirectUrl = (req) => {
+  return "/" + req.user.role + "/";// === 'admin' ? '/admin/orders' : '/customer/orders'
+}
 
 router.use(express.json());
 router.use(express.urlencoded({
@@ -50,7 +54,7 @@ router.post('/signin', async (req, res) => {
   }
   try {
     await user.comparePassword(password);
-    const token = jwt.sign({ userId: user._id }, jwtkey)
+    const token = jwt.sign({ userId: user._id }, config.secretKey)
     res.send({ token })
   } catch (err) {
     return res.status(422).send({ error: "must provide email or password" })
@@ -82,15 +86,13 @@ router.get('/auth/google/callback', (req, res, next) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         //res.json({ success: true, status: 'Login Successful!', token: token });
-        res.redirect(config.baseUrl);
+        res.redirect(config.appBaseUrl);
       }
     });
   })(req, res);
 });
 
-router.get("/auth/facebook", passport.authenticate('facebook', {
-  successRedirect: config.baseUrl + '/', failureRedirect: config.baseUrl + '/error?index=4'
-}));
+router.get("/auth/facebook", passport.authenticate('facebook', { successRedirect: config.baseUrl + '/', failureRedirect: config.baseUrl + '/error?index=4', scope: ['email'] }));
 
 router.get("/auth/facebook/callback", (req, res, next) => {
   passport.authenticate("facebook", { successRedirect: config.baseUrl + '/', failureRedirect: config.baseUrl + '/error?index=4' }, (err, user, info) => {
@@ -110,7 +112,7 @@ router.get("/auth/facebook/callback", (req, res, next) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         //res.json({ success: true, status: 'Login Successful!', token: token });
-        res.redirect(config.baseUrl);
+        res.redirect(config.appBaseUrl);
       }
     });
   })(req, res);

@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+
+var config = require('../../configF');
 // import {useState} from "react";
 import {
   StyleSheet,
@@ -7,7 +9,9 @@ import {
   ImageBackground,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking,
+  ScrollView
 } from "react-native";
 import EvilIconsIcon from "react-native-vector-icons/EvilIcons";
 import Selector from './Selector';
@@ -18,7 +22,7 @@ import Selector from './Selector';
 
 function Login(props) {
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="rgba(0,0,0,0)" />
       <View style={styles.background}>
         <ImageBackground
@@ -113,13 +117,13 @@ function Login(props) {
                 <Text style={styles.text2}>Get Started       </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => Linking.openURL('http://localhost:3000/users/auth/google')}
+                onPress={() => Linking.openURL(config.baseUrl+ '/users/auth/google')}
                 style={styles.button}
               >
                 <Text style={styles.text2}>Login With Google       </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => Linking.openURL('http://localhost:3000/users/auth/facebook')}
+                onPress={() => Linking.openURL(config.baseUrl+ '/users/auth/facebook')}
                 style={styles.button}
               >
                 <Text style={styles.text2}>Login With Facebook       </Text>
@@ -141,7 +145,7 @@ function Login(props) {
           </View>
         </ImageBackground>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

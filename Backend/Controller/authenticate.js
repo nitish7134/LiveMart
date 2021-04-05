@@ -6,7 +6,6 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth20');
 var config = require('../config.js');
-var LocalStrategy = require('passport-local');
 // used to serialize the user for the session
 passport.serializeUser(function (user, done) {
     done(null, user.id);
@@ -90,7 +89,7 @@ exports.facebookPassport = passport.use(new FacebookStrategy({
     callbackURL: config.baseUrl + config.facebook.callbackURL,
     profileFields: ["email", "name"]
 }, (accessToken, refreshToken, profile, done) => {
-
+    console.log(JSON. stringify(profile))
     User.findOne({ email: profile.emails[0].value }, (err, user) => {
         if (err) {
             return done(err, false);
@@ -125,7 +124,7 @@ exports.facebookPassport = passport.use(new FacebookStrategy({
 exports.googlePassport = passport.use(new GoogleStrategy({
     clientID: config.google.clientId,
     clientSecret: config.google.clientSecret,
-    callbackURL: config.baseUrl + config.google.callbackURL
+    callbackURL: "https://192.168.1.83.xip.io:3443/users/auth/google/callback"//config.baseUrl + config.google.callbackURL
 }, (accessToken, refreshToken, profile, done) => {
     process.nextTick(function () {
         User.findOne({ email: profile.emails[0].value }, (err, user) => {
