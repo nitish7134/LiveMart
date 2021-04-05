@@ -71,11 +71,11 @@ router.get('/send', cors.corsWithOptions, authenticate.verifyUser, (req, res) =>
 })
 router.get('/verify', cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
     const otpvar = await OTP.findOne({ user: user._id })
-    if (!otpva) {
+    if (!otpvar) {
         return res.status(422).send({ error: "NO OTP REQUEST" })
     }
     try {
-        if (req.body.otp !== otp.otp) {
+        if (req.body.otp !== otpvar.otp) {
             res.statusCode = 401;
             res.setHeader('Content-Type', 'application/json');
             res.json({ success: false, status: 'OTP INVALID' });
