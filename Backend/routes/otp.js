@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var OTP = require('../models/otp');
+var OTP = require('../Models/otp');
 
 var authenticate = require('../Controller/authenticate');
 var cors = require('./cors');

@@ -19,7 +19,7 @@ var User = new Schema({
         default: ''
     },
     role: {
-        type: string,
+        type: String,
         required: true,
         default: "customer"
     },
@@ -41,7 +41,7 @@ var User = new Schema({
     Notifications: [Notification],
     FeedbacksGiven: [{ Feedback: mongoose.Schema.ObjectId }],
     FeedbacksReceived: [{ Feedback: mongoose.Schema.ObjectId }],
-    cart: cart
+    cart: Cart
 }, {
     timestamp: true
 });
