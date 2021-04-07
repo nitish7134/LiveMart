@@ -30,16 +30,17 @@ const OtpScreen = () => {
   const handleSubmit = () => {
     console.log("Sending OTP: " + otp);
   };
-  const handleResend = () =>{
+  const handleResend = () => {
     console.log("RESEND OTP")
   }
 
   return (
     <FormContainer title={"OTP Verification"}>
-          {/* <form name="form1">
-              <input type="text" name="pincode" maxlength="4" id="pin" pattern="\d{4}" required />
-              <input type="Submit" />
-          </form> */}
+      <TextInput
+        placeholder="Enter OTP"
+        numeric value   // This prop makes the input to get numeric only 
+        keyboardType={'numeric'} // This prop help to open numeric keyboard
+      />
       <View style={styles.buttonGroup}>
         {error ? <Error message={error} /> : null}
         <EasyButton large primary onPress={() => handleResend()}>
