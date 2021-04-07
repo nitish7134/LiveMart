@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack"
 
 import ProductContainer from "../Screens/Products/ProductContainer";
 import SingleProduct from "../Screens/Products/SingleProduct"
+// import AuthWebView from "../Screens/User/AuthWebView"
 
 const Stack = createStackNavigator()
 
@@ -23,6 +24,13 @@ function MyStack() {
                     headerShown: true,
                 }}
             />
+            {/* <Stack.Screen
+                name='Login'
+                component={AuthWebView}
+                options = {{
+
+                }}
+            /> */}
         </Stack.Navigator>
     )
 }

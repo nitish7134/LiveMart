@@ -8,7 +8,7 @@ var cors = require('./cors');
 const config = require('../config');
 
 const _getRedirectUrl = (req) => {
-  return "/" + req.user.role + "/";// === 'admin' ? '/admin/orders' : '/customer/orders'
+  return "/" + req.user.role + "/";
 }
 
 router.use(express.json());
@@ -98,7 +98,7 @@ router.get("/auth/facebook/callback", (req, res, next) => {
     if (!user) {
       res.statusCode = 401;
       res.setHeader('Content-Type', 'application/json');
-      res.json({ index: 2, success: false, status: 'Login Unsuccessful!', err: info });
+      return res.json({ index: 2, success: false, status: 'Login Unsuccessful!', err: info });
     }
     req.logIn(user, (err) => {
       if (err) {
@@ -109,7 +109,9 @@ router.get("/auth/facebook/callback", (req, res, next) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         //res.json({ success: true, status: 'Login Successful!', token: token });
+        console.log("CALLBACL TOKEN PRINT"+token);
         res.redirect(config.appBaseUrl+"?token:"+token);
+        return; 
       }
     });
   })(req, res);

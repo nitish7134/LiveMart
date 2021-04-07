@@ -60,7 +60,7 @@ function sendOtp(PhoneNo, email, otp) {
     sendSMS(PhoneNo, otp);
 }
 
-router.get('/send', cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+router.get('/send', cors.corsWithOptions, authenticate.verifyUserWithoutOtp, (req, res) => {
     var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
     const otpvar = new OTP({
         user: req.user._id,
@@ -72,7 +72,7 @@ router.get('/send', cors.corsWithOptions, authenticate.verifyUser, (req, res) =>
 router.get('/verify', cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
     const otpvar = await OTP.findOne({ user: user._id })
     if (!otpvar) {
-        return res.status(422).send({ error: "NO OTP REQUEST" })
+        return res.status(422).send({ error: "NO Expired" })
     }
     try {
         if (req.body.otp !== otpvar.otp) {
@@ -81,8 +81,9 @@ router.get('/verify', cors.corsWithOptions, authenticate.verifyUser, (req, res) 
             res.json({ success: false, status: 'OTP INVALID' });
         } else {
             res.statusCode = 200;
+            var token = authenticate.getOTPToken({ _id: req.user._id });
             res.setHeader('Content-Type', 'application/json');
-            res.json({ success: true, status: 'Valid OTP' });
+            res.json({ success: true, status: 'Valid OTP',token:token });
         }
     } catch (err) {
         return res.status(422).send({ error: "err" })

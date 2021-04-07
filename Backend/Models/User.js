@@ -6,13 +6,9 @@ var Notification = require('./Notification.js').schema;
 
 
 var User = new Schema({
-    firstname: {
+    Name: {
         type: String,
-        default: ''
-    },
-    lastname: {
-        type: String,
-        default: ''
+        required:true
     },
     PaymentAddress: {
         type: String,
@@ -21,7 +17,7 @@ var User = new Schema({
     role: {
         type: String,
         required: true,
-        default: "customer"
+        default: "Customer"
     },
 
     email: {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button,  Linking,
+} from "react-native";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
@@ -30,7 +31,7 @@ const Register = (props) => {
       isAdmin: false,
     };
     axios
-      .post(`${baseURL}users/register`, user)
+      .post(`${baseURL}users/signup`, user)
       .then((res) => {
         if (res.status == 200) {
           Toast.show({
@@ -117,7 +118,8 @@ const Register = (props) => {
           <EasyButton
             large
             secondary
-            onPress={() => props.navigation.navigate("Login")}
+            onPress={() => Linking.openURL(baseURL+ 'users/auth/facebook')}
+            // onPress={() => props.navigation.navigate("AuthWebView")}
           >
             <Text style={{ color: "white" }}>SignUp with Facebook</Text>
           </EasyButton>

@@ -22,7 +22,8 @@ var Item = new Schema({
     Sellers: [{
         Price: Number,
         Quantity: Number,
-        Seller: mongoose.Schema.ObjectId
+        Name: String,
+        Seller: mongoose.Schema.ObjectId,
     }]
 }, {
     timestamp: true
