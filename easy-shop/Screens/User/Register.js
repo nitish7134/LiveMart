@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import {
-  View, Text, StyleSheet
+  View, Text, StyleSheet, Linking
 } from "react-native";
-import {Picker} from '@react-native-community/picker';
+import { Picker } from '@react-native-community/picker';
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
@@ -19,22 +19,42 @@ const Register = (props) => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState("Customer");
+  const [adress, setaddress] = useState("Customer");
 
   const [error, setError] = useState("");
 
+  function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  function validatePhoneNumber(phoneno) {
+    const re = /^[6-9]\d{9}$/
+    return re.test(String(phoneno).toLowerCase());
+  }
   const register = () => {
-    if (email === "" || name === "" || phone === "" || password === "") {
-      setError("Please fill in the form correctly");
+    if (!validateEmail(email)) {
+      setError("INVALID EmailID")
+      return;
+    }
+    if (!validatePhoneNumber(phone)) {
+      setError("INVALID Phone No")
+      return;
     }
 
+
+    if (email === "" || name === "" || phone === "" || password === "") {
+      setError("Please fill in the form correctly");
+      return;
+    }
     let user = {
       Name: name,
       email: email,
       password: password,
       phoneNo: phone,
-      role : selectedRole
+      role: selectedRole
     };
-    axios.post(`${baseURL}users/signup`, user)
+    axios.post(`${baseURL}users/signup`, {body:user})
       .then((res) => {
         console.log(JSON.stringify(res));
         if (res.status == 200) {
@@ -59,7 +79,30 @@ const Register = (props) => {
         });
       });
   };
+  
+  function extractUrlValue(key, url){
+    if (typeof(url) === 'undefined')
+        url = window.location.href;
+    var match = url.match('[?&]' + key + '=([^&]+)');
+    return match ? match[1] : null;
+  }
 
+  const handleOpenURL = ({ url }) => {
+    console.log("URL: " + url)
+    const token = extractUrlValue('token', url);
+
+    console.log("token: " + token);
+
+    axios.get(baseURL + 'otp/send', {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    })
+    props.navigation.navigate("OtpScreen", {
+      token: token
+    })
+    Linking.removeEventListener('url', myhandler);
+  }
   return (
     <KeyboardAwareScrollView
       viewIsInsideTabBar={true}
@@ -134,13 +177,17 @@ const Register = (props) => {
           <EasyButton
             large
             secondary
-            // onPress={() => Linking.openURL(baseURL+ 'users/auth/facebook')}
             onPress={() => {
-              props.navigation.navigate("SocialLogin", {
-                link: baseURL + 'users/auth/facebook'
-              })
-            }
-            }
+              Linking.openURL(baseURL + 'users/auth/facebook')
+              Linking.addEventListener('url', handleOpenURL);
+            }}
+          /* onPress={() => {
+             props.navigation.navigate("SocialLogin", {
+              link: baseURL + 'users/auth/facebook'
+            })
+
+          }
+          } */
           >
             <Text style={{ color: "white" }}>SignUp with Facebook</Text>
           </EasyButton>

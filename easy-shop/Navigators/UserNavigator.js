@@ -7,7 +7,6 @@ import UserProfile from '../Screens/User/UserProfile'
 import AuthWebView from '../Screens/User/AuthWebView'
 import OtpScreen from "../Screens/User/Otp"
 
-
 const Stack = createStackNavigator();
 
 function MyStack() {
@@ -16,7 +15,8 @@ function MyStack() {
 
             <Stack.Screen
                 name="Login"
-                component={Login}
+                component={Login
+                }
                 options={{
                     headerShown: false
                 }}
@@ -35,7 +35,13 @@ function MyStack() {
                     headerShown: false,
                 }}
             />
-
+            <Stack.Screen
+                name="OtpScreen"
+                component={OtpScreen}
+                options={{
+                    headerShown: false
+                }}
+            />
             <Stack.Screen
                 name="User Profile"
                 component={UserProfile}

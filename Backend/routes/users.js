@@ -83,7 +83,7 @@ router.get('/auth/google/callback', (req, res, next) => {
         res.cookie('jwt', token);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.redirect(config.appBaseUrl+"?token:"+token);
+        res.redirect(config.appBaseUrl+"?token="+token);
       }
     });
   })(req, res);
@@ -110,7 +110,7 @@ router.get("/auth/facebook/callback", (req, res, next) => {
         res.setHeader('Content-Type', 'application/json');
         //res.json({ success: true, status: 'Login Successful!', token: token });
         console.log("CALLBACL TOKEN PRINT"+token);
-        res.redirect(config.appBaseUrl+"?token:"+token);
+        res.redirect(config.appBaseUrl+"?token="+token);
         return; 
       }
     });

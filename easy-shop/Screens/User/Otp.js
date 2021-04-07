@@ -13,33 +13,57 @@ import EasyButton from "../../Shared/StyledComponents/EasyButton";
 
 
 const OtpScreen = () => {
-  /* return (
-      <View style={styles.container}>
-          <TextInput
-              placeholder="enter the otp"
-              style={styles.enterTheOtp}
-          ></TextInput>
-          <TouchableOpacity style={styles.button}>
-              <Text style={styles.submit}>Submit</Text>
-          </TouchableOpacity>
-      </View>
-  ); */
+
+  const { route } = this.props;
+  const token = route.params.link;
+ 
   const [otp, setOTP] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
     console.log("Sending OTP: " + otp);
+    axios.get(baseURL + 'otp/verify', {
+      headers: {
+        Authorization: "Bearer " + token
+      },
+      body: {
+        otp: otp
+      }
+    }).then((res) => {
+      console.log(res);
+
+      switch (res.statusCode) {
+        case 401:
+          setError("INVALID OTP")
+          break;
+        case 200:
+
+          break;
+        default:
+          setError("OTP MAYBE EXPIRED")
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
   };
   const handleResend = () => {
     console.log("RESEND OTP")
+    axios.get(baseURL + 'otp/send', {
+      headers: {
+        Authorization: "Bearer " + yourJWTToken
+      }
+    })
   }
 
   return (
     <FormContainer title={"OTP Verification"}>
-      <TextInput
-        placeholder="Enter OTP"
-        numeric value   // This prop makes the input to get numeric only 
+      <Input
+        placeholder={"Enter OTP"}
+        secureTextEntry={true}
+        name={"otp"}
+        id={"otp"}
         keyboardType={'numeric'} // This prop help to open numeric keyboard
+        onChangeText={(text) => setOTP(text)}
       />
       <View style={styles.buttonGroup}>
         {error ? <Error message={error} /> : null}
@@ -66,7 +90,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
-/* 
+/*
 const styles = StyleSheet.create({
     container: {
         width: 169,

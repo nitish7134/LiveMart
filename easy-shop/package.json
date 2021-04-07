@@ -27,6 +27,7 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
     "react-native-gesture-handler": "~1.7.0",
+    "react-native-google-places-autocomplete": "^2.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.4",
@@ -49,5 +50,6 @@
   "devDependencies": {
     "@babel/core": "~7.9.0"
   },
-  "private": true
+  "private": true,
+  "proxy": "http://localhost:3000"
 }
