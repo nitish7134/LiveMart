@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Button,  Linking,
+import {
+  View, Text, StyleSheet
 } from "react-native";
+import {Picker} from '@react-native-community/picker';
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
@@ -16,6 +18,8 @@ const Register = (props) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("Customer");
+
   const [error, setError] = useState("");
 
   const register = () => {
@@ -24,15 +28,15 @@ const Register = (props) => {
     }
 
     let user = {
-      name: name,
+      Name: name,
       email: email,
       password: password,
-      phone: phone,
-      isAdmin: false,
+      phoneNo: phone,
+      role : selectedRole
     };
-    axios
-      .post(`${baseURL}users/signup`, user)
+    axios.post(`${baseURL}users/signup`, user)
       .then((res) => {
+        console.log(JSON.stringify(res));
         if (res.status == 200) {
           Toast.show({
             topOffset: 60,
@@ -46,6 +50,7 @@ const Register = (props) => {
         }
       })
       .catch((error) => {
+        console.log(error);
         Toast.show({
           topOffset: 60,
           type: "error",
@@ -92,6 +97,17 @@ const Register = (props) => {
           {error ? <Error message={error} /> : null}
         </View>
         <View>
+          <View style={styles.container}>
+            <Picker
+              selectedValue={selectedRole}
+              style={{ height: 50, width: 150 }}
+              onValueChange={(itemValue, itemIndex) => setSelectedRole(itemValue)}
+            >
+              <Picker.Item label="Customer" value="Customer" />
+              <Picker.Item label="Retailer" value="Retailer" />
+              <Picker.Item label="Wholeasaler" value="Retailer" />
+            </Picker>
+          </View>
           <EasyButton large primary onPress={() => register()}>
             <Text style={{ color: "white" }}>Register</Text>
           </EasyButton>
@@ -118,8 +134,13 @@ const Register = (props) => {
           <EasyButton
             large
             secondary
-            onPress={() => Linking.openURL(baseURL+ 'users/auth/facebook')}
-            // onPress={() => props.navigation.navigate("AuthWebView")}
+            // onPress={() => Linking.openURL(baseURL+ 'users/auth/facebook')}
+            onPress={() => {
+              props.navigation.navigate("SocialLogin", {
+                link: baseURL + 'users/auth/facebook'
+              })
+            }
+            }
           >
             <Text style={{ color: "white" }}>SignUp with Facebook</Text>
           </EasyButton>

@@ -73,7 +73,7 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
 
 exports.verifyUserWithoutOtp = (req, res, next) => {
         const { authorization } = req.headers;
-        //authorization === Bearer sfafsafa
+        //authorization === Bearer
         if (!authorization) {
             return res.status(401).send({ error: "you must be logged in" })
         }
