@@ -25,6 +25,7 @@ const Main = () => {
   return (
     <Stack.Navigator>
 
+
       <Stack.Screen
         name="Login"
         component={Login
@@ -41,19 +42,20 @@ const Main = () => {
         }}
       />
       <Stack.Screen
-        name="OtpScreen"
-        component={OtpScreen}
-        options={{
-          headerShown: false
-        }}
-      />
-      <Stack.Screen
         name="PostSignUp"
         component={PostSignup}
         options={{
           headerShown: false
         }}
       />
+      <Stack.Screen
+        name="OtpScreen"
+        component={OtpScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
       <Stack.Screen
         name="User Profile"
         component={UserProfile}

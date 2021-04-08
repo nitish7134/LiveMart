@@ -13,6 +13,7 @@ import GButton from '../../assets/GAuthButton.png'
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
 
+
 const Register = (props) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -55,13 +56,17 @@ const Register = (props) => {
       phoneNo: phone,
       role: selectedRole
     };
-    fetch(baseURL + "/users/signup",{  method: 'POST',
-    body:user})
-    /* axios.post('/users/signup', { body: user }, {
-      "headers": {
-        "content-type": "application/json",
+    var url = "http://ec2-18-216-67-251.us-east-2.compute.amazonaws.com:3000/users/signup"
+    console.log("POSTING TO URL: " +url)
+    axios({
+      method: 'POST',
+      url: url,
+      body: user,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
       },
-    }) */
+    })
       .then((res) => {
         console.log(JSON.stringify(res));
         if (res.status == 200) {
@@ -72,7 +77,7 @@ const Register = (props) => {
             text2: "Please Login into your account",
           });
           setTimeout(() => {
-            props.navigation.navigate("Login");
+            props.navigation.navigate("OtpScreen");
           }, 500);
         }
       })
@@ -191,6 +196,7 @@ const Register = (props) => {
           </TouchableOpacity>
         </View>
       </FormContainer>
+      
     </KeyboardAwareScrollView>
   );
 };

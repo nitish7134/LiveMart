@@ -15,8 +15,8 @@ class MapInput extends React.Component {
 
                 autoFocus={true}
 
-                returnkeyType={'search'}
-                listVienDisplayed={false}
+                returnkeyType={'search'} 
+                listViewDisplayed={false}
 
                 fetchDetails={true}
 

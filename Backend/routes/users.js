@@ -38,6 +38,7 @@ router.post('/signup', cors.corsWithOptions, async (req, res) => {
     res.send({ token })
 
   } catch (err) {
+    console.log(JSON.stringify(err));
     return res.status(422).send(err.message)
   }
 })

@@ -36,6 +36,7 @@ class MapContainer extends React.Component {
             latitude: loc.lat,
             longitude: loc.lng,
         });
+        console.log(lac.lat, loc.lng);
     }
     onMapRegionChange(region) {
         this.setState({ region });
@@ -51,12 +52,12 @@ class MapContainer extends React.Component {
                     <MapInput notifyChange={(loc) => this.getCoordsFromName(loc)}
                     />
                 </View>
-                {                  this.state.region['latitude'] ?
+                {this.state.region['latitude'] ?
                     <View style={{ flex: 1 }}>
-
                         <MyMapView
                             region={this.state.region}
-                            onRegionChange={(reg) => this.onMapRegionChange(reg)} />
+                            onRegionChange={(reg) => this.onMapRegionChange(reg)} 
+                        />
                     </View>
                     :
                     null
