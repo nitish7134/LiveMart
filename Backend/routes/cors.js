@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
+const config = require('./../config');
 
-const whitelist = ['http://localhost:3000', 'https://localhost:3443','http://10.105.177.9:3000/','https://www.abhyudayiitb.org/'];
+const whitelist = ['http://localhost:3000', 'https://localhost:3443', config.appBaseUrl ];
 var corsOptionsDelegate = (req, callback) => {
     var corsOptions;
     console.log(req.header('Origin'));
@@ -16,4 +16,4 @@ var corsOptionsDelegate = (req, callback) => {
 };
 
 exports.cors = cors();
-exports.corsWithOptions = cors();//corsOptionsDelegate);
+exports.corsWithOptions = cors()//corsOptionsDelegate);

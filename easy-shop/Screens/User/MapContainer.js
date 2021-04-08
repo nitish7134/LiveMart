@@ -1,13 +1,18 @@
 import React from 'react';
+import { View } from "react-native";
+import MapInput from './MapInput';
+import MyMapView from './MyMapView';
+import getLocation from '../../Shared/getLocation'
 class MapContainer extends React.Component {
 
     state = {
-        region:{},
+        region: {},
     };
 
     componentDidMount() {
         this.getInitialState();
     }
+    
     getInitialState() {
         getLocation().then(data => {
             this.updateState({
@@ -43,7 +48,7 @@ class MapContainer extends React.Component {
 
                 <View style={{ flex: 0.4 }}>
 
-                    <Map Input notifyChange={(loc) => this.getCoordsFromName(loc)}
+                    <MapInput notifyChange={(loc) => this.getCoordsFromName(loc)}
                     />
                 </View>
                 {                  this.state.region['latitude'] ?

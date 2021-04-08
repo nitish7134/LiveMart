@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  View, Text, StyleSheet, Linking
+  View, Text, StyleSheet, Linking, Image, TouchableOpacity
 } from "react-native";
 import { Picker } from '@react-native-community/picker';
 import FormContainer from "../../Shared/Form/FormContainer";
@@ -9,7 +9,7 @@ import Error from "../../Shared/Error";
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
-
+import GButton from '../../assets/GAuthButton.png'
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
 
@@ -47,6 +47,7 @@ const Register = (props) => {
       setError("Please fill in the form correctly");
       return;
     }
+    setError("");
     let user = {
       Name: name,
       email: email,
@@ -54,7 +55,13 @@ const Register = (props) => {
       phoneNo: phone,
       role: selectedRole
     };
-    axios.post(`${baseURL}users/signup`, {body:user})
+    fetch(baseURL + "/users/signup",{  method: 'POST',
+    body:user})
+    /* axios.post('/users/signup', { body: user }, {
+      "headers": {
+        "content-type": "application/json",
+      },
+    }) */
       .then((res) => {
         console.log(JSON.stringify(res));
         if (res.status == 200) {
@@ -79,10 +86,10 @@ const Register = (props) => {
         });
       });
   };
-  
-  function extractUrlValue(key, url){
-    if (typeof(url) === 'undefined')
-        url = window.location.href;
+
+  function extractUrlValue(key, url) {
+    if (typeof (url) === 'undefined')
+      url = window.location.href;
     var match = url.match('[?&]' + key + '=([^&]+)');
     return match ? match[1] : null;
   }
@@ -143,7 +150,7 @@ const Register = (props) => {
           <View style={styles.container}>
             <Picker
               selectedValue={selectedRole}
-              style={{ height: 50, width: 150 }}
+              // style={{ height: 50, width: 150 }}
               onValueChange={(itemValue, itemIndex) => setSelectedRole(itemValue)}
             >
               <Picker.Item label="Customer" value="Customer" />
@@ -165,32 +172,23 @@ const Register = (props) => {
           </EasyButton>
         </View>
         <View>
-          <EasyButton
-            large
-            secondary
-            onPress={() => props.navigation.navigate("Login")}
-          >
-            <Text style={{ color: "white" }}>SignUp with Google</Text>
-          </EasyButton>
-        </View>
-        <View>
-          <EasyButton
-            large
-            secondary
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(baseURL + 'users/auth/google')
+              Linking.addEventListener('url', handleOpenURL);
+            }}            >
+            <Image source={require("./../../assets/GAuthButton.png")}
+              style={{ width: 200, height: 50 }} />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => {
               Linking.openURL(baseURL + 'users/auth/facebook')
               Linking.addEventListener('url', handleOpenURL);
             }}
-          /* onPress={() => {
-             props.navigation.navigate("SocialLogin", {
-              link: baseURL + 'users/auth/facebook'
-            })
-
-          }
-          } */
           >
-            <Text style={{ color: "white" }}>SignUp with Facebook</Text>
-          </EasyButton>
+            <Image source={require("./../../assets/GAuthButton.png")}
+              style={{ width: 200, height: 50 }} />
+          </TouchableOpacity>
         </View>
       </FormContainer>
     </KeyboardAwareScrollView>

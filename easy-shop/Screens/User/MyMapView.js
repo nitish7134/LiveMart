@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapView } from 'expo';
+import MapView from 'react-native-maps'
 
 const MyMapView = (props) => {
     return (
@@ -10,7 +10,7 @@ const MyMapView = (props) => {
             onRegionChange={(reg) => props.onRegionChange(reg)}>
 
             <MapView.Marker
-                Cordinate={props.region} />
+                coordinate={props.region} />
         </MapView>
     )
 }
