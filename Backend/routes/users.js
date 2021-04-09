@@ -6,11 +6,6 @@ var passport = require('passport');
 var authenticate = require('../Controller/authenticate');
 var cors = require('./cors');
 const config = require('../config');
-const { json } = require('body-parser');
-
-const _getRedirectUrl = (req) => {
-  return "/" + req.user.role + "/";
-}
 
 router.use(express.json());
 router.use(express.urlencoded({
@@ -32,7 +27,7 @@ router.get('/profile', cors.cors, authenticate.verifyUser, (req, res) => {
 
 router.post('/signup', cors.corsWithOptions, async (req, res) => {
   try {
-    console.log(JSON.stringify(req.body.user));
+    console.log(req.body.user);
     const user = new User(req.body.user);
     await user.save();
     const token = jwt.sign({ userId: user._id }, config.secretKey)

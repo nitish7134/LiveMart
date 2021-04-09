@@ -56,13 +56,12 @@ const Register = (props) => {
       phoneNo: phone,
       role: selectedRole
     };
-    var url = "http://ec2-18-216-67-251.us-east-2.compute.amazonaws.com:3000/users/signup"
-    console.log("POSTING TO URL: " +url)
     axios({
       method: 'POST',
-      url: url,
-      body: user,
+      url: baseURL+'users/signup',
+      data: {"user":user},
       headers: {
+
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
       },
@@ -107,13 +106,13 @@ const Register = (props) => {
 
     axios.get(baseURL + 'otp/send', {
       headers: {
-        Authorization: "Bearer " + token
+        Authorization: 'Bearer ' + token
       }
     })
     props.navigation.navigate("OtpScreen", {
       token: token
     })
-    Linking.removeEventListener('url', myhandler);
+    Linking.removeEventListener('url', handleOpenURL);
   }
   return (
     <KeyboardAwareScrollView

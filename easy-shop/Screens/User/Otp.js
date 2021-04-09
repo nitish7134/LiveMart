@@ -12,9 +12,9 @@ import Error from "../../Shared/Error";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 
 
-const OtpScreen = () => {
+const OtpScreen = (props) => {
 
-  const { route } = this.props;
+  const { route } = props;
   const token = route.params.link;
  
   const [otp, setOTP] = useState("");
