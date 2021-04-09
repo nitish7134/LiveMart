@@ -57,6 +57,25 @@ const Login = (props) => {
           <Text style={{ color: "white" }}>Login</Text>
         </EasyButton>
       </View>
+      <View>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(baseURL + 'users/auth/google')
+              Linking.addEventListener('url', handleOpenURL);
+            }}            >
+            <Image source={require("./../../assets/GAuthButton.png")}
+              style={{ width: 200, height: 50 }} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(baseURL + 'users/auth/facebook')
+              Linking.addEventListener('url', handleOpenURL);
+            }}
+          >
+            <Image source={require("./../../assets/GAuthButton.png")}
+              style={{ width: 200, height: 50 }} />
+          </TouchableOpacity>
+      </View>
       <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
         <Text style={styles.middleText}>Don't have an account yet?</Text>
         <EasyButton
