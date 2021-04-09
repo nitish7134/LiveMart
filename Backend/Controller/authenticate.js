@@ -19,10 +19,10 @@ passport.deserializeUser(function (id, done) {
 });
 
 exports.getToken = function (user) {
-    return jwt.sign(user, config.jwtKey);
+    return jwt.sign(user, config.jwtKey, { expiresIn: 60 * 60 });
 };
 exports.getOTPToken = function (user) {
-    return jwt.sign(user, config.jwtOTPKey);
+    return jwt.sign(user, config.jwtOTPKey, { expiresIn: 60 * 60 });
 };
 
 var opts = {};
@@ -31,7 +31,7 @@ var cookieExtractor = function (req) {
     if (req && req.cookies) token = req.cookies['jwt'];
     return token;
 };
-opts.jwtFromRequest = cookieExtractor;
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken;
 opts.secretOrKey = config.jwtKey;
 
 exports.jwtPassport = passport.use(new JwtStrategy(opts,
@@ -39,6 +39,7 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
         console.log("JWT payload: ", jwt_payload);
         User.findOne({ _id: jwt_payload._id }, (err, user) => {
             if (err) {
+                console.log("HI + " + JSON.stringify(err));
                 return done(err, false);
             }
             else if (user) {
@@ -52,9 +53,8 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
 ));
 
 exports.verifyUser = //passport.authenticate('jwt', { session: false });
-    /* function */ (req, res, next) => {
-        const { authorization } = req.headers;
-        //authorization === Bearer sfafsafa
+        /* function */ (req, res, next) => {
+        let { authorization } = req.headers;
         if (!authorization) {
             return res.status(401).send({ error: "you must be logged in" })
         }
@@ -73,27 +73,30 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
         })
     }
 
-exports.verifyUserWithoutOtp = (req, res, next) => {
-    const { authorization } = req.headers;
-    //authorization === Bearer
+exports.verifyUserWithoutOtp = /* passport.authenticate('jwt', { session: false }); */ (req, res, next) => {
+    let { authorization } = req.headers;
     if (!authorization) {
         console.log("you must be logged in")
         return res.status(401).send({ error: "you must be logged in" })
     }
-    const token = authorization.replace("Bearer ", "");
+    const token = authorization.split(' ')[1];
+    //authorization.replace("Bearer ", "");
     console.log("Verifing token: {" + token + "}");
     jwt.verify(token, config.jwtKey, async (err, payload) => {
         if (err) {
             console.log("you must be logged in 2" + JSON.stringify(err));
             return res.status(401).send({ error: "you must be logged in 2" })
         }
-        const { userId } = payload;
+        const userId = payload._id;
         const user = await User.findById(userId)
         if (user) {
+            console.log("USER FOund")
             req.user = user;
             next();
-        } else
+        } else {
+            console.log("NO USER FOUND WITH ID " + userId);
             res.status(401).send({ error: "No such User Found" })
+        }
     })
 }
 exports.verifyAdmin = function (req, res, next) {

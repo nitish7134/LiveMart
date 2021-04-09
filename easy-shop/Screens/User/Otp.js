@@ -10,34 +10,37 @@ import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
+import axios from "axios";
 
+import baseURL from "../../assets/common/baseUrl";
 
 const OtpScreen = (props) => {
 
   const { route } = props;
-  const token = route.params.link;
- 
+  const token = route.params.token;
+
   const [otp, setOTP] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
     console.log("Sending OTP: " + otp);
-    axios.get(baseURL + 'otp/verify', {
+    axios.post(baseURL + 'otp/verify', {
+      otp: otp
+    }, {
       headers: {
         Authorization: "Bearer " + token
       },
-      body: {
-        otp: otp
-      }
-    }).then((res) => {
-      console.log(res);
 
-      switch (res.statusCode) {
+    }).then((res) => {
+      console.log(JSON.stringify(res));
+
+      switch (res.status) {
         case 401:
           setError("INVALID OTP")
           break;
         case 200:
-
+          
+          props.navigation.navigate("Home");
           break;
         default:
           setError("OTP MAYBE EXPIRED")
@@ -50,7 +53,7 @@ const OtpScreen = (props) => {
     console.log("RESEND OTP")
     axios.get(baseURL + 'otp/send', {
       headers: {
-        Authorization: "Bearer " + yourJWTToken
+        Authorization: "Bearer " + token
       }
     })
   }

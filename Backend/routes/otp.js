@@ -8,6 +8,13 @@ const config = require('../config');
 
 var messagebird = require('messagebird')(config.messagebird_API_KEY);
 var nodemailer = require('nodemailer');
+var mongoose = require('mongoose');
+
+
+router.use(express.json());
+router.use(express.urlencoded({
+    extended: true
+}));
 
 router.options('*', cors.corsWithOptions, (req, res) => { res.sendStatus(200); });
 
@@ -52,10 +59,11 @@ function sendSMS(PhoneNo, otp) {
 }
 function sendOtp(PhoneNo, email, otp) {
     sendMail(email, otp);
-    sendSMS(PhoneNo, otp);
+    // sendSMS(PhoneNo, otp);
 }
 
-router.get('/send', cors.corsWithOptions,  authenticate.verifyUserWithoutOtp, (req, res) => {
+router.get('/send', cors.corsWithOptions, authenticate.verifyUserWithoutOtp, (req, res) => {
+    OTP.remove({ user: mongoose.Types.ObjectId(req.user._id) });
     var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
     const otpvar = new OTP({
         user: req.user._id,
@@ -65,25 +73,31 @@ router.get('/send', cors.corsWithOptions,  authenticate.verifyUserWithoutOtp, (r
         sendOtp(req.user.phoneNo, req.user.email, otp);
     });
 })
-router.get('/verify', cors.corsWithOptions, authenticate.verifyUserWithoutOtp, (req, res) => {
+router.post('/verify', cors.corsWithOptions, authenticate.verifyUserWithoutOtp, (req, res) => {
     try {
-        OTP.findOne({ user: user._id }).then(otpvar => {
+        console.log("FONDING OF USER : " + req.user._id);
+        OTP.find({ user: mongoose.Types.ObjectId(req.user._id) }).sort({"sessionActivity":"-1"}).then(otpvar => {
+            console.log("OTP", otpvar);
             if (!otpvar) {
-                return res.status(422).send({ error: "NO Expired" })
+                console.log("NO OTP FOUND")
+                return res.status(422).send({ error: "OTP Expired" })
             }
-            if (req.body.otp !== otpvar.otp) {
-                res.statusCode = 401;
-                res.setHeader('Content-Type', 'application/json');
-                res.json({ success: false, status: 'OTP INVALID' });
-            } else {
-                res.statusCode = 200;
+            console.log("REQBODY", req.body);
+            if (req.body.otp == otpvar[0].otp) {
+                res.status(200);
+                OTP.remove({ user: mongoose.Types.ObjectId(req.user._id) });
                 var token = authenticate.getOTPToken({ _id: req.user._id });
                 res.setHeader('Content-Type', 'application/json');
                 res.json({ success: true, status: 'Valid OTP', token: token });
+            } else {
+                res.status(401);
+                res.setHeader('Content-Type', 'application/json');
+                res.json({ success: false, status: 'OTP INVALID' });
             }
         })
 
     } catch (err) {
+        console.log("error " + JSON.stringify(err))
         return res.status(422).send({ error: "err" })
     }
 })

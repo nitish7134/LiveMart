@@ -76,7 +76,7 @@ const Register = (props) => {
             text2: "Please Login into your account",
           });
           setTimeout(() => {
-            props.navigation.navigate("OtpScreen");
+            props.navigation.navigate("OtpScreen",{token:token});
           }, 500);
         }
       })
@@ -100,13 +100,13 @@ const Register = (props) => {
 
   const handleOpenURL = ({ url }) => {
     console.log("URL: " + url)
-    const token = extractUrlValue('token', url);
-
+    var token = extractUrlValue('token', url);
+    token = token.split("#")[0];
     console.log("token: " + token);
 
     axios.get(baseURL + 'otp/send', {
       headers: {
-        Authorization: 'Bearer ' + token
+        authorization: 'bearer ' + token
       }
     })
     props.navigation.navigate("OtpScreen", {
