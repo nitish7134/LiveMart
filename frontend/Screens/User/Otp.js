@@ -14,11 +14,17 @@ import axios from "axios";
 
 import baseURL from "../../assets/common/baseUrl";
 
+import jwt_decode from "jwt-decode"
+import AsyncStorage from "@react-native-community/async-storage"
+
+import AuthGlobal from "../../Context/store/AuthGlobal";
+import {setCurrentUser} from '../../Context/actions/Auth.actions'
+
 const OtpScreen = (props) => {
 
   const { route } = props;
   const token = route.params.token;
-
+  const context = useContext(AuthGlobal);
   const [otp, setOTP] = useState("");
   const [error, setError] = useState("");
 
@@ -39,6 +45,10 @@ const OtpScreen = (props) => {
           setError("INVALID OTP")
           break;
         case 200:
+          //LOGIN IN REDUX STORE
+          AsyncStorage.setItem("jwt", token)
+          const decoded = jwt_decode(token)
+          context.dispatch(setCurrentUser(decoded))
           
           props.navigation.navigate("Home");
           break;
@@ -46,6 +56,8 @@ const OtpScreen = (props) => {
           setError("OTP MAYBE EXPIRED")
       }
     }).catch((err) => {
+      setError("OTP MAYBE EXPIRED")
+
       console.log(err);
     })
   };

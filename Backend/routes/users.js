@@ -56,10 +56,6 @@ router.post('/signin', async (req, res) => {
   }
 })
 
-router.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-});
 router.get('/auth/google', passport.authenticate('google', { successRedirect: config.baseUrl + '/', failureRedirect: config.baseUrl + '/error?index=4', scope: ['profile', 'email'] }));
 
 router.get('/auth/google/callback', (req, res, next) => {

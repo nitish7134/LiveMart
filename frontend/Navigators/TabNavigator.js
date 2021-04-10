@@ -1,12 +1,18 @@
-import React from "react"
+import React , {useContext} from "react"
+import {View} from "react-native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AdminNavigator from "./AdminNavigator";
 import HomeNavigator from "./HomeNavigator";
 import CartNavigator from "./CartNavigator";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 import CartIcon from "../Shared/CartIcon";
 
+import AuthGlobal from "../Context/store/AuthGlobal";
+
 function MyStack() {
+    const context = useContext(AuthGlobal)
+
     const Tab = createBottomTabNavigator();
     return (
         <Tab.Navigator
@@ -39,7 +45,7 @@ function MyStack() {
                 }}
             />
 
-           {/*  {context.stateUser.user.isAdmin == true ? (
+            {context.stateUser.user.isAdmin == true ? (
                 <Tab.Screen
                     name="Admin"
                     component={AdminNavigator}
@@ -49,7 +55,7 @@ function MyStack() {
                         ),
                     }}
                 />
-            ) : null} */}
+            ) : null}
         </Tab.Navigator>
     )
 }

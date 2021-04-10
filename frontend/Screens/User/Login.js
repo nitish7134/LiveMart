@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, TouchableOpacity, Image, Linking } from "react-native";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
@@ -8,6 +8,10 @@ import EasyButton from "../../Shared/StyledComponents/EasyButton";
 // Context
 import AuthGlobal from "../../Context/store/AuthGlobal";
 import { loginUser } from "../../Context/actions/Auth.actions";
+
+import baseURL from "../../assets/common/baseUrl";
+
+
 
 const Login = (props) => {
   const context = useContext(AuthGlobal);
@@ -34,6 +38,22 @@ const Login = (props) => {
     }
   };
 
+  const handleOpenURL = ({ url }) => {
+    console.log("URL: " + url)
+    var token = extractUrlValue('token', url);
+    token = token.split("#")[0];
+    console.log("token: " + token);
+
+    axios.get(baseURL + 'otp/send', {
+      headers: {
+        authorization: 'bearer ' + token
+      }
+    })
+    props.navigation.navigate("OtpScreen", {
+      token: token
+    })
+    Linking.removeEventListener('url', handleOpenURL);
+  }
   return (
     <FormContainer title={"Login"}>
       <Input
@@ -58,30 +78,30 @@ const Login = (props) => {
         </EasyButton>
       </View>
       <View>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL(baseURL + 'users/auth/google')
-              Linking.addEventListener('url', handleOpenURL);
-            }}            >
-            <Image source={require("./../../assets/GAuthButton.png")}
-              style={{ width: 200, height: 50 }} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL(baseURL + 'users/auth/facebook')
-              Linking.addEventListener('url', handleOpenURL);
-            }}
-          >
-            <Image source={require("./../../assets/GAuthButton.png")}
-              style={{ width: 200, height: 50 }} />
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(baseURL + 'users/auth/google')
+            Linking.addEventListener('url', handleOpenURL);
+          }}            >
+          <Image source={require("./../../assets/GAuthButton.png")}
+            style={{ width: 200, height: 50 }} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(baseURL + 'users/auth/facebook')
+            Linking.addEventListener('url', handleOpenURL);
+          }}
+        >
+          <Image source={require("./../../assets/GAuthButton.png")}
+            style={{ width: 200, height: 50 }} />
+        </TouchableOpacity>
       </View>
       <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
         <Text style={styles.middleText}>Don't have an account yet?</Text>
         <EasyButton
-        large
-        secondary 
-        onPress={() => props.navigation.navigate("Register")}>
+          large
+          secondary
+          onPress={() => props.navigation.navigate("Register")}>
           <Text style={{ color: "white" }}>Register</Text>
         </EasyButton>
       </View>

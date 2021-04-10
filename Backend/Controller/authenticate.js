@@ -155,7 +155,7 @@ exports.facebookPassport = passport.use(new FacebookStrategy({
 exports.googlePassport = passport.use(new GoogleStrategy({
     clientID: config.google.clientId,
     clientSecret: config.google.clientSecret,
-    callbackURL: "https://192.168.1.83.xip.io:3443/users/auth/google/callback"//config.baseUrl + config.google.callbackURL
+    callbackURL: config.baseUrl + config.google.callbackURL
 }, (accessToken, refreshToken, profile, done) => {
     process.nextTick(function () {
         User.findOne({ email: profile.emails[0].value }, (err, user) => {

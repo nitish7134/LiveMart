@@ -34,8 +34,6 @@ var User = new Schema({
     facebookId: String,
     googleId: String,
     Notifications: [Notification],
-    FeedbacksGiven: [{ Feedback: mongoose.Schema.ObjectId }],
-    FeedbacksReceived: [{ Feedback: mongoose.Schema.ObjectId }],
     cart: Cart
 }, {
     timestamp: true

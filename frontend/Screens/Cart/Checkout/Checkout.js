@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext} from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Text, View, Button } from 'react-native'
 import { Item, Picker, Toast } from 'native-base'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -14,19 +14,19 @@ const countries = require("../../../assets/countries.json");
 const Checkout = (props) => {
     const context = useContext(AuthGlobal)
 
-    const [ orderItems, setOrderItems ] = useState();
-    const [ address, setAddress ] = useState();
-    const [ address2, setAddress2 ] = useState();
-    const [ city, setCity ] = useState();
-    const [ zip, setZip ] = useState();
-    const [ country, setCountry ] = useState();
-    const [ phone, setPhone ] = useState();
-    const [ user, setUser ] = useState();
+    const [orderItems, setOrderItems] = useState();
+    const [address, setAddress] = useState();
+    const [address2, setAddress2] = useState();
+    const [city, setCity] = useState();
+    const [zip, setZip] = useState();
+    const [country, setCountry] = useState();
+    const [phone, setPhone] = useState();
+    const [user, setUser] = useState();
 
     useEffect(() => {
         setOrderItems(props.cartItems)
 
-        if(context.stateUser.isAuthenticated) {
+        if (context.stateUser.isAuthenticated) {
             setUser(context.stateUser.user.sub)
         } else {
             props.navigation.navigate("Cart");
@@ -57,7 +57,7 @@ const Checkout = (props) => {
             zip,
         }
 
-        props.navigation.navigate("Payment", {order: order })
+        props.navigation.navigate("Payment", { order: order })
     }
 
     return (
@@ -74,25 +74,25 @@ const Checkout = (props) => {
                     keyboardType={"numeric"}
                     onChangeText={(text) => setPhone(text)}
                 />
-                   <Input
+                <Input
                     placeholder={"Shipping Address 1"}
                     name={"ShippingAddress1"}
                     value={address}
                     onChangeText={(text) => setAddress(text)}
                 />
-                   <Input
+                <Input
                     placeholder={"Shipping Address 2"}
                     name={"ShippingAddress2"}
                     value={address2}
                     onChangeText={(text) => setAddress2(text)}
                 />
-                   <Input
+                <Input
                     placeholder={"City"}
                     name={"city"}
                     value={city}
                     onChangeText={(text) => setCity(text)}
                 />
-                   <Input
+                <Input
                     placeholder={"Zip Code"}
                     name={"zip"}
                     value={zip}
@@ -111,16 +111,16 @@ const Checkout = (props) => {
                         onValueChange={(e) => setCountry(e)}
                     >
                         {countries.map((c) => {
-                            return <Picker.Item 
-                                    key={c.code} 
-                                    label={c.name}
-                                    value={c.name}
-                                    />
+                            return <Picker.Item
+                                key={c.code}
+                                label={c.name}
+                                value={c.name}
+                            />
                         })}
                     </Picker>
                 </Item>
                 <View style={{ width: '80%', alignItems: "center" }}>
-                    <Button title="Confirm" onPress={() => checkOut()}/>
+                    <Button title="Confirm" onPress={() => checkOut()} />
                 </View>
             </FormContainer>
         </KeyboardAwareScrollView>
