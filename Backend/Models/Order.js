@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Cart = require('./Cart.js');
+var Cart = require('./Cart').schema;
 
 
 var Order = new Schema({
@@ -10,6 +10,7 @@ var Order = new Schema({
     Customer: mongoose.Schema.ObjectId,
     Seller: mongoose.Schema.ObjectId,
     statusCode: Number,
+    Address:String,
     ExpectedDelivery: Date
 });
 

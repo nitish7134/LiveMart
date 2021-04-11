@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { 
-    View, 
+import {
+    View,
     Text,
     FlatList,
     Dimensions,
     TextInput,
-    StyleSheet 
+    StyleSheet
 } from "react-native"
 import EasyButton from "../../Shared/StyledComponents/EasyButton"
 import baseURL from "../../assets/common/baseUrl";
@@ -24,7 +24,7 @@ const Item = (props) => {
                 medium
                 onPress={() => props.delete(props.item._id)}
             >
-                <Text style={{ color: "white", fontWeight: "bold"}}>Delete</Text>
+                <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
             </EasyButton>
         </View>
     )
@@ -44,9 +44,14 @@ const Categories = (props) => {
             .catch((error) => console.log(error));
 
         axios
-        .get(`${baseURL}categories`)
-        .then((res) => setCategories(res.data))
-        .catch((error) => alert("Error to load categories"))
+            .get(`${baseURL}categories`, {
+                headers: {
+                    authorization: 'Bearer ' + token
+                }
+            }
+            )
+            .then((res) => setCategories(res.data))
+            .catch((error) => alert("Error to load categories"))
 
         return () => {
             setCategories();
@@ -59,40 +64,37 @@ const Categories = (props) => {
             name: categoryName
         };
 
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
-
         axios
-        .post(`${baseURL}categories`, category, config)
-        .then((res) => setCategories([...categories, res.data]))
-        .catch((error) => alert("Error to load categories"));
+            .post(`${baseURL}categories`, category, {
+                headers: {
+                    authorization: 'Bearer ' + token
+                }
+            },)
+            .then((res) => setCategories([...categories, res.data]))
+            .catch((error) => alert("Error to load categories"));
 
         setCategoryName("");
     }
 
     const deleteCategory = (id) => {
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
-
+        
         axios
-        .delete(`${baseURL}categories/${id}`, config)
-        .then((res) => {
-            const newCategories = categories.filter((item) => item.id !== id);
-            setCategories(newCategories);
-        })
-        .catch((error) => alert("Error to load categories"));
+            .delete(`${baseURL}categories/${id}`, {
+                headers: {
+                    authorization: 'Bearer ' + token
+                }
+            })
+            .then((res) => {
+                const newCategories = categories.filter((item) => item.id !== id);
+                setCategories(newCategories);
+            })
+            .catch((error) => alert("Error to load categories"));
     }
 
     return (
-        <View style={{ position: "relative", height: "100%"}}>
+        <View style={{ position: "relative", height: "100%" }}>
             <View style={{ marginBottom: 60 }}>
-                <FlatList 
+                <FlatList
                     data={categories}
                     renderItem={({ item, index }) => (
                         <Item item={item} index={index} delete={deleteCategory} />
@@ -105,7 +107,7 @@ const Categories = (props) => {
                     <Text>Add Category</Text>
                 </View>
                 <View style={{ width: width / 2.5 }}>
-                    <TextInput 
+                    <TextInput
                         value={categoryName}
                         style={styles.input}
                         onChangeText={(text) => setCategoryName(text)}
@@ -117,7 +119,7 @@ const Categories = (props) => {
                         primary
                         onPress={() => addCategory()}
                     >
-                        <Text style={{ color: "white", fontWeight: "bold"}}>Submit</Text>
+                        <Text style={{ color: "white", fontWeight: "bold" }}>Submit</Text>
                     </EasyButton>
                 </View>
             </View>

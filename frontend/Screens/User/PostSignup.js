@@ -7,37 +7,83 @@ import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import { Picker } from '@react-native-community/picker';
+import AsyncStorage from "@react-native-community/async-storage"
+import { useFocusEffect } from "@react-navigation/native"
+import { getUserProfile } from "../../Context/actions/Auth.actions"
 
 // Context
 import AuthGlobal from "../../Context/store/AuthGlobal";
-import { loginUser } from "../../Context/actions/Auth.actions";
+import axios from "axios";
+import baseURL from "../../assets/common/baseUrl";
 
 const PostSignup = (props) => {
     const context = useContext(AuthGlobal);
-    const [email, setEmail] = useState("");
+    const [userProfile, setUserProfile] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [selectedRole, setSelectedRole] = useState("Customer");
-    const [error, setError] = useState("");
-
+    const [error, setError] = useState("--");
+    const [token, setToken] = useState("");
+    useFocusEffect(
+        React.useCallback(() => {
+            if (
+                context.stateUser.isAuthenticated === false ||
+                context.stateUser.isAuthenticated === null
+            ) {
+                props.navigation.navigate("Login")
+            };
+            setUserProfile(context.stateUser.userProfile);
+            setToken(context.stateUser.token)
+        }, [context.stateUser.isAuthenticated])
+    );
+    function validatePhoneNumber(phoneno) {
+        const re = /^[6-9]\d{9}$/
+        return re.test(String(phoneno).toLowerCase());
+    }
     const handleSubmit = () => {
-        const user = {
-            password
-        };
-
-        if (password === "") {
-            setError("Please fill in your credentials");
+        if (validatePhoneNumber(phone)) {
+            setError("INVALID PHONE NUMBER");
         } else {
-            loginUser(user, context.dispatch);
-        }
-    };
+            var user = {};
+            if (!userProfile.phoneNo)
+                user.phoneNo = phone;
+            if (!userProfile.role) {
+                user.role = selectedRole;
+            }
+            if (userProfile.password === "false") {
+                user.password = password;
+            }
 
+            try {
+                console.log("token " + token);
+                console.log(user);
+                axios.put(baseURL + 'users', {
+                    "user": user
+                }, {
+                    headers: {
+                        Authorization: "Bearer " + token
+                    },
+                }).then((response) => {
+                    if (response.status(200))
+                        props.navigation.navigate("Home");
+                    else
+                        setError(response.status);
+                })
+            } catch (err) {
+                console.log(err);
+                setError(err.message);
+            }
+        }
+    }
+    if (userProfile.phoneNo && userProfile.role && userProfile.password == "true")
+        props.navigation.navigate("Home");
+    console.log(JSON.stringify(userProfile));
     return (
         <KeyboardAwareScrollView
             viewIsInsideTabBar={true}
             extraHeight={200}
             enableOnAndroid={true}
-            
+
         >
             <FormContainer title={"Post SignUp"} >
                 {/* <Input
@@ -47,25 +93,27 @@ const PostSignup = (props) => {
                 value={email}
                 onChangeText={(text) => setEmail(text.toLowerCase())}
             /> */}
-                <Input
-                    placeholder={"Enter Password"}
-                    name={"password"}
-                    id={"password"}
-                    secureTextEntry={true}
-                    value={password}
-                    onChangeText={(text) => setPassword(text)}
-                />
-                <Input
-                    placeholder={"Phone Number"}
-                    name={"phone"}
-                    id={"phone"}
-                    keyboardType={"numeric"}
-                    onChangeText={(text) => setPhone(text)}
-                />
-                <View style={styles.buttonGroup}>
-                    {error ? <Error message={error} /> : null}
-                </View>
-                <View>
+                {userProfile.password === "false" ? (
+                    <Input
+                        placeholder={"Enter Password"}
+                        name={"password"}
+                        id={"password"}
+                        secureTextEntry={true}
+                        value={password}
+                        onChangeText={(text) => setPassword(text)}
+                    />) : null}
+
+                {!userProfile.phoneNo ? (
+                    <Input
+                        placeholder={"Phone Number"}
+                        name={"phone"}
+                        id={"phone"}
+                        keyboardType={"numeric"}
+                        onChangeText={(text) => setPhone(text)}
+                    />) : null}
+
+                {!userProfile.role ? (
+
                     <View style={styles.container}>
                         <Picker
                             selectedValue={selectedRole}
@@ -77,10 +125,14 @@ const PostSignup = (props) => {
                             <Picker.Item label="Wholeasaler" value="Retailer" />
                         </Picker>
                     </View>
-                    <EasyButton large primary onPress={() => register()}>
-                        <Text style={{ color: "white" }}>Continue</Text>
-                    </EasyButton>
+                ) : null}
+                <EasyButton large primary onPress={() => handleSubmit()}>
+                    <Text style={{ color: "white" }}>Continue</Text>
+                </EasyButton>
+                <View style={styles.buttonGroup}>
+                    {error ? <Error message={error} /> : null}
                 </View>
+
             </FormContainer>
         </KeyboardAwareScrollView >
     );

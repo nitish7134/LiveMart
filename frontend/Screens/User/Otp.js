@@ -4,7 +4,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Text
+  Text,
+  Button
 } from "react-native";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
@@ -13,18 +14,15 @@ import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import axios from "axios";
 
 import baseURL from "../../assets/common/baseUrl";
-
-import jwt_decode from "jwt-decode"
 import AsyncStorage from "@react-native-community/async-storage"
 
 import AuthGlobal from "../../Context/store/AuthGlobal";
-import {setCurrentUser} from '../../Context/actions/Auth.actions'
+import { setCurrentUser } from '../../Context/actions/Auth.actions'
 
 const OtpScreen = (props) => {
-
+  const context = useContext(AuthGlobal);
   const { route } = props;
   const token = route.params.token;
-  const context = useContext(AuthGlobal);
   const [otp, setOTP] = useState("");
   const [error, setError] = useState("");
 
@@ -36,7 +34,6 @@ const OtpScreen = (props) => {
       headers: {
         Authorization: "Bearer " + token
       },
-
     }).then((res) => {
       console.log(JSON.stringify(res));
 
@@ -45,18 +42,17 @@ const OtpScreen = (props) => {
           setError("INVALID OTP")
           break;
         case 200:
-          //LOGIN IN REDUX STORE
-          AsyncStorage.setItem("jwt", token)
-          const decoded = jwt_decode(token)
-          context.dispatch(setCurrentUser(decoded))
-          
-          props.navigation.navigate("Home");
+          console.log("Response: " + res.data);
+          AsyncStorage.setItem("jwt", res.data.token)
+          context.dispatch(setCurrentUser(res.data.token, res.data.user))
+          console.log(context.stateUser);
+          props.navigation.navigate("PostSignUp");
           break;
         default:
-          setError("OTP MAYBE EXPIRED")
+          setError("ERROR")
       }
     }).catch((err) => {
-      setError("OTP MAYBE EXPIRED")
+      setError(err.message)
 
       console.log(err);
     })
@@ -81,15 +77,17 @@ const OtpScreen = (props) => {
         onChangeText={(text) => setOTP(text)}
       />
       <View style={styles.buttonGroup}>
-        {error ? <Error message={error} /> : null}
-        <EasyButton large primary onPress={() => handleResend()}>
-          <Text style={{ color: "white" }}>Resend OTP</Text>
+        <EasyButton
+          style={{ innerHeight: 5 }}
+          onPress={() => handleResend()}>
+          <Text style={{ color: "black" }}>Resend OTP</Text>
         </EasyButton>
       </View>
       <View style={styles.buttonGroup}>
         {error ? <Error message={error} /> : null}
-        <EasyButton large primary onPress={() => handleSubmit()}>
-          <Text style={{ color: "white" }}>Login</Text>
+        <EasyButton
+          large primary onPress={() => handleSubmit()}>
+          <Text style={{ color: "black" }}>Login</Text>
         </EasyButton>
       </View>
     </FormContainer>

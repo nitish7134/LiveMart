@@ -5,48 +5,23 @@ import baseURL from "../../assets/common/baseUrl"
 
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
-export const loginUser = (user, dispatch) => {
-    fetch(`${baseURL}users/signin`, {
-        method: "POST",
-        body: JSON.stringify(user),
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-        },
-    })
-    .then((res) => res.json())
-    .then((data) => {
-        if (data) {
-            const token = data.token;
-            AsyncStorage.setItem("jwt", token)
-            const decoded = jwt_decode(token)
-            dispatch(setCurrentUser(decoded))
-        } else {
-           logoutUser(dispatch)
-        }
-    })
-    .catch((err) => {
-        Toast.show({
-            topOffset: 60,
-            type: "error",
-            text1: "Please provide correct credentials",
-            text2: ""
-        });
-        logoutUser(dispatch)
-    });
-};
 
-export const getUserProfile = (id) => {
-    fetch(`${baseURL}users`, {
+export const getUserProfile = (token) => {
+    fetch(`${baseURL}users/profile`, {
         method: "GET",
-        body: JSON.stringify(user),
+        headers: {
+            authorization: 'bearer ' + token
+        },
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json"
         },
     })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
+        .then((res) => res.json())
+        .then((data) => {
+            dispatch(setCurrentUser(data.token, data.user));
+            return data.user;
+        });
 }
 
 export const logoutUser = (dispatch) => {
@@ -54,9 +29,10 @@ export const logoutUser = (dispatch) => {
     dispatch(setCurrentUser({}))
 }
 
-export const setCurrentUser = (decoded) => {
+export const setCurrentUser = (token, userProfile) => {
     return {
         type: SET_CURRENT_USER,
-        payload: decoded,
+        payload: token,
+        userProfile: userProfile
     }
 }

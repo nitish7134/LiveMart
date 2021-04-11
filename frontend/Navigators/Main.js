@@ -19,6 +19,14 @@ const Main = () => {
 
   return (
     <Stack.Navigator>
+      
+       <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{
+          headerShown: false
+        }}
+      />
       <Stack.Screen
         name="Login"
         component={Login
@@ -27,9 +35,9 @@ const Main = () => {
           headerShown: false
         }}
       />
-      <Stack.Screen
-        name="Register"
-        component={Register}
+     <Stack.Screen
+        name="OtpScreen"
+        component={OtpScreen}
         options={{
           headerShown: false
         }}
@@ -41,24 +49,13 @@ const Main = () => {
           headerShown: false
         }}
       />
-      <Stack.Screen
-        name="OtpScreen"
-        component={OtpScreen}
-        options={{
-          headerShown: false
-        }}
-      />
-
-      <Stack.Screen
-        name="User Profile"
-        component={UserProfile}
-        options={{
-          headerShown: false
-        }}
-      />
+      
       <Stack.Screen
         name="Home"
         component={TabNavigator}
+        options={{
+          headerShown: false
+        }}
       />
     </Stack.Navigator>
   );

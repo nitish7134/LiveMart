@@ -6,6 +6,7 @@ var passport = require('passport');
 var authenticate = require('../Controller/authenticate');
 var cors = require('./cors');
 const config = require('../config');
+const { token } = require('morgan');
 
 router.use(express.json());
 router.use(express.urlencoded({
@@ -20,26 +21,70 @@ router.get('/', function (req, res, next) {
     res.send(users);
   });
 });
-router.get('/profile', cors.cors, authenticate.verifyUser, (req, res) => {
-  return res.send(req.user);
+router.put('/', cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  try {
+    User.findById(req.user._id).then(user => {
+
+      if (!user.role) {
+        user.role = req.body.user.role;
+      }
+      if (!user.password) {
+        user.password = req.body.user.password;
+      }
+      if (!user.phoneNo) {
+        user.phoneNo = req.body.user.phoneNo;
+      }
+      user.save().then(user => {
+        if (user) {
+          console.log("Saved")
+          return res.status(200);
+        }
+        else {
+          console.log("COULN'T SAVE")
+          return res.status(500).send({ "message": "Couldn't Update" });
+        }
+      })
+
+    })
+  }
+  catch (err) {
+    console.log("ERROR");
+    next(err);
+  }
+});
+router.get('/profile', cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  var user = req.user;
+  if (user.password) {
+    delete user.password
+    user.password = true;
+  } else {
+    user.password = false;
+  }
+
+  return res.send({ token: req.token, user: user });
 });
 
 
 router.post('/signup', cors.corsWithOptions, async (req, res) => {
   try {
     console.log(req.body.user);
-    const user = new User(req.body.user);
-    await user.save();
-    const token = jwt.sign({ userId: user._id }, config.secretKey)
-    res.send({ token })
+    User.create(req.body.user).then(user => {
+      authenticate.getToken({ _id: user._id })
+      const token = authenticate.getToken({ _id: user._id })
+      res.send({ token })
+    });
+
 
   } catch (err) {
     console.log(JSON.stringify(err));
     return res.status(422).send(err.message)
   }
 })
-router.post('/signin', async (req, res) => {
-  const { email, password } = req.body
+
+router.post('/signin', cors.corsWithOptions, async (req, res) => {
+  console.log(req.body.user);
+  const email = req.body.user.email;
+  const password = req.body.user.password;
   if (!email || !password) {
     return res.status(422).send({ error: "must provide email or password" })
   }
@@ -49,7 +94,7 @@ router.post('/signin', async (req, res) => {
   }
   try {
     await user.comparePassword(password);
-    const token = jwt.sign({ userId: user._id }, config.secretKey)
+    const token = authenticate.getToken({ _id: user._id })
     res.send({ token })
   } catch (err) {
     return res.status(422).send({ error: "must provide email or password" })
@@ -76,7 +121,7 @@ router.get('/auth/google/callback', (req, res, next) => {
         res.cookie('jwt', token);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.redirect(config.appBaseUrl+"?token="+token);
+        res.redirect(config.appBaseUrl + "?token=" + token);
       }
     });
   })(req, res);
@@ -102,9 +147,9 @@ router.get("/auth/facebook/callback", (req, res, next) => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         //res.json({ success: true, status: 'Login Successful!', token: token });
-        console.log("CALLBACL TOKEN PRINT"+token);
-        res.redirect(config.appBaseUrl+"?token="+token);
-        return; 
+        console.log("CALLBACL TOKEN PRINT" + token);
+        res.redirect(config.appBaseUrl + "?token=" + token);
+        return;
       }
     });
   })(req, res);

@@ -6,11 +6,11 @@ var Item = new Schema({
     TotalPrice: Number,
     Items: [{
         Item: mongoose.Schema.ObjectId,
-        Selers:[{
+        Selers: [{
             Seller: mongoose.Schema.ObjectId,
             Quantity_to_buy: Number
         }]
-   }]
+    }]
 }, {
     timestamp: true
 });

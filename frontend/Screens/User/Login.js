@@ -4,13 +4,12 @@ import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
+import Toast from "react-native-toast-message";
 
 // Context
 import AuthGlobal from "../../Context/store/AuthGlobal";
-import { loginUser } from "../../Context/actions/Auth.actions";
-
+import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
-
 
 
 const Login = (props) => {
@@ -21,10 +20,16 @@ const Login = (props) => {
 
   useEffect(() => {
     if (context.stateUser.isAuthenticated === true) {
-      props.navigation.navigate("User Profile");
+      props.navigation.navigate("PostSignUp");
     }
   }, [context.stateUser.isAuthenticated]);
-
+  const askForOtp = (token) => {
+    axios.get(baseURL + 'otp/send', {
+      headers: {
+        authorization: 'bearer ' + token
+      }
+    })
+  }
   const handleSubmit = () => {
     const user = {
       email,
@@ -34,9 +39,52 @@ const Login = (props) => {
     if (email === "" || password === "") {
       setError("Please fill in your credentials");
     } else {
-      loginUser(user, context.dispatch);
-    }
-  };
+      axios({
+        method: 'POST',
+        url: baseURL + 'users/signin',
+        data: { "user": user },
+        headers: {
+
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+        },
+      })
+        .then((res) => {
+          const token = res.data.token;
+          if (res.status == 200) {
+            console.log(res);
+            Toast.show({
+              topOffset: 60,
+              type: "success",
+              text1: "Registration Succeeded",
+              text2: "Please Login into your account",
+            });
+            askForOtp(token);
+
+            setTimeout(() => {
+              props.navigation.navigate("OtpScreen", {
+                token: token
+              })
+            }, 500);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          Toast.show({
+            topOffset: 60,
+            type: "error",
+            text1: "Incorrect Credentials",
+            text2: "Try Again",
+          });
+        });
+    };
+  }
+  function extractUrlValue(key, url) {
+    if (typeof (url) === 'undefined')
+      url = window.location.href;
+    var match = url.match('[?&]' + key + '=([^&]+)');
+    return match ? match[1] : null;
+  }
 
   const handleOpenURL = ({ url }) => {
     console.log("URL: " + url)
@@ -78,25 +126,29 @@ const Login = (props) => {
         </EasyButton>
       </View>
       <View>
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(baseURL + 'users/auth/google')
-            Linking.addEventListener('url', handleOpenURL);
-          }}            >
-          <Image source={require("./../../assets/GAuthButton.png")}
-            style={{ width: 200, height: 50 }} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(baseURL + 'users/auth/facebook')
-            Linking.addEventListener('url', handleOpenURL);
-          }}
-        >
-          <Image source={require("./../../assets/GAuthButton.png")}
-            style={{ width: 200, height: 50 }} />
-        </TouchableOpacity>
-      </View>
-      <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
+          <TouchableOpacity
+            style={{ margin: 5 }}
+
+            onPress={() => {
+              Linking.openURL(baseURL + 'users/auth/google')
+              Linking.addEventListener('url', handleOpenURL);
+            }}            >
+            <Image source={require("./../../assets/GAuthButton.png")}
+              style={{ width: 200, height: 50 }} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ margin: 5 }}
+
+            onPress={() => {
+              Linking.openURL(baseURL + 'users/auth/facebook')
+              Linking.addEventListener('url', handleOpenURL);
+            }}
+          >
+            <Image source={require("./../../assets/loginFB.png")}
+              style={{ width: 200, height: 50 }} />
+          </TouchableOpacity>
+        </View>
+     <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
         <Text style={styles.middleText}>Don't have an account yet?</Text>
         <EasyButton
           large

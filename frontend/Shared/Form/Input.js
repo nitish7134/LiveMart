@@ -1,6 +1,8 @@
 import React from 'react';
-import { TextInput, StyleSheet } from 'react-native'
+import { StyleSheet,Dimensions } from 'react-native'
+import { TextInput } from 'react-native-paper';
 
+const {width,height}= Dimensions.get("window");
 const Input = (props) => {
     return (
         <TextInput
@@ -20,16 +22,19 @@ const Input = (props) => {
 }
 
 const styles = StyleSheet.create({
-    input: {
-        width: '80%',
-        height: 60,
-        backgroundColor: 'white',
-        margin: 10,
-        borderRadius: 20,
-        padding: 10,
-        borderWidth: 2,
-        borderColor: 'orange'
-    },
+  input: {
+    // fontFamily: "roboto-regular",
+    color: "#121212",
+    height: 55,
+    width: width/2,
+    borderWidth: 2,
+    borderColor: "#0b487f",//"rgba(151,203,151,1)",
+    //borderStyle: "dotted",
+    borderRadius: 10,
+    textAlign: "center",
+    //backgroundColor: "rgba(255,255,255,1)",
+    marginTop:10
+  },
 });
 
 export default Input;

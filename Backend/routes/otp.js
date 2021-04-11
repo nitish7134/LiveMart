@@ -63,7 +63,7 @@ function sendOtp(PhoneNo, email, otp) {
 }
 
 router.get('/send', cors.corsWithOptions, authenticate.verifyUserWithoutOtp, (req, res) => {
-    OTP.remove({ user: mongoose.Types.ObjectId(req.user._id) });
+    OTP.remove({ user: mongoose.Schema.Types.ObjectId(req.user._id) });
     var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
     const otpvar = new OTP({
         user: req.user._id,
@@ -87,6 +87,14 @@ router.post('/verify', cors.corsWithOptions, authenticate.verifyUserWithoutOtp, 
                 res.status(200);
                 OTP.remove({ user: mongoose.Types.ObjectId(req.user._id) });
                 var token = authenticate.getOTPToken({ _id: req.user._id });
+                var user = req.user;
+                if (user.password) {
+                  delete user.password
+                  user.password = true;
+                } else {
+                  user.password = false;
+                }
+                return res.send({token:token,user:user});
                 res.setHeader('Content-Type', 'application/json');
                 res.json({ success: true, status: 'Valid OTP', token: token });
             } else {

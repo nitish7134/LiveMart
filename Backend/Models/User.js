@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
 var Cart = require('./Cart.js').schema;
 var Notification = require('./Notification.js').schema;
@@ -10,14 +11,7 @@ var User = new Schema({
         type: String,
         required:true
     },
-    PaymentAddress: {
-        type: String,
-        default: ''
-    },
-    role: {
-        type: String,
-        default: "Customer"
-    },
+    role: String,
 
     email: {
         type: String,

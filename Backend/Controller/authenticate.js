@@ -22,15 +22,12 @@ exports.getToken = function (user) {
     return jwt.sign(user, config.jwtKey, { expiresIn: 60 * 60 });
 };
 exports.getOTPToken = function (user) {
-    return jwt.sign(user, config.jwtOTPKey, { expiresIn: 60 * 60 });
+    var token = jwt.sign(user, config.jwtOTPKey, { expiresIn: 60 * 60 });
+    console.log("SIGNING WITH TOKEN " + token + "using " + config.jwtOTPKey);
+    return token
 };
 
 var opts = {};
-var cookieExtractor = function (req) {
-    var token = null;
-    if (req && req.cookies) token = req.cookies['jwt'];
-    return token;
-};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken;
 opts.secretOrKey = config.jwtKey;
 
@@ -54,22 +51,31 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
 
 exports.verifyUser = //passport.authenticate('jwt', { session: false });
         /* function */ (req, res, next) => {
+        console.log("REQUEST");
         let { authorization } = req.headers;
         if (!authorization) {
+            console.log("NO AUTHORIZATION");
             return res.status(401).send({ error: "you must be logged in" })
         }
-        const token = authorization.replace("Bearer ", "");
+        // const token = authorization.replace("Bearer ", "");
+        const token = authorization.split(' ')[1];
         jwt.verify(token, config.jwtOTPKey, async (err, payload) => {
             if (err) {
+                console.log("INVALID TOKEN + " + JSON.stringify(err));
+                console.log("TOKEN: {" + token + "} With Key: {" + config.jwtOTPKey + "}");
                 return res.status(401).send({ error: "you must be logged in 2" })
             }
-            const { userId } = payload;
+            const userId = payload._id;
             const user = await User.findById(userId)
             if (user) {
                 req.user = user;
+                req.token = token;
                 next();
-            } else
+            } else {
+                console.log(payload);
+                console.log("UserNotFound")
                 res.status(401).send({ error: "No such User Found" })
+            }
         })
     }
 
@@ -98,21 +104,6 @@ exports.verifyUserWithoutOtp = /* passport.authenticate('jwt', { session: false 
             res.status(401).send({ error: "No such User Found" })
         }
     })
-}
-exports.verifyAdmin = function (req, res, next) {
-    User.findOne({ _id: req.user._id })
-        .then((user) => {
-            console.log("User: ", req.user);
-            if (user.role == -1) {
-                next();
-            }
-            else {
-                err = new Error('You are not authorized to perform this operation!');
-                err.status = 403;
-                return next(err);
-            }
-        }, (err) => next(err))
-        .catch((err) => next(err))
 }
 
 exports.facebookPassport = passport.use(new FacebookStrategy({

@@ -1,32 +1,53 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Item = new Schema({
-    Name: {
+
+var Items = new Schema({
+    name: {
         type: String,
-        default: ''
+        required: true,
     },
-    Seler: {
-        type: Number,
-        default: 0 //0 for Retailer, 1 for WholeSaler
-    },
-    Category: {
+    description: {
         type: String,
+        required: true
+    },
+    Seller: {
+        type: Number,//0 for Retailer, 1 for WholeSaler
         required: true
     },
     TotalQuantity: {
         type: Number,
         default: 0
     },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    },
+    image: String,
+    brand: String,
     NextAvailDate: Date,
+    isFeatured: {
+        type: Boolean,
+        default: false
+    },
+    rating: {
+        type: Number,
+        default: 0,
+    },
+    numReviews: {
+        type: Number,
+        default: 0,
+    },
     Sellers: [{
         Price: Number,
         Quantity: Number,
         Name: String,
-        Seller: mongoose.Schema.ObjectId,
+        Seller: mongoose.Schema.ObjectId
     }]
 }, {
     timestamp: true
 });
 
-module.exports = mongoose.model('Item', Item);
+
+module.exports = mongoose.model('Items', Items);
