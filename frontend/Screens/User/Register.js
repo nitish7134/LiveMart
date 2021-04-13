@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
-	View, Text, StyleSheet, Linking, Image, TouchableOpacity
+  View,
+  Text,
+  StyleSheet,
+  Linking,
+  Image,
+  TouchableOpacity,
 } from "react-native";
-import { Picker } from '@react-native-community/picker';
+import { Picker } from "@react-native-community/picker";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
@@ -11,127 +16,128 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 // import GButton from '../../assets/GAuthButton.png'
 import axios from "axios";
+import AuthGlobal from "../../Context/store/AuthGlobal";
 import baseURL from "../../assets/common/baseUrl";
 
 //native paper
 
 import { List } from "react-native-paper";
 
-
 const Register = (props) => {
-	const [email, setEmail] = useState("");
-	const [name, setName] = useState("");
-	const [phone, setPhone] = useState("");
-	const [password, setPassword] = useState("");
-	const [selectedRole, setSelectedRole] = useState("Customer");
-	const [adress, setaddress] = useState("Customer");
-	const [text, setText] = React.useState("");
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("Customer");
+  const [adress, setaddress] = useState("Customer");
+  const [text, setText] = React.useState("");
+  const context = useContext(AuthGlobal);
+  useEffect(() => {
+    if (context.stateUser.isAuthenticated === true) {
+      props.navigation.navigate("Home");
+    }
+  }, [context.stateUser.isAuthenticated]);
 
-	const [error, setError] = useState("");
+  function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
 
-	function validateEmail(email) {
-		const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return re.test(String(email).toLowerCase());
-	}
+  function validatePhoneNumber(phoneno) {
+    const re = /^[6-9]\d{9}$/;
+    return re.test(String(phoneno).toLowerCase());
+  }
+  const register = () => {
+    if (!validateEmail(email)) {
+      setError("INVALID EmailID");
+      return;
+    }
+    if (!validatePhoneNumber(phone)) {
+      setError("INVALID Phone No");
+      return;
+    }
 
-	function validatePhoneNumber(phoneno) {
-		const re = /^[6-9]\d{9}$/
-		return re.test(String(phoneno).toLowerCase());
-	}
-	const register = () => {
-		if (!validateEmail(email)) {
-			setError("INVALID EmailID")
-			return;
-		}
-		if (!validatePhoneNumber(phone)) {
-			setError("INVALID Phone No")
-			return;
-		}
+    if (email === "" || name === "" || phone === "" || password === "") {
+      setError("Please fill in the form correctly");
+      return;
+    }
+    setError("");
+    let user = {
+      Name: name,
+      email: email,
+      password: password,
+      phoneNo: phone,
+      role: selectedRole,
+    };
+    axios({
+      method: "POST",
+      url: baseURL + "users/signup",
+      data: { user: user },
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+      },
+    })
+      .then((res) => {
+        const token = res.data.token;
+        if (res.status == 200) {
+          console.log(res);
+          Toast.show({
+            topOffset: 60,
+            type: "success",
+            text1: "Registration Succeeded",
+            text2: "Please Login into your account",
+          });
+          askForOtp(token);
+          setTimeout(() => {
+            props.navigation.navigate("OtpScreen", {
+              token: token,
+            });
+          }, 500);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        Toast.show({
+          topOffset: 60,
+          type: "error",
+          text1: "Something went wrong",
+          text2: "Please try again",
+        });
+      });
+  };
 
+  function extractUrlValue(key, url) {
+    if (typeof url === "undefined") url = window.location.href;
+    var match = url.match("[?&]" + key + "=([^&]+)");
+    return match ? match[1] : null;
+  }
+  const askForOtp = (token) => {
+    axios.get(baseURL + "otp/send", {
+      headers: {
+        authorization: "Bearer " + token,
+      },
+    });
+  };
+  const handleOpenURL = ({ url }) => {
+    console.log("URL: " + url);
+    var token = extractUrlValue("token", url);
+    token = token.split("#")[0];
+    console.log("token: " + token);
+    askForOtp(token);
 
-		if (email === "" || name === "" || phone === "" || password === "") {
-			setError("Please fill in the form correctly");
-			return;
-		}
-		setError("");
-		let user = {
-			Name: name,
-			email: email,
-			password: password,
-			phoneNo: phone,
-			role: selectedRole
-		};
-		axios({
-			method: 'POST',
-			url: baseURL + 'users/signup',
-			data: { "user": user },
-			headers: {
+    props.navigation.navigate("OtpScreen", {
+      token: token,
+    });
+    Linking.removeEventListener("url", handleOpenURL);
 
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Headers': '*',
-			},
-		})
-			.then((res) => {
-				const token = res.data.token;
-				if (res.status == 200) {
-					console.log(res);
-					Toast.show({
-						topOffset: 60,
-						type: "success",
-						text1: "Registration Succeeded",
-						text2: "Please Login into your account",
-					});
-					askForOtp(token);
-					setTimeout(() => {
-						props.navigation.navigate("OtpScreen", {
-							token: token
-						})
-					}, 500);
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-				Toast.show({
-					topOffset: 60,
-					type: "error",
-					text1: "Something went wrong",
-					text2: "Please try again",
-				});
-			});
-	};
+    //native paper
+    const [expanded, setExpanded] = React.useState(true);
 
-	function extractUrlValue(key, url) {
-		if (typeof (url) === 'undefined')
-			url = window.location.href;
-		var match = url.match('[?&]' + key + '=([^&]+)');
-		return match ? match[1] : null;
-	}
-	const askForOtp = (token) => {
-		axios.get(baseURL + 'otp/send', {
-			headers: {
-				authorization: 'Bearer ' + token
-			}
-		})
-	}
-	const handleOpenURL = ({ url }) => {
-		console.log("URL: " + url)
-		var token = extractUrlValue('token', url);
-		token = token.split("#")[0];
-		console.log("token: " + token);
-		askForOtp(token);
-
-		props.navigation.navigate("OtpScreen", {
-			token: token
-		})
-		Linking.removeEventListener('url', handleOpenURL);
-
-		//native paper
-		const [expanded, setExpanded] = React.useState(true);
-
-		const handlePress = () => setExpanded(!expanded);
-
-	}
-	return (
+    const handlePress = () => setExpanded(!expanded);
+  };
+  return (
     <KeyboardAwareScrollView
       viewIsInsideTabBar={true}
       extraHeight={200}
@@ -182,7 +188,7 @@ const Register = (props) => {
               <Picker.Item label="Customer" value="Customer" />
               <Picker.Item label="Retailer" value="Retailer" />
               <Picker.Item label="Wholeasaler" value="Retailer" />
-             {/*  itemStyle=
+              {/*  itemStyle=
               {{
                 backgroundColor: "grey",
                 color: "blue",
@@ -236,11 +242,11 @@ const Register = (props) => {
 };
 
 const styles = StyleSheet.create({
-	buttonGroup: {
-		width: "80%",
-		margin: 10,
-		alignItems: "center",
-	},
+  buttonGroup: {
+    width: "80%",
+    margin: 10,
+    alignItems: "center",
+  },
 });
 
 export default Register;
