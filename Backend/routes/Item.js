@@ -6,7 +6,6 @@ var Items = require("../Models/Item");
 var authenticate = require("../Controller/authenticate");
 var cors = require("./cors");
 var mongoose = require("mongoose");
-var multer = require("multer");
 const FILE_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpeg",
