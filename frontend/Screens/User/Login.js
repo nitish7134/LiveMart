@@ -1,5 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
-import { View, Text, StyleSheet, Button, TouchableOpacity, Image, Linking } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  Image,
+  Linking,
+} from "react-native";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
@@ -11,25 +19,25 @@ import AuthGlobal from "../../Context/store/AuthGlobal";
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
 
-
 const Login = (props) => {
   const context = useContext(AuthGlobal);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  console.log("CHECKING CONTEXT", context);
   useEffect(() => {
     if (context.stateUser.isAuthenticated === true) {
-      props.navigation.navigate("PostSignUp");
+      props.navigation.navigate("Home");
     }
   }, [context.stateUser.isAuthenticated]);
+
   const askForOtp = (token) => {
-    axios.get(baseURL + 'otp/send', {
+    axios.get(baseURL + "otp/send", {
       headers: {
-        authorization: 'bearer ' + token
-      }
-    })
-  }
+        authorization: "bearer " + token,
+      },
+    });
+  };
   const handleSubmit = () => {
     const user = {
       email,
@@ -40,13 +48,12 @@ const Login = (props) => {
       setError("Please fill in your credentials");
     } else {
       axios({
-        method: 'POST',
-        url: baseURL + 'users/signin',
-        data: { "user": user },
+        method: "POST",
+        url: baseURL + "users/signin",
+        data: { user: user },
         headers: {
-
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': '*',
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
         },
       })
         .then((res) => {
@@ -63,8 +70,8 @@ const Login = (props) => {
 
             setTimeout(() => {
               props.navigation.navigate("OtpScreen", {
-                token: token
-              })
+                token: token,
+              });
             }, 500);
           }
         })
@@ -77,31 +84,30 @@ const Login = (props) => {
             text2: "Try Again",
           });
         });
-    };
-  }
+    }
+  };
   function extractUrlValue(key, url) {
-    if (typeof (url) === 'undefined')
-      url = window.location.href;
-    var match = url.match('[?&]' + key + '=([^&]+)');
+    if (typeof url === "undefined") url = window.location.href;
+    var match = url.match("[?&]" + key + "=([^&]+)");
     return match ? match[1] : null;
   }
 
   const handleOpenURL = ({ url }) => {
-    console.log("URL: " + url)
-    var token = extractUrlValue('token', url);
+    console.log("URL: " + url);
+    var token = extractUrlValue("token", url);
     token = token.split("#")[0];
     console.log("token: " + token);
 
-    axios.get(baseURL + 'otp/send', {
+    axios.get(baseURL + "otp/send", {
       headers: {
-        authorization: 'bearer ' + token
-      }
-    })
+        authorization: "bearer " + token,
+      },
+    });
     props.navigation.navigate("OtpScreen", {
-      token: token
-    })
-    Linking.removeEventListener('url', handleOpenURL);
-  }
+      token: token,
+    });
+    Linking.removeEventListener("url", handleOpenURL);
+  };
   return (
     <FormContainer title={"Login"}>
       <Input
@@ -126,34 +132,38 @@ const Login = (props) => {
         </EasyButton>
       </View>
       <View>
-          <TouchableOpacity
-            style={{ margin: 5 }}
-
-            onPress={() => {
-              Linking.openURL(baseURL + 'users/auth/google')
-              Linking.addEventListener('url', handleOpenURL);
-            }}            >
-            <Image source={require("./../../assets/GAuthButton.png")}
-              style={{ width: 200, height: 50 }} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ margin: 5 }}
-
-            onPress={() => {
-              Linking.openURL(baseURL + 'users/auth/facebook')
-              Linking.addEventListener('url', handleOpenURL);
-            }}
-          >
-            <Image source={require("./../../assets/loginFB.png")}
-              style={{ width: 200, height: 50 }} />
-          </TouchableOpacity>
-        </View>
-     <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
+        <TouchableOpacity
+          style={{ margin: 5 }}
+          onPress={() => {
+            Linking.openURL(baseURL + "users/auth/google");
+            Linking.addEventListener("url", handleOpenURL);
+          }}
+        >
+          <Image
+            source={require("./../../assets/GAuthButton.png")}
+            style={{ width: 200, height: 50 }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ margin: 5 }}
+          onPress={() => {
+            Linking.openURL(baseURL + "users/auth/facebook");
+            Linking.addEventListener("url", handleOpenURL);
+          }}
+        >
+          <Image
+            source={require("./../../assets/loginFB.png")}
+            style={{ width: 200, height: 50 }}
+          />
+        </TouchableOpacity>
+      </View>
+      <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
         <Text style={styles.middleText}>Don't have an account yet?</Text>
         <EasyButton
           large
           secondary
-          onPress={() => props.navigation.navigate("Register")}>
+          onPress={() => props.navigation.navigate("Register")}
+        >
           <Text style={{ color: "white" }}>Register</Text>
         </EasyButton>
       </View>
