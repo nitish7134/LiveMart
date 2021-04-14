@@ -16,13 +16,6 @@ import {
 } from "../../Context/actions/Auth.actions";
 import { useEffect } from "react/cjs/react.development";
 
-import FontAwesome, {
-  SolidIcons,
-  RegularIcons,
-  BrandIcons,
-  parseIconFromClassName,
-} from "react-native-fontawesome";
-
 const UserProfile = (props) => {
   const context = useContext(AuthGlobal);
   const [userProfile, setUserProfile] = useState();
@@ -40,11 +33,12 @@ const UserProfile = (props) => {
             .then((response) => {
               console.log("RESPONSE FROM PROFILE", response.data);
               setUserProfile(response.data.user);
-              console.log("userProfile:33", userProfile);
+              console.log("userProfile:33", response.data.user);
               setToken(response.data.token);
               // dipatch(response.data.token, response.data.user);
-              dispatch(setCurrentUser(response.data.token, response.data.user));
               console.log("Checking my Context User", context.stateUser);
+
+              dispatch(setCurrentUser(response.data.token, response.data.user));
             });
         })
         .catch((error) => console.log(error));

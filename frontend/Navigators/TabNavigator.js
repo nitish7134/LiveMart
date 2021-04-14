@@ -5,12 +5,6 @@ import AdminNavigator from "./AdminNavigator";
 import HomeNavigator from "./HomeNavigator";
 import CartNavigator from "./CartNavigator";
 import UserProfile from "./../Screens/User/UserProfile";
-import FontAwesome, {
-  SolidIcons,
-  RegularIcons,
-  BrandIcons,
-  parseIconFromClassName,
-} from "react-native-fontawesome";
 
 import CartIcon from "../Shared/CartIcon";
 

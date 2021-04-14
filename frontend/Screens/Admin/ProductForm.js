@@ -45,7 +45,7 @@ const ProductForm = (props) => {
     } else {
       setItem(props.route.params.item);
       setBrand(props.route.params.item.brand);
-      setName(props.route.params.item.name);
+      setName(props.route.params.item.Name);
       setPrice(props.route.params.item.price.toString());
       setDescription(props.route.params.item.description);
       setMainImage(props.route.params.item.image);
@@ -61,7 +61,7 @@ const ProductForm = (props) => {
         // Categories
         axios
           .get(`${baseURL}categories`)
-          .then((res) => setCategories(res.data))
+          .then((res) => {setCategories(res.data);console.log(res.data)})
           .catch((error) => alert("Error to load categories"));
 
         // Image Picker
@@ -260,7 +260,7 @@ const ProductForm = (props) => {
           onValueChange={(e) => [setPickerValue(e), setCategory(e)]}
         >
           {categories.map((c) => {
-            return <Picker.Item key={c.id} label={c.name} value={c.id} />;
+            return <Picker.Item key={c.id} label={c.Name} value={c.id} />;
           })}
         </Picker>
       </Item>

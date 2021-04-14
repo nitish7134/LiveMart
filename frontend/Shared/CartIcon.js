@@ -9,7 +9,7 @@ const CartIcon = (props) => {
     <>
       {props.cartItems.length ? (
         <Badge style={styles.badge}>
-          <Text style={styles.text}>{props.cartItems.length}</Text>
+          <Text style={styles.text}>{props.cartItems.Items.length}</Text>
         </Badge>
       ) : null}
     </>

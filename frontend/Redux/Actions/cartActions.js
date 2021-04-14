@@ -1,12 +1,13 @@
 import {
-    ADD_TO_CART,
+    UPDATE_CART,
     REMOVE_FROM_CART,
     CLEAR_CART
 } from '../constants';
 
-export const addToCart = (payload) => {
+export const updateCart = (payload) => {
+
     return {
-        type: ADD_TO_CART,
+        type: UPDATE_CART,
         payload
     }
 }

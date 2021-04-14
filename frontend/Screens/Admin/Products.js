@@ -33,9 +33,6 @@ const ListHeader = () => {
       <View style={styles.headerItem}>
         <Text style={{ fontWeight: "600" }}>Category</Text>
       </View>
-      <View style={styles.headerItem}>
-        <Text style={{ fontWeight: "600" }}>Price</Text>
-      </View>
     </View>
   );
 };
@@ -53,7 +50,7 @@ const Products = (props) => {
           setToken(res);
 
           axios
-            .get(`${baseURL}products`, {
+            .get(`${baseURL}products/role`, {
               headers: { Authorization: "Bearer " + res },
             })
             .then((res) => {
@@ -169,7 +166,7 @@ const styles = StyleSheet.create({
   },
   headerItem: {
     margin: 3,
-    width: width / 6,
+    width: width / 4,
   },
   spinner: {
     height: height / 2,

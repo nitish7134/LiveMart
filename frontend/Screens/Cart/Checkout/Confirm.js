@@ -30,7 +30,7 @@ const Confirm = (props) => {
             });
             setTimeout(() => {
               props.clearCart();
-              props.navigation.navigate("Cart");
+              props.navigation.navigate("Cart")
             }, 500);
           }
         })

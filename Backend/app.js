@@ -11,6 +11,7 @@ const OTP = require("./routes/otp");
 var itemRouter = require("./routes/Item");
 var categoryRouter = require("./routes/Category");
 var orderRouter = require("./routes/orders");
+var cartRouter = require("./routes/Cart")
 var config = require("./config");
 
 const mongoose = require("mongoose");
@@ -60,6 +61,7 @@ app.use("/otp", OTP);
 app.use("/products", itemRouter);
 app.use("/categories", categoryRouter);
 app.use("/orders", orderRouter);
+app.use("/cart", cartRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

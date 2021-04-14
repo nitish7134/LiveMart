@@ -1,13 +1,19 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var Item = new Schema({
-    Address: String,
+var Cart = new Schema({
+    CustomerID: mongoose.Types.ObjectId,
     TotalPrice: Number,
     Items: [{
-        Item: mongoose.Schema.ObjectId,
-        Selers: [{
-            Seller: mongoose.Schema.ObjectId,
+        Item: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Items",
+            required: true,
+        },  
+        Sellers: [{
+            Seller: mongoose.Types.ObjectId,
+            Name:String,
+            Price:Number,
             Quantity_to_buy: Number
         }]
     }]
@@ -15,4 +21,4 @@ var Item = new Schema({
     timestamp: true
 });
 
-module.exports = mongoose.model('Item', Item);
+module.exports = mongoose.model('Cart', Cart);

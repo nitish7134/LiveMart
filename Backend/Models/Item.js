@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var Items = new Schema(
   {
-    name: {
+    Name: {
       type: String,
       required: true,
     },
@@ -19,7 +19,7 @@ var Items = new Schema(
       type: Number,
       default: 0,
     },
-    category: {
+    Category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
@@ -52,7 +52,7 @@ var Items = new Schema(
       {
         Price: Number,
         Quantity: Number,
-        Name: String,
+        SellerName: String,
         Seller: mongoose.Schema.ObjectId,
       },
     ],

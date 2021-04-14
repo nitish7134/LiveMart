@@ -68,7 +68,7 @@ const ListItem = (props) => {
             </Modal>
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate("Product Detail", { item: props })
+                    props.navigation.navigate("Product Detail", { item: props,admin:true })
                 }}
                 onLongPress={() => setModalVisible(true)}
                 style={[styles.container, {
@@ -85,9 +85,8 @@ const ListItem = (props) => {
                     style={styles.image}
                 />
                 <Text style={styles.item}>{props.brand}</Text>
-                <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{props.name}</Text>
-                <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{props.category.name}</Text>
-                <Text style={styles.item}>$ {props.price}</Text>
+                <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{props.Name}</Text>
+                <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{props.Category.Name}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -101,14 +100,14 @@ const styles = StyleSheet.create({
     },
     image: {
         borderRadius: 50,
-        width: width / 6,
+        width: width / 4,
         height: 20,
         margin: 2
     },
     item: {
         flexWrap: "wrap",
         margin: 3,
-        width: width / 6
+        width: width / 4
     },
     centeredView: {
         flex: 1,

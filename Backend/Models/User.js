@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
-var Cart = require('./Cart.js').schema;
 var Notification = require('./Notification.js').schema;
 
 
@@ -28,7 +27,6 @@ var User = new Schema({
     facebookId: String,
     googleId: String,
     Notifications: [Notification],
-    cart: Cart
 }, {
     timestamp: true
 });

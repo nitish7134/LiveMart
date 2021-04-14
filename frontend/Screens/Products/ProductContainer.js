@@ -60,6 +60,7 @@ const ProductContainer = (props) => {
             headers: { Authorization: `Bearer ${res}` },
           })
           .then((res) => {
+            console.log("Categories",res.data);
             setCategories(res.data);
           })
           .catch((error) => {

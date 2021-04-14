@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { Image, View, StyleSheet, Text, ScrollView, Button } from 'react-native';
-import { Left, Right, Container, H1 } from 'native-base';
+import React, { useState, useEffect, useContext } from 'react'
+import { Image, View, StyleSheet, Text, ScrollView, Button, Dimensions } from 'react-native';
+import { Left, Right, Container, H1, ListItem } from 'native-base';
 import Toast from 'react-native-toast-message';
 import EasyButton from '../../Shared/StyledComponents/EasyButton'
 import TrafficLight from '../../Shared/StyledComponents/TrafficLight'
-
+import { TextInput } from 'react-native-paper';
 import { connect } from 'react-redux';
 import * as actions from '../../Redux/Actions/cartActions';
+import AuthGlobal from '../../Context/store/AuthGlobal';
+import axios from "axios";
+import baseURL from '../../assets/common/baseUrl';
+var { width } = Dimensions.get("window");
 
 const SingleProduct = (props) => {
+    const context = useContext(AuthGlobal);
 
     const [item, setItem] = useState(props.route.params.item);
     const [availability, setAvailability] = useState(null);
@@ -34,12 +39,12 @@ const SingleProduct = (props) => {
 
     return (
         <Container style={styles.container}>
-            <ScrollView style={{ marginBottom: 80, padding: 5 }}>
+            <ScrollView style={{ padding: 5 }}>
                 <View>
-                    <Image 
+                    <Image
                         source={{
-                            uri: item.image ? item.image 
-                            : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                            uri: item.image ? item.image
+                                : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
                         }}
                         resizeMode="contain"
                         style={styles.image}
@@ -58,29 +63,57 @@ const SingleProduct = (props) => {
                     </View>
                     <Text>{item.description}</Text>
                 </View>
+
+                <View /*style={styles.item} */>
+                    {item.Sellers.map((x) => {
+                        return (
+                            <ListItem key={x._id}>
+                                <Text style={styles.Name}>{x.SellerName}</Text>
+                                <Text style={styles.price}>₹ {x.Price}</Text>
+                                <EasyButton
+                                    primary
+                                    medium
+                                    onPress={() => {
+                                        axios.post(baseURL + 'cart',
+                                            {
+                                                Item: item.id,
+                                                seller: { Quantity_to_buy: 1, seller: x._id, price: x.Price, Name: x.SellerName }
+                                            }, {
+                                            headers: {
+                                                authorization: `Bearer ` + context.stateUser.token,
+                                            },
+                                        }).then(() => {
+                                            axios.get(baseURL + 'cart',
+                                                {
+                                                headers: {
+                                                    authorization: `Bearer ` + context.stateUser.token,
+                                                }
+                                            }).then(res => {
+                                                console.log(res.data)
+                                                props.addItemToCart(res.data);
+                                                Toast.show({
+                                                    topOffset: 60,
+                                                    type: "success",
+                                                    text1: `${item.Name} added to Cart`,
+                                                    text2: "Go to your cart to complete order"
+                                                })
+                                            }).catch((error) => alert(error));
+
+                                        })
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}>Add</Text>
+                                </EasyButton>
+
+                            </ListItem>
+                        )
+                    })}
+                </View>
+
+
+
             </ScrollView>
 
-            <View style={styles.bottomContainer}>
-                <Left>
-                    <Text style={styles.price}>$ {item.price}</Text>
-                </Left>
-                <Right>
-                   <EasyButton 
-                   primary
-                   medium
-                   onPress={() => {props.addItemToCart(item),
-                        Toast.show({
-                            topOffset: 60,
-                            type: "success",
-                            text1: `${item.name} added to Cart`,
-                            text2: "Go to your cart to complete order"
-                        })
-                }}
-                   >
-                       <Text style={{ color: 'white'}}>Add</Text>
-                   </EasyButton>
-                </Right>
-            </View>
         </Container>
     )
 
@@ -88,8 +121,8 @@ const SingleProduct = (props) => {
 
 const mapToDispatchToProps = (dispatch) => {
     return {
-        addItemToCart: (product) => 
-            dispatch(actions.addToCart({quantity: 1, product}))
+        addItemToCart: (cart) =>
+            dispatch(actions.updateCart(cart))
     }
 }
 
@@ -107,6 +140,11 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 250
     },
+    Name: {
+        fontSize: 16,
+        flexWrap: "wrap",
+        width: width * 0.4
+    },
     contentContainer: {
         marginTop: 20,
         justifyContent: 'center',
@@ -121,25 +159,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20
     },
-    bottomContainer: {
-        flexDirection: 'row',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        backgroundColor: 'white'
-    },
     price: {
-        fontSize: 24,
-        margin: 20,
-        color: 'red'
+        color: 'red',
+        fontSize: 17,
+        flexWrap: "wrap",
+        width: width * 0.2
     },
     availabilityContainer: {
-        marginBottom: 20,
         alignItems: "center"
     },
     availability: {
         flexDirection: 'row',
-        marginBottom: 10,
     }
 })
 

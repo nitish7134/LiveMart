@@ -20,34 +20,30 @@ import EasyButton from "../../Shared/StyledComponents/EasyButton"
 
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/cartActions";
-import AuthGlobal from "../../Context/store/AuthGlobal"
 
 var { height, width } = Dimensions.get("window");
 
 const Cart = (props) => {
 
-  const context = useContext(AuthGlobal);
-
-    var total = 0;
-    props.cartItems.forEach(cart => {
-        return (total += cart.product.price)
-    });
-
+  console.log("CART PROPS", props.cartItems);
+  var total = 0;
+  console.log("ITEMS:",props.cartItems.Items)
+ 
   return (
     <>
-      {props.cartItems.length ? (
+      {props.cartItems && props.cartItems.Items && props.cartItems.Items.length ? (
         <Container>
           <H1 style={{ alignSelf: "center" }}>Cart</H1>
           <SwipeListView
-            data={props.cartItems}
+            data={props.cartItems.Items}
             renderItem={(data) => (
-             <CartItem item={data} />
+              <CartItem item={data} />
             )}
             renderHiddenItem={(data) => (
               <View style={styles.hiddenContainer}>
-                <TouchableOpacity 
-                style={styles.hiddenButton}
-                onPress={() => props.removeFromCart(data.item)}
+                <TouchableOpacity
+                  style={styles.hiddenButton}
+                  onPress={() => props.removeFromCart(data.item)}
                 >
                   <Icon name="trash" color={"white"} size={30} />
                 </TouchableOpacity>
@@ -63,36 +59,25 @@ const Cart = (props) => {
           />
           <View style={styles.bottomContainer}>
             <Left>
-                <Text style={styles.price}>$ {total}</Text>
+              <Text style={styles.price}>₹ {props.cartItems.TotalPrice}</Text>
             </Left>
             <Right>
-                <EasyButton
-                  danger
-                  medium
-                  onPress={() => props.clearCart()}
-                >
-                  <Text style={{ color: 'white' }}>Clear</Text>
-                </EasyButton>
+              <EasyButton
+                danger
+                medium
+                onPress={() => props.clearCart()}
+              >
+                <Text style={{ color: 'white' }}>Clear</Text>
+              </EasyButton>
             </Right>
             <Right>
-              {context.stateUser.isAuthenticated ? (
-                <EasyButton
-                  primary
-                  medium
-                  onPress={() => props.navigation.navigate('Checkout')}
-                >
+              <EasyButton
+                primary
+                medium
+                onPress={() => props.navigation.navigate('Checkout')}
+              >
                 <Text style={{ color: 'white' }}>Checkout</Text>
-                </EasyButton>
-              ) : (
-                <EasyButton
-                  secondary
-                  medium
-                  onPress={() => props.navigation.navigate('Login')}
-                >
-                <Text style={{ color: 'white' }}>Login</Text>
-                </EasyButton>
-              )}
-                
+              </EasyButton>
             </Right>
           </View>
         </Container>
@@ -117,7 +102,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     clearCart: () => dispatch(actions.clearCart()),
     removeFromCart: (item) => dispatch(actions.removeFromCart(item))
-    }
+  }
 }
 
 const styles = StyleSheet.create({
@@ -127,17 +112,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomContainer: {
-      flexDirection: 'row',
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      backgroundColor: 'white',
-      elevation: 20
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'white',
+    elevation: 20
   },
   price: {
-      fontSize: 18,
-      margin: 20,
-      color: 'red'
+    fontSize: 18,
+    margin: 20,
+    color: 'red'
   },
   hiddenContainer: {
     flex: 1,

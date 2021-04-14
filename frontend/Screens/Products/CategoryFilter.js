@@ -28,7 +28,7 @@ const CategoryFilter = (props) => {
         </TouchableOpacity>
         {props.categories.map((item) => (
           <TouchableOpacity
-            key={item._id}
+            key={item.id}
             onPress={() => {
               props.categoryFilter(item._id),
                 props.setActive(props.categories.indexOf(item));
@@ -43,7 +43,7 @@ const CategoryFilter = (props) => {
                   : styles.inactive,
               ]}
             >
-              <Text style={{ color: "white" }}>{item.name}</Text>
+              <Text style={{ color: "white" }}>{item.Name}</Text>
             </Badge>
           </TouchableOpacity>
         ))}
