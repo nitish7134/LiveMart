@@ -20,10 +20,10 @@ const SingleProduct = (props) => {
     const [availabilityText, setAvailabilityText] = useState("")
 
     useEffect(() => {
-        if (props.route.params.item.countInStock == 0) {
+        if (props.route.params.item.TotalQuantity == 0) {
             setAvailability(<TrafficLight unavailable></TrafficLight>);
             setAvailabilityText("Unvailable")
-        } else if (props.route.params.item.countInStock <= 5) {
+        } else if (props.route.params.item.TotalQuantity <= 5) {
             setAvailability(<TrafficLight limited></TrafficLight>);
             setAvailabilityText("Limited Stock")
         } else {
@@ -70,41 +70,44 @@ const SingleProduct = (props) => {
                             <ListItem key={x._id}>
                                 <Text style={styles.Name}>{x.SellerName}</Text>
                                 <Text style={styles.price}>₹ {x.Price}</Text>
-                                <EasyButton
-                                    primary
-                                    medium
-                                    onPress={() => {
-                                        axios.post(baseURL + 'cart',
-                                            {
-                                                Item: item.id,
-                                                seller: { Quantity_to_buy: 1, seller: x._id, price: x.Price, Name: x.SellerName }
-                                            }, {
-                                            headers: {
-                                                authorization: `Bearer ` + context.stateUser.token,
-                                            },
-                                        }).then(() => {
-                                            axios.get(baseURL + 'cart',
-                                                {
-                                                headers: {
-                                                    authorization: `Bearer ` + context.stateUser.token,
-                                                }
-                                            }).then(res => {
-                                                console.log(res.data)
-                                                props.addItemToCart(res.data);
-                                                Toast.show({
-                                                    topOffset: 60,
-                                                    type: "success",
-                                                    text1: `${item.Name} added to Cart`,
-                                                    text2: "Go to your cart to complete order"
-                                                })
-                                            }).catch((error) => alert(error));
-
-                                        })
-                                    }}
-                                >
-                                    <Text style={{ color: 'white' }}>Add</Text>
-                                </EasyButton>
-
+                                {(!props.route.params.admin) ? (
+                                          <EasyButton
+                                          primary
+                                          medium
+                                          onPress={() => {
+                                              axios.post(baseURL + 'cart',
+                                                  {
+                                                      Item: item.id,
+                                                      seller: { Quantity_to_buy: 1, seller: x._id, price: x.Price, Name: x.SellerName }
+                                                  }, {
+                                                  headers: {
+                                                      authorization: `Bearer ` + context.stateUser.token,
+                                                  },
+                                              }).then(() => {
+                                                  axios.get(baseURL + 'cart',
+                                                      {
+                                                      headers: {
+                                                          authorization: `Bearer ` + context.stateUser.token,
+                                                      }
+                                                  }).then(res => {
+                                                      console.log(res.data)
+                                                      props.addItemToCart(res.data);
+                                                      Toast.show({
+                                                          topOffset: 60,
+                                                          type: "success",
+                                                          text1: `${item.Name} added to Cart`,
+                                                          text2: "Go to your cart to complete order"
+                                                      })
+                                                  }).catch((error) => alert(error));
+      
+                                              })
+                                          }}
+                                      >
+                                          <Text style={{ color: 'white' }}>Add</Text>
+                                      </EasyButton>
+      
+                                ) : null }
+                          
                             </ListItem>
                         )
                     })}

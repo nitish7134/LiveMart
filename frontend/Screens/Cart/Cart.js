@@ -27,8 +27,8 @@ const Cart = (props) => {
 
   console.log("CART PROPS", props.cartItems);
   var total = 0;
-  console.log("ITEMS:",props.cartItems.Items)
- 
+  console.log("ITEMS:", props.cartItems.Items)
+
   return (
     <>
       {props.cartItems && props.cartItems.Items && props.cartItems.Items.length ? (
@@ -43,7 +43,11 @@ const Cart = (props) => {
               <View style={styles.hiddenContainer}>
                 <TouchableOpacity
                   style={styles.hiddenButton}
-                  onPress={() => props.removeFromCart(data.item)}
+                  onPress={() => {
+                    //AXIOS SERVER TO REMOVE ITEM FROM CART sending data.item
+
+                    props.removeFromCart(cart)
+                  }}
                 >
                   <Icon name="trash" color={"white"} size={30} />
                 </TouchableOpacity>
@@ -65,7 +69,33 @@ const Cart = (props) => {
               <EasyButton
                 danger
                 medium
-                onPress={() => props.clearCart()}
+                onPress={() => {
+                  //AXIOS SERVER TO REMOVE ITEM FROM CART
+                  axios.delete(baseURL + 'cart',
+                    data.item, {
+                    headers: {
+                      authorization: `Bearer ` + context.stateUser.token,
+                    },
+                  }).then(() => {
+                    axios.get(baseURL + 'cart',
+                      {
+                        headers: {
+                          authorization: `Bearer ` + context.stateUser.token,
+                        }
+                      }).then(res => {
+                        console.log(res.data)
+                        props.addItemToCart(res.data);
+                        Toast.show({
+                          topOffset: 60,
+                          type: "success",
+                          text1: `${item.Name} added to Cart`,
+                          text2: "Go to your cart to complete order"
+                        })
+                      }).catch((error) => alert(error));
+
+                  })
+                  props.clearCart(cart)
+                }}
               >
                 <Text style={{ color: 'white' }}>Clear</Text>
               </EasyButton>
@@ -100,8 +130,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    clearCart: () => dispatch(actions.clearCart()),
-    removeFromCart: (item) => dispatch(actions.removeFromCart(item))
+    clearCart: (cart) => dispatch(actions.updateCart(cart)),
+    removeFromCart: (cart) => dispatch(actions.updateCart(cart))
   }
 }
 

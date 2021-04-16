@@ -44,7 +44,7 @@ const Confirm = (props) => {
         });
     });
   };
-
+  console.log("finalOrder:",props.route.params.order.order)
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
@@ -60,7 +60,7 @@ const Confirm = (props) => {
               <Text>Country: {finalOrder.order.order.country}</Text>
             </View>
             <Text style={styles.title}>Items:</Text>
-            {finalOrder.order.order.orderItems.map((x) => {
+            {finalOrder.order.order.orderItems.Items.map((x) => {
               return (
                 <ListItem style={styles.listItem} key={x.product.name} avatar>
                   <Left>

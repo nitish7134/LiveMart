@@ -5,7 +5,8 @@ import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import axios from "axios";
-
+import * as actions from '../../Redux/Actions/cartActions';
+import { connect } from 'react-redux';
 import baseURL from "../../assets/common/baseUrl";
 import AsyncStorage from "@react-native-community/async-storage";
 
@@ -46,7 +47,18 @@ const OtpScreen = (props) => {
             AsyncStorage.setItem("jwt", res.data.token);
             context.dispatch(setCurrentUser(res.data.token, res.data.user));
             console.log(context.stateUser);
-            props.navigation.navigate("PostSignUp");
+            axios.get(baseURL + 'cart',
+              {
+                headers: {
+                  authorization: `Bearer ` + res.data.token,
+                }
+              }).then(res => {
+                console.log(res.data)
+                // dispatch(actions.updateCart(res.data));
+                props.getCart(res.data)
+                props.navigation.navigate("PostSignUp");
+              }).catch((error) => alert(error));
+
             break;
           }
           default:
@@ -92,6 +104,15 @@ const OtpScreen = (props) => {
     </FormContainer>
   );
 };
+
+const mapToDispatchToProps = (dispatch) => {
+  return {
+    getCart : (cart) => {
+      dispatch(actions.updateCart(cart));
+    }
+  }
+}
+
 const styles = StyleSheet.create({
   buttonGroup: {
     width: "80%",
@@ -102,36 +123,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
-/*
-const styles = StyleSheet.create({
-    container: {
-        width: 169,
-        height: 286
-    },
-    enterTheOtp: {
-        fontFamily: "roboto-700",
-        color: "#121212",
-        height: 83,
-        width: 169,
-        textAlign: "center",
-        fontSize: 20
-    },
-    button: {
-        width: 136,
-        height: 75,
-        backgroundColor: "#E6E6E6",
-        marginTop: 128,
-        marginLeft: 16
-    },
-    submit: {
-        fontFamily: "roboto-700",
-        color: "#121212",
-        height: 35,
-        width: 101,
-        textAlign: "center",
-        marginTop: 25,
-        marginLeft: 18
-    }
-}); */
 
-export default OtpScreen;
+export default connect(null, mapToDispatchToProps)(OtpScreen);

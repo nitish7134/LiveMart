@@ -43,15 +43,16 @@ const ProductForm = (props) => {
     if (!props.route.params) {
       setItem(null);
     } else {
+      console.log(props.route.params);
       setItem(props.route.params.item);
       setBrand(props.route.params.item.brand);
       setName(props.route.params.item.Name);
-      setPrice(props.route.params.item.price.toString());
+      setPrice("");
       setDescription(props.route.params.item.description);
       setMainImage(props.route.params.item.image);
       setImage(props.route.params.item.image);
-      setCategory(props.route.params.item.category._id);
-      setCountInStock(props.route.params.item.countInStock.toString());
+      setCategory(props.route.params.item.Category._id);
+      setCountInStock(props.route.params.item.TotalQuantity.toString());
     }
 
     AsyncStorage.getItem("jwt")

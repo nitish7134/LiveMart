@@ -46,7 +46,7 @@ router.post(
 			const seller = {
 				Seller: mongoose.Types.ObjectId(req.body.seller.seller),
 				Price:req.body.seller.price,
-				Name:req.body.seller.Name
+				Name:req.body.seller.Name	
 				// Quantity_to_buy:req.body.seller.Quantity_to_buy
 			}
 			Cart.findOne({ CustomerID: mongoose.Types.ObjectId(req.user._id) }).then(cart => {

@@ -97,9 +97,10 @@ router.get(
 	function (req, res, next) {
 		var num = req.user.role == "Retailer" ? 0 : 1;
 		try {
-			Items.find({ Seller: num }).then((items) => {
-				res.send(items);
-			});
+			Items.find({ Seller: num }).populate("Category")
+				.then((items) => {
+					res.send(items);
+				});
 		} catch (err) {
 			next(err);
 		}
@@ -133,6 +134,7 @@ router.post(
 				rating: req.body.rating,
 				numReviews: req.body.numReviews,
 				isFeatured: req.body.isFeatured,
+				price:req.body.price,
 				Seller: req.user.role == "Retailer" ? 0 : 1,
 				Category: req.body.category,
 				image: `${basePath}${fileName}`, // "http://localhost:3000/public/upload/image-2323232"
@@ -165,6 +167,8 @@ router.post(
 					Name: req.user.Name,
 					Seller: mongoose.Schema.ObjectId(req.user._id),
 				};
+				if(item.price>req.body.item.price)
+					item.price = req.body.item.price
 				item.Sellers.push(seller);
 				item.save();
 				res.statusCode = 200;

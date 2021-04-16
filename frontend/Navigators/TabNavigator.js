@@ -63,7 +63,7 @@ function MyStack() {
           ),
         }}
       />
-      {context.stateUser.userProfile.role != "Customer" ? (
+      {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer" ? (
         <Tab.Screen
           name="Admin"
           component={AdminNavigator}
@@ -77,7 +77,6 @@ function MyStack() {
     </Tab.Navigator>
   );
 }
-// SAALE PHONE CHECK KAR
 export default function TabNavigator() {
   return <MyStack />;
 }
