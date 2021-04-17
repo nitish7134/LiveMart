@@ -16,9 +16,9 @@
     "@react-navigation/material-top-tabs": "^5.3.10",
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "expo": "~39.0.2",
-    "expo-image-picker": "^9.2.1",
+    "expo-image-picker": "~9.1.1",
     "expo-status-bar": "~1.0.2",
     "jwt-decode": "^3.1.2",
     "mime": "^2.4.7",
@@ -40,8 +40,8 @@
     "react-native-tab-view": "^2.15.2",
     "react-native-toast-message": "^1.4.1",
     "react-native-vector-icons": "^7.1.0",
-    "react-native-web": "~0.13.12",
-    "react-native-webview": "^11.3.2",
+    "react-native-web": "^0.15.7",
+    "react-native-webview": "10.7.0",
     "react-navigation": "^4.4.3",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
@@ -54,5 +54,5 @@
     "@babel/core": "~7.9.0"
   },
   "private": true,
-  "proxy":"http://192.168.83.1:3000/"
+  "proxy": "http://192.168.83.1:3000/"
 }

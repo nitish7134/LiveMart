@@ -87,6 +87,8 @@ const PostSignup = (props) => {
       }
     }
   };
+  
+  
   if (userProfile.phoneNo && userProfile.role && userProfile.password == "true")
     // props.navigation.navigate("Home");
     props.navigation.reset({
@@ -94,6 +96,8 @@ const PostSignup = (props) => {
       routes: [{ name: "Home" }],
     });
   console.log(JSON.stringify(userProfile));
+
+
   return (
     <KeyboardAwareScrollView
       viewIsInsideTabBar={true}
@@ -140,7 +144,7 @@ const PostSignup = (props) => {
             >
               <Picker.Item label="Customer" value="Customer" />
               <Picker.Item label="Retailer" value="Retailer" />
-              <Picker.Item label="Wholeasaler" value="Retailer" />
+              <Picker.Item label="Wholeasaler" value="Wholesaler" />
             </Picker>
           </View>
         ) : null}
