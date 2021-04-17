@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 const CartIcon = (props) => {
   return (
     <>
-      {props.cartItems.length ? (
+      {props.cartItems && props.cartItems.Items && props.cartItems.Items.length ? (
         <Badge style={styles.badge}>
           <Text style={styles.text}>{props.cartItems.Items.length}</Text>
         </Badge>
@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignContent: "center",
-    top: -4,
-    right: -15,
+    top: -5,
+    right: -10,
   },
   text: {
     fontSize: 12,

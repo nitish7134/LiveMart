@@ -19,6 +19,8 @@
     "axios": "^0.21.0",
     "expo": "~39.0.2",
     "expo-image-picker": "^9.2.1",
+    "expo-location": "^9.0.1",
+    "expo-notifications": "~0.7.2",
     "expo-status-bar": "~1.0.2",
     "jwt-decode": "^3.1.2",
     "mime": "^2.4.7",
@@ -26,11 +28,15 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
+    "react-native-geocoding": "^0.5.0",
+    "react-native-geolocation-service": "^5.2.0",
     "react-native-gesture-handler": "~1.7.0",
+    "react-native-google-places": "^3.1.2",
     "react-native-google-places-autocomplete": "^2.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
-    "react-native-maps": "0.27.1",
+    "react-native-maps": "^0.27.1",
     "react-native-paper": "^4.7.2",
+    "react-native-push-notification": "^7.2.3",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
@@ -54,5 +60,5 @@
     "@babel/core": "~7.9.0"
   },
   "private": true,
-  "proxy":"http://192.168.83.1:3000/"
+  "proxy": "http://192.168.83.1:3000/"
 }

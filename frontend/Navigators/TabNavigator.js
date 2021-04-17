@@ -11,7 +11,7 @@ import CartIcon from "../Shared/CartIcon";
 import AuthGlobal from "../Context/store/AuthGlobal";
 import { useEffect } from "react/cjs/react.development";
 
-function MyStack() {
+function MyStack(props) {
   const context = useContext(AuthGlobal);
 
   const Tab = createBottomTabNavigator();
@@ -50,6 +50,7 @@ function MyStack() {
             <View>
               <Image source={require("../assets/CartIcon.png")} />
               <CartIcon />
+
             </View>
           ),
         }}

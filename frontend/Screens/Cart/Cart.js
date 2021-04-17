@@ -15,7 +15,7 @@ import {
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CartItem from './CartItem'
 
-import Icon from "react-native-vector-icons/FontAwesome";
+// import Icon from "react-native-vector-icons/FontAwesome";
 import EasyButton from "../../Shared/StyledComponents/EasyButton"
 
 import { connect } from "react-redux";
@@ -45,11 +45,32 @@ const Cart = (props) => {
                   style={styles.hiddenButton}
                   onPress={() => {
                     //AXIOS SERVER TO REMOVE ITEM FROM CART sending data.item
+                    axios.delete(baseURL + 'cart',
+                      data.item, {
+                      headers: {
+                        authorization: `Bearer ` + context.stateUser.token,
+                      },
+                    }).then(() => {
+                      axios.get(baseURL + 'cart',
+                        {
+                          headers: {
+                            authorization: `Bearer ` + context.stateUser.token,
+                          }
+                        }).then(res => {
+                          console.log(res.data)
+                          props.updateCart(res.data);
+                          Toast.show({
+                            topOffset: 60,
+                            type: "success",
+                            text1: `${item.Name} added to Cart`,
+                            text2: "Go to your cart to complete order"
+                          })
+                        }).catch((error) => alert(error));
 
-                    props.removeFromCart(cart)
+                    })
                   }}
                 >
-                  <Icon name="trash" color={"white"} size={30} />
+                  {/* <Icon name="trash" color={"white"} size={30} /> */}
                 </TouchableOpacity>
               </View>
             )}
@@ -71,8 +92,8 @@ const Cart = (props) => {
                 medium
                 onPress={() => {
                   //AXIOS SERVER TO REMOVE ITEM FROM CART
-                  axios.delete(baseURL + 'cart',
-                    data.item, {
+                  axios.delete(baseURL + 'cart/Clear',
+                    {
                     headers: {
                       authorization: `Bearer ` + context.stateUser.token,
                     },
@@ -84,7 +105,7 @@ const Cart = (props) => {
                         }
                       }).then(res => {
                         console.log(res.data)
-                        props.addItemToCart(res.data);
+                        props.updateCart(res.data);
                         Toast.show({
                           topOffset: 60,
                           type: "success",
@@ -94,7 +115,6 @@ const Cart = (props) => {
                       }).catch((error) => alert(error));
 
                   })
-                  props.clearCart(cart)
                 }}
               >
                 <Text style={{ color: 'white' }}>Clear</Text>
@@ -130,8 +150,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    clearCart: (cart) => dispatch(actions.updateCart(cart)),
-    removeFromCart: (cart) => dispatch(actions.updateCart(cart))
+    updateCart: (cart) => dispatch(actions.updateCart(cart)),
   }
 }
 

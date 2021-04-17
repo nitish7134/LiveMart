@@ -3,16 +3,23 @@ import { View } from "react-native";
 import MapInput from './MapInput';
 import MyMapView from './MyMapView';
 import getLocation from '../../Shared/getLocation'
-class MapContainer extends React.Component {
 
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+
+
+class MapContainer extends React.Component {
     state = {
         region: {},
+        location: null,
+        geocode: null,
+        errorMessage: ""
     };
 
     componentDidMount() {
         this.getInitialState();
     }
-    
+
     getInitialState() {
         getLocation().then(data => {
             this.updateState({
@@ -38,9 +45,35 @@ class MapContainer extends React.Component {
         });
         console.log(lac.lat, loc.lng);
     }
-    onMapRegionChange(region) {
+
+    getLocationAsync = async () => {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            this.setState({
+                errorMessage: 'Permission to access location was denied',
+            });
+        }
+
+        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
+        const { latitude, longitude } = location.coords
+        this.getGeocodeAsync({ latitude, longitude })
+        this.setState({ location: { latitude, longitude } });
+
+    };  
+    async onMapRegionChange(region) {
         this.setState({ region });
+        const { latitude, longitude } = region;
+        Location.reverseGeocodeAsync({
+            latitude,
+            longitude
+        }).then((response) => {
+            console.log("region", latitude);
+            console.log("region", longitude);
+            console.log("response", response);
+        });
+
     }
+
     render() {
 
         return (
@@ -56,7 +89,7 @@ class MapContainer extends React.Component {
                     <View style={{ flex: 1 }}>
                         <MyMapView
                             region={this.state.region}
-                            onRegionChange={(reg) => this.onMapRegionChange(reg)} 
+                            onRegionChange={(reg) => this.onMapRegionChange(reg)}
                         />
                     </View>
                     :

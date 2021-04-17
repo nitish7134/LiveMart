@@ -16,17 +16,18 @@ class MapInput extends React.Component {
                 autoFocus={true}
 
                 returnkeyType={'search'} 
-                listViewDisplayed={false}
+                listViewDisplayed={'auto'}
 
                 fetchDetails={true}
 
-                onPress={(data, details = null) => {// 'details' is provided 
+                onPress={(data, details = null) => {
                     this.props.notifyChange(details.geometry.location);
                 }}
                 query={{
                     key: 'AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU',
                     language: 'en'
                 }}
+                onFail={error => console.error("Googleplace API ERROR",error)}
 
                 nearbyPlacesAPI='GooglePlacesSearch'
 

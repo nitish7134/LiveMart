@@ -16,10 +16,18 @@ import Main from "./Navigators/Main";
 
 // Screens
 import Header from "./Shared/Header";
-
+import setupNotif from './Push'
 LogBox.ignoreAllLogs(true);
 
+//ionicons
+// async componentDidMount = () => {
+//     await Expo.Font.loadAsync({
+//         Ionicons: require('@expo/vector-icons/fonts/Ionicons.ttf'),
+//     });
+
 export default function App() {
+
+  setupNotif();
   return (
       <Auth>
         <Provider store={store}>

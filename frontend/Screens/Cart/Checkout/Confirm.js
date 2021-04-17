@@ -11,10 +11,9 @@ import baseURL from "../../../assets/common/baseUrl";
 var { width, height } = Dimensions.get("window");
 
 const Confirm = (props) => {
-  const finalOrder = props.route.params;
 
   const confirmOrder = () => {
-    const order = finalOrder.order.order;
+    const order = props.route.params.order.order;
     AsyncStorage.getItem("jwt").then((res) => {
       axios
         .post(`${baseURL}orders`, order, {
@@ -44,7 +43,7 @@ const Confirm = (props) => {
         });
     });
   };
-  console.log("finalOrder:",props.route.params.order.order)
+  console.log("props.route.params:", props.route.params)
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
@@ -53,14 +52,14 @@ const Confirm = (props) => {
           <View style={{ borderWidth: 1, borderColor: "orange" }}>
             <Text style={styles.title}>Shipping to:</Text>
             <View style={{ padding: 8 }}>
-              <Text>Address: {finalOrder.order.order.shippingAddress1}</Text>
-              <Text>Address2: {finalOrder.order.order.shippingAddress2}</Text>
-              <Text>City: {finalOrder.order.order.city}</Text>
-              <Text>Zip Code: {finalOrder.order.order.zip}</Text>
-              <Text>Country: {finalOrder.order.order.country}</Text>
+              <Text>Address: {props.route.params.order.order.shippingAddress1}</Text>
+              <Text>Address2: {props.route.params.order.order.shippingAddress2}</Text>
+              <Text>City: {props.route.params.order.order.city}</Text>
+              <Text>Zip Code: {props.route.params.order.order.zip}</Text>
+              <Text>Country: {props.route.params.order.order.country}</Text>
             </View>
             <Text style={styles.title}>Items:</Text>
-            {finalOrder.order.order.orderItems.Items.map((x) => {
+            {props.route.params.order.order.orderItems.Items.map((x) => {
               return (
                 <ListItem style={styles.listItem} key={x.product.name} avatar>
                   <Left>
