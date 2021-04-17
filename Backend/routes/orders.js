@@ -31,5 +31,17 @@ router.get(
     );
   }
 );
+router.get(
+  "/seller",
+  cors.corsWithOptions,
+  authenticate.verifyUser,
+  function (req, res, next) {
+    Orders.find({ Seller: mongoose.Schema.ObjectId(req.user._id) }).then(
+      (orders) => {
+        res.send(orders);
+      }
+    );
+  }
+);
 
 module.exports = router;

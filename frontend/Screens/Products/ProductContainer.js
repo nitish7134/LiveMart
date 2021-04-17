@@ -151,7 +151,7 @@ const ProductContainer = (props) => {
                       return (
                         <ProductList
                           navigation={props.navigation}
-                          key={item.name}
+                          key={item._id}
                           item={item}
                         />
                       );
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: "gainsboro",
   },
   listContainer: {
-    height: height,
+    // height: height,
     flex: 1,
     flexDirection: "row",
     alignItems: "flex-start",

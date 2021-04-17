@@ -43,6 +43,7 @@ var Items = new Schema(
       type: String,
       default: "",
     },
+    price:Number,
     images: [
       {
         type: String,

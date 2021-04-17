@@ -15,7 +15,7 @@ import {
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CartItem from './CartItem'
 
-import Icon from "react-native-vector-icons/FontAwesome";
+// import Icon from "react-native-vector-icons/FontAwesome";
 import EasyButton from "../../Shared/StyledComponents/EasyButton"
 
 import { connect } from "react-redux";
@@ -27,8 +27,8 @@ const Cart = (props) => {
 
   console.log("CART PROPS", props.cartItems);
   var total = 0;
-  console.log("ITEMS:",props.cartItems.Items)
- 
+  console.log("ITEMS:", props.cartItems.Items)
+
   return (
     <>
       {props.cartItems && props.cartItems.Items && props.cartItems.Items.length ? (
@@ -43,9 +43,34 @@ const Cart = (props) => {
               <View style={styles.hiddenContainer}>
                 <TouchableOpacity
                   style={styles.hiddenButton}
-                  onPress={() => props.removeFromCart(data.item)}
+                  onPress={() => {
+                    //AXIOS SERVER TO REMOVE ITEM FROM CART sending data.item
+                    axios.delete(baseURL + 'cart',
+                      data.item, {
+                      headers: {
+                        authorization: `Bearer ` + context.stateUser.token,
+                      },
+                    }).then(() => {
+                      axios.get(baseURL + 'cart',
+                        {
+                          headers: {
+                            authorization: `Bearer ` + context.stateUser.token,
+                          }
+                        }).then(res => {
+                          console.log(res.data)
+                          props.updateCart(res.data);
+                          Toast.show({
+                            topOffset: 60,
+                            type: "success",
+                            text1: `${item.Name} added to Cart`,
+                            text2: "Go to your cart to complete order"
+                          })
+                        }).catch((error) => alert(error));
+
+                    })
+                  }}
                 >
-                  <Icon name="trash" color={"white"} size={30} />
+                  {/* <Icon name="trash" color={"white"} size={30} /> */}
                 </TouchableOpacity>
               </View>
             )}
@@ -65,7 +90,32 @@ const Cart = (props) => {
               <EasyButton
                 danger
                 medium
-                onPress={() => props.clearCart()}
+                onPress={() => {
+                  //AXIOS SERVER TO REMOVE ITEM FROM CART
+                  axios.delete(baseURL + 'cart/Clear',
+                    {
+                    headers: {
+                      authorization: `Bearer ` + context.stateUser.token,
+                    },
+                  }).then(() => {
+                    axios.get(baseURL + 'cart',
+                      {
+                        headers: {
+                          authorization: `Bearer ` + context.stateUser.token,
+                        }
+                      }).then(res => {
+                        console.log(res.data)
+                        props.updateCart(res.data);
+                        Toast.show({
+                          topOffset: 60,
+                          type: "success",
+                          text1: `${item.Name} added to Cart`,
+                          text2: "Go to your cart to complete order"
+                        })
+                      }).catch((error) => alert(error));
+
+                  })
+                }}
               >
                 <Text style={{ color: 'white' }}>Clear</Text>
               </EasyButton>
@@ -100,8 +150,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    clearCart: () => dispatch(actions.clearCart()),
-    removeFromCart: (item) => dispatch(actions.removeFromCart(item))
+    updateCart: (cart) => dispatch(actions.updateCart(cart)),
   }
 }
 

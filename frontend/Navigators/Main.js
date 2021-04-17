@@ -8,9 +8,6 @@ import Login from '../Screens/User/Login'
 import Register from '../Screens/User/Register'
 import UserProfile from '../Screens/User/UserProfile'
 import OtpScreen from "../Screens/User/Otp"
-
-
-//TESTING
 import PostSignup from '../Screens/User/PostSignup';
 
 const Stack = createStackNavigator();

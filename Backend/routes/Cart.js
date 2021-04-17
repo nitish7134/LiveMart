@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const cors = require("./cors");
 const authenticate = require("./../Controller/authenticate");
-const Cart = require("../Models/Cart");
+const Cart = require("../models/Cart");
 var mongoose = require('mongoose');
 router.use(express.json());
 router.use(
@@ -46,7 +46,7 @@ router.post(
 			const seller = {
 				Seller: mongoose.Types.ObjectId(req.body.seller.seller),
 				Price:req.body.seller.price,
-				Name:req.body.seller.Name
+				Name:req.body.seller.Name	
 				// Quantity_to_buy:req.body.seller.Quantity_to_buy
 			}
 			Cart.findOne({ CustomerID: mongoose.Types.ObjectId(req.user._id) }).then(cart => {

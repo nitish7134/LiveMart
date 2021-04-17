@@ -6,7 +6,7 @@ import baseURL from "../../assets/common/baseUrl"
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
 
-export const getUserProfile = (token) => {
+export const getUserProfile = (toke, func) => {
     fetch(`${baseURL}users/profile`, {
         method: "GET",
         headers: {
@@ -20,7 +20,7 @@ export const getUserProfile = (token) => {
         .then((res) => res.json())
         .then((data) => {
             dispatch(setCurrentUser(data.token, data.user));
-            return data.user;
+            func(data.user);
         });
 }
 
