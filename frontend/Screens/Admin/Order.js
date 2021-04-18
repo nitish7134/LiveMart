@@ -22,7 +22,7 @@ const Orders = (props) => {
 
   const getOrders = (res) => {
     axios
-      .get(`${baseURL}orders`, {
+      .get(`${baseURL}orders/seller`, {
         headers: {
           authorization: "Bearer " + res,
         },

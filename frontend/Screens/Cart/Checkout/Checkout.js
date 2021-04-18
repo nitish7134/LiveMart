@@ -58,12 +58,76 @@ const Checkout = (props) => {
             user,
             zip,
         }
-
-        props.navigation.navigate("Payment", { order: order })
+        props.navigation.navigate("OrderMode", { order: order })
     }
 
     return (
-        <MapContainer />
+        <>
+            {/* <MapContainer /> */}
+            <KeyboardAwareScrollView
+                viewIsInsideTabBar={true}
+                extraHeight={200}
+                enableOnAndroid={true}
+            >
+                <FormContainer title={"Shipping Address"}>
+                    <Input
+                        placeholder={"Phone"}
+                        name={"phone"}
+                        value={phone}
+                        keyboardType={"numeric"}
+                        onChangeText={(text) => setPhone(text)}
+                    />
+                    <Input
+                        placeholder={"Shipping Address 1"}
+                        name={"ShippingAddress1"}
+                        value={address}
+                        onChangeText={(text) => setAddress(text)}
+                    />
+                    <Input
+                        placeholder={"Shipping Address 2"}
+                        name={"ShippingAddress2"}
+                        value={address2}
+                        onChangeText={(text) => setAddress2(text)}
+                    />
+                    <Input
+                        placeholder={"City"}
+                        name={"city"}
+                        value={city}
+                        onChangeText={(text) => setCity(text)}
+                    />
+                    <Input
+                        placeholder={"Zip Code"}
+                        name={"zip"}
+                        value={zip}
+                        keyboardType={"numeric"}
+                        onChangeText={(text) => setZip(text)}
+                    />
+                    <Item picker>
+                        <Picker
+                            mode="dropdown"
+                            iosIcon={<Icon name="arrow-down" color={"#007aff"} />}
+                            style={{ width: undefined }}
+                            selectedValue={country}
+                            placeholder="Select your country"
+                            placeholderStyle={{ color: '#007aff' }}
+                            placeholderIconColor="#007aff"
+                            onValueChange={(e) => setCountry(e)}
+                        >
+                            {countries.map((c) => {
+                                return <Picker.Item
+                                    key={c.code}
+                                    label={c.name}
+                                    value={c.name}
+                                />
+                            })}
+                        </Picker>
+                    </Item>
+                    <View style={{ width: '80%', alignItems: "center" }}>
+                        <Button title="Confirm" onPress={() => checkOut()} />
+                    </View>
+                </FormContainer>
+            </KeyboardAwareScrollView>
+        </>
     )
 }
 

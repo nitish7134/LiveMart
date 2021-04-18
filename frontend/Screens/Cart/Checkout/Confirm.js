@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, ScrollView, Button } from "react-native";
-import { Text, Left, Right, ListItem, Thumbnail, Body } from "native-base";
+import { View, StyleSheet, Dimensions, ScrollView, Button, AsyncStorage } from "react-native";
+import { Text, Left, Right, ListItem, Thumbnail, Body, Card, CardItem } from "native-base";
 import { connect } from "react-redux";
 import * as actions from "../../../Redux/Actions/cartActions";
 
@@ -57,23 +57,46 @@ const Confirm = (props) => {
               <Text>City: {props.route.params.order.order.city}</Text>
               <Text>Zip Code: {props.route.params.order.order.zip}</Text>
               <Text>Country: {props.route.params.order.order.country}</Text>
+              <Text>Order Mode: {props.route.params.order.order.orderType}</Text>
             </View>
             <Text style={styles.title}>Items:</Text>
-            {props.route.params.order.order.orderItems.Items.map((x) => {
+            {props.route.params.order.order.orderItems.Items.map((data) => {
               return (
-                <ListItem style={styles.listItem} key={x.product.name} avatar>
-                  <Left>
-                    <Thumbnail source={{ uri: x.product.image }} />
-                  </Left>
+                <ListItem style={styles.listItem} key={data._id} avatar>
                   <Body style={styles.body}>
-                    <Left>
-                      <Text>{x.product.name}</Text>
-                    </Left>
-                    <Right>
-                      <Text>$ {x.product.price}</Text>
-                    </Right>
+                    <Card style={styles.card}>
+                      <CardItem>
+                        <Thumbnail
+                          source={{
+                            uri: data.Item.image
+                              ? data.Item.image
+                              : "https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png",
+                          }}
+                        />
+                        <Text style={{ fontWeight: "bold" }}>   {data.Item.Name}</Text>
+                      </CardItem>
+
+                      {/* <CardItem header>	
+                      </CardItem> */}
+
+                      <CardItem>
+                        <Left>
+                          <Text>Sellers: </Text>
+                        </Left>
+                      </CardItem>
+                      <CardItem>
+                        <Left>
+                          <Text>{data.Sellers[0].Name}</Text>
+                        </Left>
+                        <Right>
+                          <Text> ₹ {data.Sellers[0].Price} X {data.Sellers[0].Quantity_to_buy} </Text>
+                        </Right>
+                      </CardItem>
+
+                    </Card>
                   </Body>
                 </ListItem>
+
               );
             })}
           </View>
@@ -94,19 +117,19 @@ const mapDispatchToProps = (dispatch) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: height,
-    padding: 8,
+    // height: height,
+    // padding: 8,
     alignContent: "center",
     backgroundColor: "white",
   },
   titleContainer: {
     justifyContent: "center",
     alignItems: "center",
-    margin: 8,
+    // marginTop: 50,
   },
   title: {
     alignSelf: "center",
-    margin: 8,
+    // marginTop: 8,
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -114,13 +137,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     justifyContent: "center",
-    width: width / 1.2,
+    width: width * 0.9,
+  },
+  card: {
+    width: 0.8 * width,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft:-30
   },
   body: {
-    margin: 10,
     alignItems: "center",
     flexDirection: "row",
-  },
+    justifyContent: "center",
+    // height: height
+  }
 });
 
 export default connect(null, mapDispatchToProps)(Confirm);

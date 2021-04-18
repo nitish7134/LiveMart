@@ -134,7 +134,7 @@ router.post(
 				rating: req.body.rating,
 				numReviews: req.body.numReviews,
 				isFeatured: req.body.isFeatured,
-				price:req.body.price,
+				price: req.body.price,
 				Seller: req.user.role == "Retailer" ? 0 : 1,
 				Category: req.body.category,
 				image: `${basePath}${fileName}`, // "http://localhost:3000/public/upload/image-2323232"
@@ -167,7 +167,7 @@ router.post(
 					Name: req.user.Name,
 					Seller: mongoose.Schema.ObjectId(req.user._id),
 				};
-				if(item.price>req.body.item.price)
+				if (item.price > req.body.item.price)
 					item.price = req.body.item.price
 				item.Sellers.push(seller);
 				item.save();
@@ -182,6 +182,10 @@ router.post(
 	}
 );
 
+router.put("/", cors.corsWithOptions, authenticate.verifyUser, uploadOptions.single("image"), (req, res, next) => {
+	console.log(req.body);
+	
+})
 router.get(
 	`/get/featured/:count`,
 	authenticate.verifyUser,
