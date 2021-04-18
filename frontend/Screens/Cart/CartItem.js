@@ -19,15 +19,20 @@ const CartItem = (props) => {
 									: "https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png",
 							}}
 						/>
-						<Text style={{fontWeight:"bold"}}>   {data.Item.Name}</Text>
+						<Text style={{ fontWeight: "bold" }}>   {data.Item.Name}</Text>
 					</CardItem>
 
 					{/* <CardItem header>	
-						</CardItem> */}
-
+						</CardItem> */
+					}
 					<CardItem>
 						<Left>
-							<Text>Seller: {data.Sellers[0].Name}</Text>
+							<Text>Sellers: </Text>
+						</Left>
+					</CardItem>
+					<CardItem>
+						<Left>
+							<Text>{data.Sellers[0].Name}</Text>
 						</Left>
 						<Right>
 							<Text> ₹ {data.Sellers[0].Price} X {data.Sellers[0].Quantity_to_buy} </Text>

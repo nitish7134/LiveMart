@@ -1,47 +1,119 @@
 var express = require("express");
 var router = express.Router();
 var User = require("../Models/User");
-var Orders = require("../Models/Order");
-
-var passport = require("passport");
-var authenticate = require("../Controller/authenticate");
 var cors = require("./cors");
-const config = require("../config");
-const { token } = require("morgan");
 const mongoose = require("mongoose");
+const CustomerOrders = require("../Models/CustomerOrders");
+const SellerOrders = require("../Models/SellerOrders");
+var authenticate = require("../Controller/authenticate");
+
 router.use(express.json());
 router.use(
-  express.urlencoded({
-    extended: true,
-  })
+	express.urlencoded({
+		extended: true,
+	})
 );
 
 router.options("*", cors.corsWithOptions, (req, res) => {
-  res.sendStatus(200);
+	res.sendStatus(200);
 });
 router.get(
-  "/",
-  cors.corsWithOptions,
-  authenticate.verifyUser,
-  function (req, res, next) {
-    Orders.find({ Customer: mongoose.Schema.ObjectId(req.user._id) }).then(
-      (orders) => {
-        res.send(orders);
-      }
-    );
-  }
+	"/",
+	cors.corsWithOptions,
+	authenticate.verifyUser,
+	function (req, res, next) {
+		CustomerOrders.find({ Customer: mongoose.Schema.ObjectId(req.user._id) }).then(
+			(orders) => {
+				res.send(orders);
+			}
+		);
+	}
 );
 router.get(
-  "/seller",
-  cors.corsWithOptions,
-  authenticate.verifyUser,
-  function (req, res, next) {
-    Orders.find({ Seller: mongoose.Schema.ObjectId(req.user._id) }).then(
-      (orders) => {
-        res.send(orders);
-      }
-    );
-  }
+	"/seller",
+	cors.corsWithOptions,
+	authenticate.verifyUser,
+	function (req, res, next) {
+		SellerOrders.find({ Seller: mongoose.Schema.ObjectId(req.user._id) }).then(
+			(orders) => {
+				res.send(orders);
+			}
+		);
+	}
 );
+router.post("/",
+	cors.corsWithOptions,
+	authenticate.verifyUser, async (req, res, next) => {
+		var sellerOrders = {
+
+		};
+		console.log("***********")
+		console.log(JSON.stringify(req.body));
+		console.log("***********")
+
+		var Items = [];
+		for (var i = 0; i < req.body.orderItems.Items.length; i++) {
+			for (var j = 0; j < req.body.orderItems.Items[i].Sellers.length; j++) {
+				delete req.body.orderItems.Items[i].Sellers[j]._id
+				if (sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller]) {
+					sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].Items.push({
+
+						item: req.body.orderItems.Items[i]._id,
+						QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
+
+					})
+				} else
+					sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller] = {
+						Seller: req.body.orderItems.Items[i].Sellers[j].Seller,
+						Customer: req.body._id,
+						orderType: req.body.OrderType,
+						Address: {
+							shippingAddress1: req.body.shippingAddress1,
+							shippingAddress2: req.body.shippingAddress2,
+							city: req.body.city,
+							zip: req.body.city,
+							country: req.body.country,
+						},
+						phoneNo: req.body.phone,
+						Items: [{
+							item: req.body.orderItems.Items[i]._id,
+							QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
+						}],
+					};
+			}
+			var item = {
+				Item: req.body.orderItems.Items[i]._id,
+				Sellers: req.body.orderItems.Items[i].Sellers
+			}
+			Items.push(item);
+		}
+		CustomerOrders.create({
+			Customer: req.user._id,
+			Order: {
+				TotalPrice: req.body.orderItems.TotalPrice,
+				Items: Items,
+				statusCode: 0,
+				orderType: req.body.orderType, //0 for online 1 for offline
+				Address: {
+					shippingAddress1: req.body.shippingAddress1,
+					shippingAddress2: req.body.shippingAddress2,
+					city: req.body.city,
+					zip: req.body.city,
+					country: req.body.country,
+				},
+				phone: req.body.phone
+			}
+		}).then(async (CustomerOrder) => {
+			if (CustomerOrder) {
+				for (var i = 0; i < sellerOrders.length; i++) {
+					await SellerOrders.create(sellerOrders[i])
+					console.log("CREATED "+i);
+				}
+				return res.sendStatus(200);
+			}
+		}).catch((err) => {
+			next(err);
+		});
+	})
 
 module.exports = router;

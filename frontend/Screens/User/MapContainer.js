@@ -59,7 +59,7 @@ class MapContainer extends React.Component {
         this.getGeocodeAsync({ latitude, longitude })
         this.setState({ location: { latitude, longitude } });
 
-    };  
+    };
     async onMapRegionChange(region) {
         this.setState({ region });
         const { latitude, longitude } = region;
@@ -70,6 +70,8 @@ class MapContainer extends React.Component {
             console.log("region", latitude);
             console.log("region", longitude);
             console.log("response", response);
+        }).catch((err) => {
+            console.log(err)
         });
 
     }

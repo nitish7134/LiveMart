@@ -23,8 +23,6 @@ export default setupNotif = () => {
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
         console.log(response);
     });
-
-    schedulePushNotification();
 }
 
 async function schedulePushNotification(title) {
