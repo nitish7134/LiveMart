@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const cors = require("./cors");
 const authenticate = require("./../Controller/authenticate");
-const Cart = require("../models/Cart");
+const Cart = require("../Models/Cart");
 var mongoose = require('mongoose');
 router.use(express.json());
 router.use(
