@@ -10,17 +10,19 @@ import CartIcon from "../Shared/CartIcon";
 
 import AuthGlobal from "../Context/store/AuthGlobal";
 import { useEffect } from "react/cjs/react.development";
-
-function MyStack(props) {
+const MyStack = (props) => {
   const context = useContext(AuthGlobal);
-
+  console.log("PROSP OF TAB NAVIAGAtor", props);
   const Tab = createBottomTabNavigator();
   useEffect(() => {
     if (
       context.stateUser.isAuthenticated === false ||
       context.stateUser.isAuthenticated === null
     ) {
-      props.navigation.navigate("Login");
+      props.navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
     }
   }, [context.stateUser.isAuthenticated]);
 
@@ -78,6 +80,6 @@ function MyStack(props) {
     </Tab.Navigator>
   );
 }
-export default function TabNavigator() {
-  return <MyStack />;
+export default function TabNavigator(props) {
+  return <MyStack navigation={props.navigation}/>;
 }

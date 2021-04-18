@@ -43,7 +43,7 @@ var Items = new Schema(
       type: String,
       default: "",
     },
-    price:Number,
+    price: Number,
     images: [
       {
         type: String,
@@ -54,7 +54,9 @@ var Items = new Schema(
         Price: Number,
         Quantity: Number,
         SellerName: String,
-        Seller: mongoose.Schema.ObjectId,
+        Seller: {
+          type: mongoose.Schema.ObjectId
+        },
       },
     ],
   },
