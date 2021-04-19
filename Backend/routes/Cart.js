@@ -116,13 +116,20 @@ router.post(
 router.delete("/", cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
-
+		Cart.findOneAndDelete({user:req.user._id}).then(()=>{return res.sendStatus(200)})
 	});
 
-router.delete("/", cors.corsWithOptions,
+router.delete("/item", cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
+		Cart.findOne({user:req.user._id}).then(cart=>{
+			for(var i=0;cart.Items.length;i++){
+				if(cart.Items[i].item==req.body.item.ItemID){
+					console.log("ITEM FOUND");
+				}
+			}
 
+		})
 	});
 
 module.exports = router;

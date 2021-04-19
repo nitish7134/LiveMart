@@ -45,30 +45,22 @@ const Cart = (props) => {
                 <TouchableOpacity
                   style={styles.hiddenButton}
                   onPress={() => {
-                    //AXIOS SERVER TO REMOVE ITEM FROM CART sending data.item
-                    axios.delete(baseURL + 'cart/delete',
+                    axios.delete(baseURL + 'cart/item',
                       data.item, {
                       headers: {
                         authorization: `Bearer ` + context.stateUser.token,
                       },
-                    }).then(() => {
-                      axios.get(baseURL + 'cart',
-                        {
-                          headers: {
-                            authorization: `Bearer ` + context.stateUser.token,
-                          }
-                        }).then(res => {
-                          console.log(res.data)
-                          props.updateCart(res.data);
-                          Toast.show({
-                            topOffset: 60,
-                            type: "success",
-                            text1: `${item.Name} added to Cart`,
-                            text2: "Go to your cart to complete order"
-                          })
-                        }).catch((error) => alert(error));
+                    }).then(res => {
+                      console.log(res.data)
+                      props.updateCart(res.data);
+                      Toast.show({
+                        topOffset: 60,
+                        type: "success",
+                        text1: `${item.Name} added to Cart`,
+                        text2: "Go to your cart to complete order"
+                      })
+                    }).catch((error) => alert(error));
 
-                    })
                   }}
                 >
                   <FontAwesome name="trash" color={"white"} size={30} />
@@ -92,30 +84,20 @@ const Cart = (props) => {
                 danger
                 medium
                 onPress={() => {
-                  //AXIOS SERVER TO REMOVE ITEM FROM CART
-                  axios.delete(baseURL + 'cart/Clear',
+                  axios.delete(baseURL + 'cart',
                     {
-                    headers: {
-                      authorization: `Bearer ` + context.stateUser.token,
-                    },
-                  }).then(() => {
-                    axios.get(baseURL + 'cart',
-                      {
-                        headers: {
-                          authorization: `Bearer ` + context.stateUser.token,
-                        }
-                      }).then(res => {
-                        console.log(res.data)
-                        props.updateCart(res.data);
-                        Toast.show({
-                          topOffset: 60,
-                          type: "success",
-                          text1: `${item.Name} added to Cart`,
-                          text2: "Go to your cart to complete order"
-                        })
-                      }).catch((error) => alert(error));
-
-                  })
+                      headers: {
+                        authorization: `Bearer ` + context.stateUser.token,
+                      },
+                    }).then(() => {
+                      props.clearCart();
+                      Toast.show({
+                        topOffset: 60,
+                        type: "success",
+                        text1: `Cart Cleared`,
+                        text2: "Go Home and start Shopping"
+                      })
+                    }).catch((error) => alert(error));
                 }}
               >
                 <Text style={{ color: 'white' }}>Clear</Text>
@@ -152,6 +134,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateCart: (cart) => dispatch(actions.updateCart(cart)),
+    clearCart: () => dispatch(actions.clearCart())
   }
 }
 

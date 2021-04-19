@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -19,6 +19,7 @@ import Banner from "../../Shared/Banner";
 import CategoryFilter from "./CategoryFilter";
 import baseURL from "../../assets/common/baseUrl";
 import AsyncStorage from "@react-native-community/async-storage";
+import { getUserProfile } from "../../Context/actions/Auth.actions";
 
 var { height } = Dimensions.get("window");
 
@@ -31,9 +32,12 @@ const ProductContainer = (props) => {
   const [active, setActive] = useState();
   const [initialState, setInitialState] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isMountedVal = useRef(1);
 
   useFocusEffect(
     useCallback(() => {
+      isMountedVal.current = 1;
+
       setFocus(false);
       setActive(-1);
 
@@ -68,6 +72,7 @@ const ProductContainer = (props) => {
       });
 
       return () => {
+        isMountedVal.current = 0;
         setProducts([]);
         setProductsFiltered([]);
         setFocus();
@@ -99,11 +104,11 @@ const ProductContainer = (props) => {
       ctg === "all"
         ? [setProductsCtg(initialState), setActive(true)]
         : [
-            setProductsCtg(
-              products.filter((i) => i.category._id === ctg),
-              setActive(true)
-            ),
-          ];
+          setProductsCtg(
+            products.filter((i) => i.category._id === ctg),
+            setActive(true)
+          ),
+        ];
     }
   };
 
@@ -112,7 +117,7 @@ const ProductContainer = (props) => {
       {loading == false ? (
         <Container>
           <Header searchBar rounded>
-            <Item style={{paddingLeft:10}}>
+            <Item style={{ paddingLeft: 10 }}>
               <Ionicons name="ios-search" />
               <Input
                 placeholder="Search"
@@ -150,7 +155,7 @@ const ProductContainer = (props) => {
                       return (
                         <ProductList
                           navigation={props.navigation}
-                          key={item._id}
+                          key={item.id}
                           item={item}
                         />
                       );
