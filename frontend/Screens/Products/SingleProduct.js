@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Image, View, StyleSheet, Text, ScrollView, Button, Dimensions } from 'react-native';
+import React, { useState, useEffect, useContext, Component } from 'react'
+import { Image, View, StyleSheet, Text, ScrollView, Dimensions } from 'react-native';
 import { Left, Right, Container, H1, ListItem } from 'native-base';
+import { Header, Content, Item, Input, Button } from 'native-base';
 
 //review
 import { Rating, AirbnbRating } from 'react-native-ratings';
@@ -68,6 +69,20 @@ const SingleProduct = (props) => {
                     <Text>{item.description}</Text>
                 </View>
 
+                <Rating
+                showRating
+                onFinishRating={this.ratingCompleted}
+                style={{ paddingVertical: 10 }}
+                />
+
+                <Item rounded>
+                    <Input placeholder='Review'/>
+                </Item>
+
+                <Button success>
+                    <Text>Sumbmit</Text>
+                </Button>
+
                 <View /*style={styles.item} */>
                     {item.Sellers.map((x) => {
                         return (
@@ -118,11 +133,7 @@ const SingleProduct = (props) => {
                 </View>
                 
 
-                <Rating
-                showRating
-                onFinishRating={this.ratingCompleted}
-                style={{ paddingVertical: 10 }}
-                />
+                
 
 
 
@@ -184,6 +195,10 @@ const styles = StyleSheet.create({
     },
     availability: {
         flexDirection: 'row',
+    },
+    Button: {
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 
