@@ -11,6 +11,7 @@ import { Container, Header, Icon, Item, Input, Text } from "native-base";
 import { useFocusEffect } from "@react-navigation/native";
 import baseUrl from "../../assets/common/baseUrl";
 import axios from "axios";
+import { Ionicons } from '@expo/vector-icons';
 
 import ProductList from "./ProductList";
 import SearchedProduct from "./SearchedProducts";
@@ -38,7 +39,6 @@ const ProductContainer = (props) => {
 
       // Products
       AsyncStorage.getItem("jwt").then((res) => {
-        console.log("token", res);
         axios
           .get(`${baseURL}products`, {
             headers: { Authorization: `Bearer ${res}` },
@@ -60,7 +60,6 @@ const ProductContainer = (props) => {
             headers: { Authorization: `Bearer ${res}` },
           })
           .then((res) => {
-            console.log("Categories",res.data);
             setCategories(res.data);
           })
           .catch((error) => {
@@ -113,15 +112,15 @@ const ProductContainer = (props) => {
       {loading == false ? (
         <Container>
           <Header searchBar rounded>
-            <Item>
-              <Icon name="ios-search" />
+            <Item style={{paddingLeft:10}}>
+              <Ionicons name="ios-search" />
               <Input
                 placeholder="Search"
                 onFocus={openList}
                 onChangeText={(text) => searchProduct(text)}
               />
               {focus == true ? (
-                <Icon onPress={onBlur} name="ios-close" />
+                <Ionicons onPress={onBlur} name="ios-close" />
               ) : null}
             </Item>
           </Header>

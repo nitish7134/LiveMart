@@ -9,8 +9,7 @@ import {
   Button,
 } from "react-native";
 import { Header, Item, Input } from "native-base";
-import Icon from "react-native-vector-icons/FontAwesome";
-// import Icon from "react-native-vector-icons/Ionicons";
+import {Ionicons,FontAwesome} from '@expo/vector-icons';
 import { useFocusEffect } from "@react-navigation/native";
 import ListItem from "./ListItem";
 
@@ -104,7 +103,7 @@ const Products = (props) => {
           medium
           onPress={() => props.navigation.navigate("Orders")}
         >
-          <Icon name="shopping-bag" size={18} color="white" />
+          <FontAwesome name="shopping-bag" size={18} color="white" />
           <Text style={styles.buttonText}>Orders</Text>
         </EasyButton>
         <EasyButton
@@ -112,7 +111,7 @@ const Products = (props) => {
           medium
           onPress={() => props.navigation.navigate("ProductForm")}
         >
-          <Icon name="plus" size={18} color="white" />
+          <FontAwesome name="plus" size={18} color="white" />
           <Text style={styles.buttonText}>Products</Text>
         </EasyButton>
         <EasyButton
@@ -120,14 +119,14 @@ const Products = (props) => {
           medium
           onPress={() => props.navigation.navigate("Categories")}
         >
-          <Icon name="plus" size={18} color="white" />
+          <FontAwesome name="plus" size={18} color="white" />
           <Text style={styles.buttonText}>Categories</Text>
         </EasyButton>
       </View>
       <View>
         <Header searchBar rounded>
           <Item style={{ padding: 5 }}>
-            <Icon name="search" />
+            <Ionicons name="search" />
             <Input
               placeholder="Search"
               onChangeText={(text) => searchProduct(text)}

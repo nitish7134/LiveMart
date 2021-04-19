@@ -10,7 +10,7 @@ import {
     Button,
     Modal
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome"
+import { Ionicons,FontAwesome } from '@expo/vector-icons';
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 
 var { width } = Dimensions.get("window");
@@ -43,7 +43,7 @@ const ListItem = (props) => {
                                 right: 10
                             }}
                         >
-                            <Icon name="close" size={20} />
+                            <FontAwesome name="close" size={20} />
                         </TouchableOpacity>
                         <EasyButton 
                         medium 

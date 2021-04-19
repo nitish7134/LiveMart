@@ -56,8 +56,8 @@ const Login = (props) => {
 						Toast.show({
 							topOffset: 60,
 							type: "success",
-							text1: "Registration Succeeded",
-							text2: "Please Login into your account",
+							text1: "Login Succeeded",
+							text2: "Enter OTP",
 						});
 						askForOtp(token);
 						setTimeout(() => {

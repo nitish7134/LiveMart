@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Text, View, Button, Dimensions } from 'react-native'
 import { Item, Picker, Toast } from 'native-base'
-import Icon from 'react-native-vector-icons/FontAwesome'
 import FormContainer from '../../../Shared/Form/FormContainer'
 import Input from '../../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AuthGlobal from "../../../Context/store/AuthGlobal"
 import MapContainer from '../../User/MapContainer'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 var { width } = Dimensions.get('window');
 
@@ -18,16 +18,10 @@ const Checkout = (props) => {
 
     const [orderItems, setOrderItems] = useState();
     const [address, setAddress] = useState();
-    const [address2, setAddress2] = useState();
-    const [city, setCity] = useState();
-    const [zip, setZip] = useState();
-    const [country, setCountry] = useState();
     const [phone, setPhone] = useState();
     const [user, setUser] = useState();
-
     useEffect(() => {
         setOrderItems(props.cartItems)
-
         if (context.stateUser.isAuthenticated) {
             setUser(context.stateUser.userProfile._id)
         } else {
@@ -39,7 +33,7 @@ const Checkout = (props) => {
                 text2: ""
             });
         }
-
+        getAddress();
         return () => {
             setOrderItems();
         }
@@ -47,24 +41,28 @@ const Checkout = (props) => {
 
     const checkOut = () => {
         let order = {
-            city,
-            country,
             dateOrdered: Date.now(),
             orderItems,
             phone,
-            shippingAddress1: address,
-            shippingAddress2: address2,
+            address: address,
             status: "3",
             user,
-            zip,
         }
         props.navigation.navigate("OrderMode", { order: order })
     }
 
+    const getAddress = () => {
+        axios.get("http://ip-api.com/json")
+            .then(json => {
+                console.log(json);
+            }).catch(err => {
+                console.log(err);
+            })
+    }
+
     return (
         <>
-            {/* <MapContainer /> */}
-            <KeyboardAwareScrollView
+           {/*  <KeyboardAwareScrollView
                 viewIsInsideTabBar={true}
                 extraHeight={200}
                 enableOnAndroid={true}
@@ -105,7 +103,7 @@ const Checkout = (props) => {
                     <Item picker>
                         <Picker
                             mode="dropdown"
-                            iosIcon={<Icon name="arrow-down" color={"#007aff"} />}
+                            iosIcon={<Ionicons name="arrow-down" color={"#007aff"} />}
                             style={{ width: undefined }}
                             selectedValue={country}
                             placeholder="Select your country"
@@ -126,7 +124,20 @@ const Checkout = (props) => {
                         <Button title="Confirm" onPress={() => checkOut()} />
                     </View>
                 </FormContainer>
-            </KeyboardAwareScrollView>
+            </KeyboardAwareScrollView> */}
+            <Input
+                placeholder={"Phone"}
+                name={"phone"}
+                value={phone}
+                keyboardType={"numeric"}
+                onChangeText={(text) => setPhone(text)}
+            />
+            <MapContainer setAddress={setAddress} />
+
+            <View style={{ width: '80%', alignItems: "center" }}>
+                <Button title="Confirm" onPress={() => checkOut()} />
+
+            </View>
         </>
     )
 }

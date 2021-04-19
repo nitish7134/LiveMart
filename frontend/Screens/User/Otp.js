@@ -98,7 +98,7 @@ const OtpScreen = (props) => {
       <View style={styles.buttonGroup}>
         {error ? <Error message={error} /> : null}
         <EasyButton large primary onPress={() => handleSubmit()}>
-          <Text style={{ color: "black" }}>Generate OTP</Text>
+          <Text style={{ color: "black" }}>Verify OTP</Text>
         </EasyButton>
       </View>
     </FormContainer>
