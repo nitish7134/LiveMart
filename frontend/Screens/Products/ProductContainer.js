@@ -86,7 +86,7 @@ const ProductContainer = (props) => {
   // Product Methods
   const searchProduct = (text) => {
     setProductsFiltered(
-      products.filter((i) => i.name.toLowerCase().includes(text.toLowerCase()))
+      products.filter((i) => i.Name.toLowerCase().includes(text.toLowerCase()))
     );
   };
 
@@ -105,7 +105,7 @@ const ProductContainer = (props) => {
         ? [setProductsCtg(initialState), setActive(true)]
         : [
           setProductsCtg(
-            products.filter((i) => i.category._id === ctg),
+            products.filter((i) => i.Category._id === ctg),
             setActive(true)
           ),
         ];

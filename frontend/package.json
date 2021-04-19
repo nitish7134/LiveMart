@@ -7,7 +7,8 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "build": "expo build:android",
-    "clean": "rm -rf && npm install"
+    "install": "npm install && npm start",
+    "clean": "rm -rf && npm install && npm start"
   },
   "dependencies": {
     "@expo/vector-icons": "^10.2.1",

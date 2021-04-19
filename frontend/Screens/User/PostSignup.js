@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState,useRef } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -41,8 +41,10 @@ const PostSignup = (props) => {
       }
       setUserProfile(context.stateUser.userProfile);
       setToken(context.stateUser.token);
-      return(()=>{
+      return (() => {
         isMountedVal.current = 0;
+        /* setToken();
+        setUserProfile(); */
       })
     }, [context.stateUser.isAuthenticated])
   );
@@ -93,7 +95,7 @@ const PostSignup = (props) => {
       }
     }
   };
-  if (userProfile.phoneNo && userProfile.role && userProfile.password == "true")
+  if (userProfile && userProfile.phoneNo && userProfile.role && userProfile.password == "true")
     // props.navigation.navigate("Home");
     props.navigation.reset({
       index: 0,

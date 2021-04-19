@@ -25,19 +25,26 @@ const CartItem = (props) => {
 					{/* <CardItem header>	
 						</CardItem> */
 					}
-					<CardItem>
-						<Left>
-							<Text>Sellers: </Text>
-						</Left>
-					</CardItem>
-					<CardItem>
-						<Left>
-							<Text>{data.Sellers[0].Name}</Text>
-						</Left>
-						<Right>
-							<Text> ₹ {data.Sellers[0].Price} X {data.Sellers[0].Quantity_to_buy} </Text>
-						</Right>
-					</CardItem>
+					{data.Sellers.map((x) => {
+						return (
+							<>
+								<CardItem>
+									<Left>
+										<Text>Sellers: </Text>
+									</Left>
+								</CardItem>
+								<CardItem>
+									<Left>
+										<Text>{x.Name}</Text>
+									</Left>
+									<Right>
+										<Text> ₹ {x.Price} X {x.Quantity_to_buy} </Text>
+									</Right>
+								</CardItem>
+							</>
+						)
+					})}
+
 
 				</Card>
 			</Body>

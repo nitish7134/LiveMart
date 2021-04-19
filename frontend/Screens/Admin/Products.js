@@ -126,7 +126,7 @@ const Products = (props) => {
       <View>
         <Header searchBar rounded>
           <Item style={{ padding: 5 }}>
-            <Ionicons name="search" />
+          <Ionicons name="ios-search" />
             <Input
               placeholder="Search"
               onChangeText={(text) => searchProduct(text)}

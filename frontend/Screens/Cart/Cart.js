@@ -16,11 +16,15 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 import CartItem from './CartItem'
 import { FontAwesome } from '@expo/vector-icons';
 // import Icon from '@expo/vector-icons';
+import Toast from "react-native-toast-message";
+
 import axios from 'axios'
 import EasyButton from "../../Shared/StyledComponents/EasyButton"
 
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/cartActions";
+import baseURL from "../../assets/common/baseUrl";
+import AsyncStorage from "@react-native-community/async-storage";
 
 var { height, width } = Dimensions.get("window");
 
@@ -40,27 +44,31 @@ const Cart = (props) => {
             renderItem={(data) => (
               <CartItem item={data} />
             )}
+
             renderHiddenItem={(data) => (
               <View style={styles.hiddenContainer}>
                 <TouchableOpacity
                   style={styles.hiddenButton}
                   onPress={() => {
-                    axios.delete(baseURL + 'cart/item',
-                      data.item, {
-                      headers: {
-                        authorization: `Bearer ` + context.stateUser.token,
-                      },
-                    }).then(res => {
-                      console.log(res.data)
-                      props.updateCart(res.data);
-                      Toast.show({
-                        topOffset: 60,
-                        type: "success",
-                        text1: `${item.Name} added to Cart`,
-                        text2: "Go to your cart to complete order"
-                      })
-                    }).catch((error) => alert(error));
-
+                    console.log("item",data.item.Item.Name)
+                    AsyncStorage.getItem("jwt").then((token) => {
+                      axios.delete(baseURL + 'cart/' + data.item.Item.id,
+                        {
+                          headers: {
+                            authorization: `Bearer ` + token,
+                          }
+                        }
+                      ).then(res => {
+                        console.log("response",res.data)
+                        props.updateCart(res.data);
+                        Toast.show({
+                          topOffset: 60,
+                          type: "success",
+                          text1: `${data.item.Item.Name} removed from Cart`,
+                          text2: "Go to your cart to complete order"
+                        })
+                      }).catch((error) => alert(error));
+                    })
                   }}
                 >
                   <FontAwesome name="trash" color={"white"} size={30} />
@@ -84,20 +92,22 @@ const Cart = (props) => {
                 danger
                 medium
                 onPress={() => {
-                  axios.delete(baseURL + 'cart',
-                    {
-                      headers: {
-                        authorization: `Bearer ` + context.stateUser.token,
-                      },
-                    }).then(() => {
-                      props.clearCart();
-                      Toast.show({
-                        topOffset: 60,
-                        type: "success",
-                        text1: `Cart Cleared`,
-                        text2: "Go Home and start Shopping"
-                      })
-                    }).catch((error) => alert(error));
+                  AsyncStorage.getItem("jwt").then((token) => {
+                    axios.delete(baseURL + 'cart',
+                      {
+                        headers: {
+                          authorization: `Bearer ` + token,
+                        },
+                      }).then(() => {
+                        props.clearCart();
+                        Toast.show({
+                          topOffset: 60,
+                          type: "success",
+                          text1: `Cart Cleared`,
+                          text2: "Go Home and start Shopping"
+                        })
+                      }).catch((error) => alert(error));
+                  })
                 }}
               >
                 <Text style={{ color: 'white' }}>Clear</Text>

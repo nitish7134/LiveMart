@@ -54,6 +54,7 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
 
         let { authorization } = req.headers;
         if (!authorization) {
+            console.log("NO AUTH",req.headers)
             return res.status(401).send({ error: "you must be logged in" })
         }
         // const token = authorization.replace("Bearer ", "");
