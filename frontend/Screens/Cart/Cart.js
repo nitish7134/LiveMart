@@ -14,8 +14,9 @@ import {
 } from "native-base";
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CartItem from './CartItem'
-
-// import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from '@expo/vector-icons';
+// import Icon from '@expo/vector-icons';
+import axios from 'axios'
 import EasyButton from "../../Shared/StyledComponents/EasyButton"
 
 import { connect } from "react-redux";
@@ -45,7 +46,7 @@ const Cart = (props) => {
                   style={styles.hiddenButton}
                   onPress={() => {
                     //AXIOS SERVER TO REMOVE ITEM FROM CART sending data.item
-                    axios.delete(baseURL + 'cart',
+                    axios.delete(baseURL + 'cart/delete',
                       data.item, {
                       headers: {
                         authorization: `Bearer ` + context.stateUser.token,
@@ -70,7 +71,7 @@ const Cart = (props) => {
                     })
                   }}
                 >
-                  {/* <Icon name="trash" color={"white"} size={30} /> */}
+                  <FontAwesome name="trash" color={"white"} size={30} />
                 </TouchableOpacity>
               </View>
             )}

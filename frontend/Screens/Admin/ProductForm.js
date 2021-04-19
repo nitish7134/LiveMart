@@ -12,7 +12,9 @@ import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import Error from "../../Shared/Error";
-import Icon from "react-native-vector-icons/FontAwesome";
+// import Icon from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-community/async-storage";
 import baseURL from "../../assets/common/baseUrl";
@@ -62,7 +64,7 @@ const ProductForm = (props) => {
         // Categories
         axios
           .get(`${baseURL}categories`)
-          .then((res) => {setCategories(res.data);console.log(res.data)})
+          .then((res) => { setCategories(res.data); console.log(res.data) })
           .catch((error) => alert("Error to load categories"));
 
         // Image Picker
@@ -139,9 +141,12 @@ const ProductForm = (props) => {
     };
 
     if (item !== null) {
+      var link = baseURL + 'products/update/' + item.id
+      console.log(formData);
       axios
-        .put(`${baseURL}products/${item.id}`, formData, config)
+        .post(link, formData, config)
         .then((res) => {
+          console.log(res);
           if (res.status == 200 || res.status == 201) {
             Toast.show({
               topOffset: 60,
@@ -155,6 +160,7 @@ const ProductForm = (props) => {
           }
         })
         .catch((error) => {
+          console.log(JSON.stringify(error));
           Toast.show({
             topOffset: 60,
             type: "error",
@@ -163,6 +169,7 @@ const ProductForm = (props) => {
           });
         });
     } else {
+      console.log("HI")
       axios
         .post(`${baseURL}products`, formData, config)
         .then((res) => {
@@ -194,7 +201,7 @@ const ProductForm = (props) => {
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: mainImage }} />
         <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
-          <Icon style={{ color: "white" }} name="camera" />
+          <Ionicons style={{ color: "white" }} name="camera" />
         </TouchableOpacity>
       </View>
       <View style={styles.label}>
@@ -252,7 +259,7 @@ const ProductForm = (props) => {
       <Item picker>
         <Picker
           mode="dropdown"
-          iosIcon={<Icon color={"#007aff"} name="arrow-down" />}
+          iosIcon={<Ionicons color={"#007aff"} name="arrow-down" />}
           style={{ width: undefined }}
           placeholder="Select your Category"
           selectedValue={pickerValue}

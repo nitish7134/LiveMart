@@ -12,7 +12,6 @@ import AuthGlobal from "../Context/store/AuthGlobal";
 import { useEffect } from "react/cjs/react.development";
 const MyStack = (props) => {
   const context = useContext(AuthGlobal);
-  console.log("PROSP OF TAB NAVIAGAtor", props);
   const Tab = createBottomTabNavigator();
   useEffect(() => {
     if (

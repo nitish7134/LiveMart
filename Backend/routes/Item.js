@@ -5,7 +5,6 @@ var Items = require("../Models/Item");
 
 var authenticate = require("../Controller/authenticate");
 var cors = require("./cors");
-var mongoose = require("mongoose");
 const multer = require("multer");
 const FILE_TYPE_MAP = {
 	"image/png": "png",
@@ -79,16 +78,17 @@ router.get(
 			});
 	}
 );
-router.get(`/:id`, (req, res, next) => {
-	Items.findById(req.params.id)
-		.populate("Category")
-		.then((product) => {
-			if (!product) {
-				res.status(500).json({ success: false });
-			}
-			res.send(product);
-		});
-});
+router.get(`/:id`, cors.corsWithOptions,
+	authenticate.verifyUser, (req, res, next) => {
+		Items.findById(req.params.id)
+			.populate("Category")
+			.then((product) => {
+				if (!product) {
+					res.status(500).json({ success: false });
+				}
+				res.send(product);
+			});
+	});
 router.get(
 	//Gives options to choose from while adding new Item
 	"/ToAdd",
@@ -119,7 +119,7 @@ router.post(
 				SellerName: req.user.Name,
 				Price: req.body.price,
 				Quantity: req.body.countInStock,
-				Seller: mongoose.Schema.ObjectId(req.user._id),
+				Seller: req.user._id,
 			};
 			const file = req.file;
 			if (!file) return res.status(400).send("No image in the request");
@@ -165,7 +165,7 @@ router.post(
 					Price: Number(req.body.item.price),
 					Quantity: Number(req.body.item.Quantity),
 					Name: req.user.Name,
-					Seller: mongoose.Schema.ObjectId(req.user._id),
+					Seller: req.user._id,
 				};
 				if (item.price > req.body.item.price)
 					item.price = req.body.item.price
@@ -182,10 +182,41 @@ router.post(
 	}
 );
 
-router.put("/", cors.corsWithOptions, authenticate.verifyUser, uploadOptions.single("image"), (req, res, next) => {
-	console.log(req.body);
-	
-})
+router.post("/update/:ItemID", cors.corsWithOptions,
+	authenticate.verifyUser,
+	uploadOptions.single("image"), (req, res, next) => {
+		console.log(req.body);
+
+		const file = req.file;
+		if (file) {
+			const fileName = file.filename;
+			const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
+		}
+		Item.findById(req.params.ItemID).then((item) => {
+			item.brand = req.body.brand;
+			item.Name = req.body.name;
+			item.description = req.body.description;
+			rating = req.body.rating;
+			item.numReviews = req.body.numReviews
+			item.isFeatured = req.body.isFeatured
+			item.price = req.body.price
+			item.Seller = req.user.role == "Retailer" ? 0 : 1
+			item.Category = req.body.category
+			if (file)
+				item.image = `${basePath}${fileName}`
+			for (var i = 0; i < item.Sellers.length; i++) {
+				if (item.Sellers[i]._id == req.user._id) {
+					item.TotalQuantity += req.body.countInStock - item.Sellers[i].Quantity;
+					item.Price = req.body.price;
+					item.Quantity = req.body.countInStock
+					item.save();
+					return res.sendStatus(200);
+				}
+			}
+		}, err => next(err))
+			.catch(err => next(err))
+
+	})
 router.get(
 	`/get/featured/:count`,
 	authenticate.verifyUser,

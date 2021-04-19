@@ -6,10 +6,13 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "build": "expo build:android"
+    "build": "expo build:android",
+    "clean": "rm -rf && npm install"
   },
   "dependencies": {
+    "@expo/vector-icons": "^10.2.1",
     "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/picker": "^1.8.1",
     "@react-navigation/bottom-tabs": "^5.11.2",
@@ -40,12 +43,10 @@
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
-    "react-native-svg": "*",
     "react-native-swipe-list-view": "^3.2.5",
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-toast-message": "^1.4.1",
-    "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
     "react-native-webview": "^11.3.2",
     "react-navigation": "^4.4.3",
@@ -59,6 +60,5 @@
   "devDependencies": {
     "@babel/core": "~7.9.0"
   },
-  "private": true,
-  "proxy": "http://192.168.83.1:3000/"
+  "private": true
 }

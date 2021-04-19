@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Picker } from "native-base";
-// import Icon from "react-native-vector-icons/FontAwesome";
+import {Ionicons} from '@expo/vector-icons';
+
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
 import Toast from "react-native-toast-message";
@@ -123,7 +124,7 @@ const OrderCard = (props) => {
           <View>
             <Picker
               mode="dropdown"
-              iosIcon={<Icon color={"#007aff"} name="arrow-down" />}
+              iosIcon={<Ionicons color={"#007aff"} name="arrow-down" />}
               style={{ width: undefined }}
               selectedValue={statusChange}
               placeholder="Change Status"

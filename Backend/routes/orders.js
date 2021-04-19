@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const CustomerOrders = require("../Models/CustomerOrders");
 const SellerOrders = require("../Models/SellerOrders");
 var authenticate = require("../Controller/authenticate");
+const Cart = require("../Models/Cart");
 
 router.use(express.json());
 router.use(
@@ -102,6 +103,7 @@ router.post("/",
 				phone: req.body.phone
 			}
 		}).then((customerOrder) => {
+			Cart.findByIdAndDelete(req.user._id);
 			// console.log("CREATED");
 			if (customerOrder) {
 				// console.log("CREATED",sellerOrders);
