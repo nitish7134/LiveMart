@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Image, View, StyleSheet, Text, ScrollView, Button, Dimensions } from 'react-native';
 import { Left, Right, Container, H1, ListItem } from 'native-base';
+
+//review
+import { Rating, AirbnbRating } from 'react-native-ratings';
+
 import Toast from 'react-native-toast-message';
 import EasyButton from '../../Shared/StyledComponents/EasyButton'
 import TrafficLight from '../../Shared/StyledComponents/TrafficLight'
@@ -112,6 +116,13 @@ const SingleProduct = (props) => {
                         )
                     })}
                 </View>
+                
+
+                <Rating
+                showRating
+                onFinishRating={this.ratingCompleted}
+                style={{ paddingVertical: 10 }}
+                />
 
 
 
