@@ -38,7 +38,7 @@ router.post(
 	cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
-		console.log(req.body);
+		console.log(JSON.stringify(req.body));
 		try {
 			const item = {
 				Item: req.body.Item,

@@ -23,8 +23,9 @@ router.get(
 	cors.corsWithOptions,
 	authenticate.verifyUser,
 	function (req, res, next) {
-		CustomerOrders.find({ Customer: mongoose.Schema.ObjectId(req.user._id) }).then(
+		CustomerOrders.find({ Customer: req.user._id }).populate({ path: "Order", populate: { path: "Items", populate: { path: "Item", model: 'Items' } } }).then(
 			(orders) => {
+				console.log(orders);
 				res.send(orders);
 			}
 		);
@@ -35,8 +36,9 @@ router.get(
 	cors.corsWithOptions,
 	authenticate.verifyUser,
 	function (req, res, next) {
-		SellerOrders.find({ Seller: mongoose.Schema.ObjectId(req.user._id) }).then(
+		SellerOrders.find({ Seller: req.user._id }).populate({ path: "Items", populate: { path: "Item", model: 'Items' } }).then(
 			(orders) => {
+				console.log(JSON.stringify(orders));
 				res.send(orders);
 			}
 		);
@@ -45,6 +47,7 @@ router.get(
 router.post("/",
 	cors.corsWithOptions,
 	authenticate.verifyUser, async (req, res, next) => {
+		console.log(JSON.stringify(req.body.orderItems))
 		var sellerOrders = {};
 
 		var Items = [];
@@ -52,11 +55,17 @@ router.post("/",
 			for (var j = 0; j < req.body.orderItems.Items[i].Sellers.length; j++) {
 				delete req.body.orderItems.Items[i].Sellers[j]._id
 				if (sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller]) {
+					if (sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].TotalPrice == undefined)
+						sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].TotalPrice = 0;
+
+					// console.error("\n\nError Before " + i + " : " + j, sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].TotalPrice);
+
+					sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].TotalPrice += (Number)(req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy) * req.body.orderItems.Items[i].Sellers[j].Price
+					// console.error("\n\nError After " + i + " : " + j, sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].TotalPrice);
 					sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].Items.push({
-
-						item: req.body.orderItems.Items[i]._id,
+						Item: req.body.orderItems.Items[i].Item.id,
+						Price:req.body.orderItems.Items[i].Sellers[j].Price,
 						QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
-
 					})
 				}
 				else {
@@ -64,23 +73,20 @@ router.post("/",
 						Seller: req.body.orderItems.Items[i].Sellers[j].Seller,
 						Customer: req.body._id,
 						orderType: req.body.OrderType,
-						Address: {
-							shippingAddress1: req.body.shippingAddress1,
-							shippingAddress2: req.body.shippingAddress2,
-							city: req.body.city,
-							zip: req.body.city,
-							country: req.body.country,
-						},
+						Address: req.body.address,
 						phoneNo: req.body.phone,
+						TotalPrice: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy * req.body.orderItems.Items[i].Sellers[j].Price,
 						Items: [{
-							item: req.body.orderItems.Items[i]._id,
+							Item: req.body.orderItems.Items[i].Item.id,
+							Price:req.body.orderItems.Items[i].Sellers[j].Price,
 							QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
 						}],
 					};
 				}
 			}
+			console.log("seller Orders", JSON.stringify(sellerOrders));
 			var item = {
-				Item: req.body.orderItems.Items[i]._id,
+				Item: req.body.orderItems.Items[i].Item.id,
 				Sellers: req.body.orderItems.Items[i].Sellers
 			}
 			Items.push(item);
@@ -92,13 +98,7 @@ router.post("/",
 				Items: Items,
 				statusCode: 0,
 				orderType: req.body.orderType, //0 for online 1 for offline
-				Address: {
-					shippingAddress1: req.body.shippingAddress1,
-					shippingAddress2: req.body.shippingAddress2,
-					city: req.body.city,
-					zip: req.body.zip,
-					country: req.body.country,
-				},
+				Address: req.body.address,
 				phone: req.body.phone
 			}
 		}).then((customerOrder) => {
@@ -109,11 +109,15 @@ router.post("/",
 				Object.keys(sellerOrders).forEach(key => {
 					console.log(sellerOrders[key] + " : " + key);
 					console.log(JSON.stringify(sellerOrders[key]))
+					sellerOrders[key].orderID = customerOrder._id
 					SellerOrders.create(sellerOrders[key]).then(order => {
 						console.log("CREATED " + order);
 					}).catch(err => next(err))
 				});
-				return res.sendStatus(200);
+				Cart.findOneAndDelete({ CustomerID: req.user._id }).then(() => {
+					return res.sendStatus(200);
+
+				}, err => next(err)).catch(err => next(err))
 
 			}
 		}).catch((err) => {

@@ -4,12 +4,21 @@ var Schema = mongoose.Schema;
 var Feedback = new Schema({
     AddressedToID: mongoose.Schema.ObjectId,
     AddressedFromID: mongoose.Schema.ObjectId,
-    ItemID:mongoose.Schema.ObjectId,
+    AddressedFromName: String,
+    ItemID: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Items",
+        required: true,
+    },
     Query: {
         type: String,
         required: true
     },
-    Reply: String
+    Reply: String,
+    Replied: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamp: true
 });

@@ -10,6 +10,7 @@ import CartIcon from "../Shared/CartIcon";
 
 import AuthGlobal from "../Context/store/AuthGlobal";
 import { useEffect } from "react/cjs/react.development";
+import ProfileNavigator from "./ProfileNavigator";
 const MyStack = (props) => {
   const context = useContext(AuthGlobal);
   const Tab = createBottomTabNavigator();
@@ -58,7 +59,7 @@ const MyStack = (props) => {
       />
       <Tab.Screen
         name="User Profile"
-        component={UserProfile}
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color }) => (
             <Image source={require("../assets/UserIcon.png")} />

@@ -6,7 +6,8 @@ import Input from '../../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AuthGlobal from "../../../Context/store/AuthGlobal"
 import Geocoder from 'react-native-geocoding'
-import Geolocation from 'react-native-community/geolocation'
+// import Geolocation from 'react-native-community/geolocation'
+import getLocation from '../../../Shared/getLocation'
 import { connect } from 'react-redux'
 
 var { width } = Dimensions.get('window');
@@ -16,7 +17,7 @@ const countries = require("../../../assets/countries.json");
 const Checkout = (props) => {
     const context = useContext(AuthGlobal)
 
-    const [flatno, setFlatAdd] = useState();
+    const [flatno, setFlatAdd] = useState("");
     const [orderItems, setOrderItems] = useState();
     const [address, setAddress] = useState();
     const [address2, setAddress2] = useState();
@@ -24,7 +25,6 @@ const Checkout = (props) => {
     const [phone, setPhone] = useState();
     const [country, setCountry] = useState();
     const [user, setUser] = useState();
-    const [formattedAddress, setFormatted] = useState();
 
 
     useEffect(() => {
@@ -41,34 +41,32 @@ const Checkout = (props) => {
             });
         }
 
-        let lat,long;
-
-        Geolocation.getCurrentLocation(info => {
-            lat = info.latitude;
-            long = info.longitude;
-        });
-        
-        let Address1, Address2;
-        Geocoder.init(AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU);
-        Geocoder.from(lat, long)
-            .then(json => {
-                json.results[0].address_components.forEach((value, index) => {
-                    if(index <3)
-                        Address1 += value.long_name;
-                    else 
-                        Address2 += value.long_name;
+        let lat, long;
+        getLocation().then(data => {
+            lat = data.latitude
+            long = data.longitude
+            let Address1 = "", Address2 = "";
+            Geocoder.init("AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU");
+            console.log("Requesting......");
+            Geocoder.from(lat, long)
+                .then(json => {
+                    json.results[0].address_components.forEach((value, index) => {
+                        if (value && value != undefined && value != 'undefined') {
+                            if (index < 3)
+                                Address1 += value.long_name + (index != 2 ? ", " : "");
+                            else if(index<9)
+                                Address2 += ", " + value.long_name;
+                        }
                         // setAddress(json.results[0].formatted_address);
-                })
+                    })
+                    setZip(json.results[0].address_components[9].long_name)
+                    setAddress(Address1);
+                    setAddress2(Address2);
+                }).catch((err) => {
+                    console.log(err);
+                });
+        });
 
-                setFormatted(json.results[0].address_components.formatted_address);
-
-                setAddress(Address1);
-                setAddress2(Address2);
-                setZip(json.results[0].address_components[json.results[0].address_components.length - 1].long_name);
-                setCountry(json.results[0].address_components[json.results[0].address_components.length - 2].long_name);
-            }).catch((err) => {
-                console.log(err);
-            });
 
         return () => {
             setOrderItems();
@@ -80,7 +78,7 @@ const Checkout = (props) => {
             dateOrdered: Date.now(),
             orderItems,
             phone,
-            address: formattedAddress,
+            address: flatno + " " + address + " " + address2 + " " + zip,
             status: "3",
             user,
         }
@@ -136,27 +134,7 @@ const Checkout = (props) => {
                         keyboardType={"numeric"}
                         onChangeText={(text) => setZip(text)}
                     />
-                    <Item picker>
-                        <Picker
-                            mode="dropdown"
-                            iosIcon={<Ionicons name="arrow-down" color={"#007aff"} />}
-                            style={{ width: undefined }}
-                            selectedValue={country}
-                            placeholder="Select your country"
-                            placeholderStyle={{ color: '#007aff' }}
-                            placeholderIconColor="#007aff"
-                            onValueChange={(e) => setCountry(e)}
-                        >
-                            {countries.map((c) => {
-                                return <Picker.Item
-                                    key={c.code}
-                                    label={c.name}
-                                    value={c.name}
-                                />
-                            })}
-                        </Picker>
-                    </Item>
-                    <View style={{ width: '80%', alignItems: "center" }}>
+                    <View style={{ width: '80%', marginTop: 10, alignItems: "center" }}>
                         <Button title="Confirm" onPress={() => checkOut()} />
                     </View>
                 </FormContainer>

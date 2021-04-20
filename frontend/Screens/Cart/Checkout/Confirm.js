@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Dimensions, ScrollView, Button } from "react-native";
-import { AsyncStorage} from 'react-native-community/async-storage'
+import AsyncStorage from "@react-native-community/async-storage";
 import { Text, Left, Right, ListItem, Thumbnail, Body, Card, CardItem } from "native-base";
 import { connect } from "react-redux";
 import * as actions from "../../../Redux/Actions/cartActions";
@@ -44,7 +44,6 @@ const Confirm = (props) => {
         });
     });
   };
-  console.log("props.route.params:", props.route.params)
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
@@ -53,11 +52,7 @@ const Confirm = (props) => {
           <View style={{ borderWidth: 1, borderColor: "orange" }}>
             <Text style={styles.title}>Shipping to:</Text>
             <View style={{ padding: 8 }}>
-              <Text>Address: {props.route.params.order.order.shippingAddress1}</Text>
-              <Text>Address2: {props.route.params.order.order.shippingAddress2}</Text>
-              <Text>City: {props.route.params.order.order.city}</Text>
-              <Text>Zip Code: {props.route.params.order.order.zip}</Text>
-              <Text>Country: {props.route.params.order.order.country}</Text>
+              <Text>Address: {props.route.params.order.order.address}</Text>
               <Text>Order Mode: {props.route.params.order.order.orderType}</Text>
             </View>
             <Text style={styles.title}>Items:</Text>

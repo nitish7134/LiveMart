@@ -29,6 +29,7 @@ const Orders = (props) => {
       })
       .then((x) => {
         setOrderList(x.data);
+        console.log("OrdersReceived: ", JSON.stringify(x.data))
       })
       .catch((error) => console.log(error));
   };
@@ -38,7 +39,7 @@ const Orders = (props) => {
       <FlatList
         data={orderList}
         renderItem={({ item }) => (
-          <OrderCard navigation={props.navigation} {...item} editMode={true} />
+          <OrderCard navigation={props.navigation} Order={item} editMode={true} />
         )}
         keyExtractor={(item) => item.id}
       />

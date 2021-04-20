@@ -9,7 +9,7 @@ import {
   Button,
 } from "react-native";
 import { Header, Item, Input } from "native-base";
-import {Ionicons,FontAwesome} from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { useFocusEffect } from "@react-navigation/native";
 import ListItem from "./ListItem";
 
@@ -114,6 +114,8 @@ const Products = (props) => {
           <FontAwesome name="plus" size={18} color="white" />
           <Text style={styles.buttonText}>Products</Text>
         </EasyButton>
+      </View>
+      <View style={styles.buttonContainer}>
         <EasyButton
           secondary
           medium
@@ -122,11 +124,19 @@ const Products = (props) => {
           <FontAwesome name="plus" size={18} color="white" />
           <Text style={styles.buttonText}>Categories</Text>
         </EasyButton>
+        <EasyButton
+          secondary
+          medium
+          onPress={() => props.navigation.navigate("Feedback")}
+        >
+          <FontAwesome name="plus" size={18} color="white" />
+          <Text style={styles.buttonText}>Feedbacks</Text>
+        </EasyButton>
       </View>
       <View>
         <Header searchBar rounded>
           <Item style={{ padding: 5 }}>
-          <Ionicons name="ios-search" />
+            <Ionicons name="ios-search" />
             <Input
               placeholder="Search"
               onChangeText={(text) => searchProduct(text)}
@@ -178,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   buttonContainer: {
-    margin: 20,
+    marginTop: 10,
     alignSelf: "center",
     flexDirection: "row",
   },

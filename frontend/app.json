@@ -27,7 +27,7 @@
       "package": "com.nitish7134.LiveMart"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/Logo.png"
     }
   }
 }

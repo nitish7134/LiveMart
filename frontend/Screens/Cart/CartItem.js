@@ -22,9 +22,6 @@ const CartItem = (props) => {
 						<Text style={{ fontWeight: "bold" }}>   {data.Item.Name}</Text>
 					</CardItem>
 
-					{/* <CardItem header>	
-						</CardItem> */
-					}
 					{data.Sellers.map((x) => {
 						return (
 							<>
@@ -37,6 +34,7 @@ const CartItem = (props) => {
 									<Left>
 										<Text>{x.Name}</Text>
 									</Left>
+									
 									<Right>
 										<Text> ₹ {x.Price} X {x.Quantity_to_buy} </Text>
 									</Right>

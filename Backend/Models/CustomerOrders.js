@@ -14,28 +14,14 @@ var CustomerOrder = new Schema({
                 Name: String,
             }]
         }],
-        statusCode: Number,
-        orderType: String, 
+        statusCode: {
+            type: Number,
+            default: 0
+        },
+        orderType: String,
         Address: {
-            shippingAddress1: {
-                type: String,
-                required: true,
-            },
-            shippingAddress2: {
-                type: String,
-            },
-            city: {
-                type: String,
-                required: true,
-            },
-            zip: {
-                type: String,
-                required: true,
-            },
-            country: {
-                type: String,
-                required: true,
-            }
+            type: String,
+            required: true
         },
         ExpectedDelivery: Date,
         phone: String
