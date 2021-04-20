@@ -13,7 +13,6 @@ var { width } = Dimensions.get('window');
 
 const countries = require("../../../assets/countries.json");
 
-
 const Checkout = (props) => {
     const context = useContext(AuthGlobal)
 
@@ -25,6 +24,9 @@ const Checkout = (props) => {
     const [phone, setPhone] = useState();
     const [country, setCountry] = useState();
     const [user, setUser] = useState();
+    const [formattedAddress, setFormatted] = useState();
+
+
     useEffect(() => {
         setOrderItems(props.cartItems)
         if (context.stateUser.isAuthenticated) {
@@ -58,6 +60,8 @@ const Checkout = (props) => {
                         // setAddress(json.results[0].formatted_address);
                 })
 
+                setFormatted(json.results[0].address_components.formatted_address);
+
                 setAddress(Address1);
                 setAddress2(Address2);
                 setZip(json.results[0].address_components[json.results[0].address_components.length - 1].long_name);
@@ -76,7 +80,7 @@ const Checkout = (props) => {
             dateOrdered: Date.now(),
             orderItems,
             phone,
-            address: address,
+            address: formattedAddress,
             status: "3",
             user,
         }

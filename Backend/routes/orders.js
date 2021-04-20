@@ -46,9 +46,6 @@ router.post("/",
 	cors.corsWithOptions,
 	authenticate.verifyUser, async (req, res, next) => {
 		var sellerOrders = {};
-		/* console.log("***********")
-		console.log(JSON.stringify(req.body));
-		console.log("***********") */
 
 		var Items = [];
 		for (var i = 0; i < req.body.orderItems.Items.length; i++) {
@@ -61,7 +58,8 @@ router.post("/",
 						QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
 
 					})
-				} else
+				}
+				else {
 					sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller] = {
 						Seller: req.body.orderItems.Items[i].Sellers[j].Seller,
 						Customer: req.body._id,
@@ -79,6 +77,7 @@ router.post("/",
 							QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
 						}],
 					};
+				}
 			}
 			var item = {
 				Item: req.body.orderItems.Items[i]._id,

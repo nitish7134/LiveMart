@@ -1,5 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, ScrollView, Button, AsyncStorage } from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView, Button } from "react-native";
+import { AsyncStorage} from 'react-native-community/async-storage'
 import { Text, Left, Right, ListItem, Thumbnail, Body, Card, CardItem } from "native-base";
 import { connect } from "react-redux";
 import * as actions from "../../../Redux/Actions/cartActions";
@@ -19,8 +20,8 @@ const Confirm = (props) => {
         .post(`${baseURL}orders`, order, {
           headers: { Authorization: `Bearer ${res}` },
         })
-        .then((res) => {
-          if (res.status == 200 || res.status == 201) {
+        .then((response) => {
+          if (response.status == 200 || response.status == 201) {
             Toast.show({
               topOffset: 60,
               type: "success",
