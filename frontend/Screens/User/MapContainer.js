@@ -19,7 +19,7 @@ class MapContainer extends React.Component {
 
     componentDidMount() {
         this.getInitialState();
-       /*  Geocoder.init(config.apiKey);
+        Geocoder.init(AIzaSyCSJg197HNnhk43JQCdkan - AXbtojffOnU);
         Geocoder.from(this.state.region.latitude, this.state.region.longitude)
         .then(json => {
             json.results[0].address_components.forEach((value,index) => {
@@ -29,7 +29,7 @@ class MapContainer extends React.Component {
             })
         }).catch((err) => {
             console.log(err);
-        }); */
+        });
     }
 
     getInitialState() {
