@@ -1,8 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Image, View, StyleSheet, Text, ScrollView, Button, Dimensions } from 'react-native';
+import React, { useState, useEffect, useContext, Component } from 'react'
+import { Image, View, StyleSheet, Text, ScrollView, Dimensions } from 'react-native';
 import { Left, Right, Container, H1, ListItem } from 'native-base';
+import { Header, Content, Item } from 'native-base';
+
+
+//review
+import { Rating, AirbnbRating } from 'react-native-ratings';
+import Input from "../../Shared/Form/Input";
+import EasyButton from "../../Shared/StyledComponents/EasyButton";
+
 import Toast from 'react-native-toast-message';
-import EasyButton from '../../Shared/StyledComponents/EasyButton'
 import TrafficLight from '../../Shared/StyledComponents/TrafficLight'
 import { TextInput } from 'react-native-paper';
 import { connect } from 'react-redux';
@@ -16,6 +23,8 @@ const SingleProduct = (props) => {
     const context = useContext(AuthGlobal);
 
     const [item, setItem] = useState(props.route.params.item);
+    const [rating, setRating] = useState(props.route.params.item.rating / props.route.params.item.numReviews);
+    const [review, setReview] = useState("");
     const [availability, setAvailability] = useState(null);
     const [availabilityText, setAvailabilityText] = useState("")
 
@@ -36,7 +45,28 @@ const SingleProduct = (props) => {
             setAvailabilityText("");
         }
     }, [])
-
+    const handleSendReview = () => {
+        axios.post(baseURL + 'cart',
+            {
+                Rating: rating,
+                Review: review
+            }, {
+            headers: {
+                authorization: `Bearer ` + context.stateUser.token,
+            },
+        }).then(() => {
+            Toast.show({
+                topOffset: 60,
+                type: "success",
+                text1: `Reveiw Posted`,
+                text2: ""
+            })
+        });
+    }
+    const ratingCompleted = (rating) => {
+        console.log(rating);
+        setRating(rating)
+    }
     return (
         <Container style={styles.container}>
             <ScrollView style={{ padding: 5 }}>
@@ -61,9 +91,32 @@ const SingleProduct = (props) => {
                         </Text>
                         {availability}
                     </View>
-                    <Text>{item.description}</Text>
+                    {item.description != 'undefined' ? (<Text note>{item.description}</Text>
+                    ) : null}
                 </View>
+                <View style={styles.availabilityContainer}>
 
+                    <Rating
+                        showRating
+                        ratingCount={5}
+                        defaultRating={rating}
+                        onFinishRating={ratingCompleted}
+                        style={{ paddingVertical: 10 }}
+                    />
+                </View>
+                <View style={styles.availabilityContainer}>
+
+                    <Input placeholder='Review'
+                        onChangeText={(text) => setReview(text)}
+                        name={"review"}
+                        id={"review"}
+                    />
+                </View>
+                <View style={styles.availabilityContainer}>
+                    <EasyButton primary style={{ innerHeight: 5 }} onPress={() => handleSendReview()}>
+                        <Text style={{ color: "black" }}>Submit Reveiw</Text>
+                    </EasyButton>
+                </View>
                 <View /*style={styles.item} */>
                     {item.Sellers.map((x) => {
                         return (
@@ -71,47 +124,50 @@ const SingleProduct = (props) => {
                                 <Text style={styles.Name}>{x.SellerName}</Text>
                                 <Text style={styles.price}>₹ {x.Price}</Text>
                                 {(!props.route.params.admin) ? (
-                                          <EasyButton
-                                          primary
-                                          medium
-                                          onPress={() => {
-                                              axios.post(baseURL + 'cart',
-                                                  {
-                                                      Item: item.id,
-                                                      seller: { Quantity_to_buy: 1, seller: x._id, price: x.Price, Name: x.SellerName }
-                                                  }, {
-                                                  headers: {
-                                                      authorization: `Bearer ` + context.stateUser.token,
-                                                  },
-                                              }).then(() => {
-                                                  axios.get(baseURL + 'cart',
-                                                      {
-                                                      headers: {
-                                                          authorization: `Bearer ` + context.stateUser.token,
-                                                      }
-                                                  }).then(res => {
-                                                      console.log(res.data)
-                                                      props.addItemToCart(res.data);
-                                                      Toast.show({
-                                                          topOffset: 60,
-                                                          type: "success",
-                                                          text1: `${item.Name} added to Cart`,
-                                                          text2: "Go to your cart to complete order"
-                                                      })
-                                                  }).catch((error) => alert(error));
-      
-                                              })
-                                          }}
-                                      >
-                                          <Text style={{ color: 'white' }}>Add</Text>
-                                      </EasyButton>
-      
-                                ) : null }
-                          
+                                    <EasyButton
+                                        primary
+                                        medium
+                                        onPress={() => {
+                                            axios.post(baseURL + 'cart',
+                                                {
+                                                    Item: item.id,
+                                                    seller: { Quantity_to_buy: 1, seller: x._id, price: x.Price, Name: x.SellerName }
+                                                }, {
+                                                headers: {
+                                                    authorization: `Bearer ` + context.stateUser.token,
+                                                },
+                                            }).then(() => {
+                                                axios.get(baseURL + 'cart',
+                                                    {
+                                                        headers: {
+                                                            authorization: `Bearer ` + context.stateUser.token,
+                                                        }
+                                                    }).then(res => {
+                                                        console.log(res.data)
+                                                        props.addItemToCart(res.data);
+                                                        Toast.show({
+                                                            topOffset: 60,
+                                                            type: "success",
+                                                            text1: `${item.Name} added to Cart`,
+                                                            text2: "Go to your cart to complete order"
+                                                        })
+                                                    }).catch((error) => alert(error));
+
+                                            })
+                                        }}
+                                    >
+                                        <Text style={{ color: 'white' }}>Add</Text>
+                                    </EasyButton>
+
+                                ) : null}
+
                             </ListItem>
                         )
                     })}
                 </View>
+
+
+
 
 
 
@@ -173,6 +229,10 @@ const styles = StyleSheet.create({
     },
     availability: {
         flexDirection: 'row',
+    },
+    Button: {
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 

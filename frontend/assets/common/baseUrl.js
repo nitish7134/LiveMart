@@ -1,7 +1,8 @@
 import { Platform } from 'react-native'
 
 
-let baseURL = /* "http://18.216.67.251:3000/"// */'http://192.168.0.8:3000/';
+let baseURL = /* "http://18.216.67.251:3000/"// */'http://192.168.1.83:3000/'  
+// let baseURL = 'http://192.168.0.107:3000/';
 /* 
 {Platform.OS == 'android'
 ? baseURL =  'https://192.168.1.83:3443/' 

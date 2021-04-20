@@ -83,7 +83,7 @@ const Register = (props) => {
 						topOffset: 60,
 						type: "success",
 						text1: "Registration Succeeded",
-						text2: "Please Login into your account",
+						text2: "Verify Otp",
 					});
 					askForOtp(token);
 					setTimeout(() => {

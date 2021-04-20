@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -24,8 +24,11 @@ const PostSignup = (props) => {
   const [selectedRole, setSelectedRole] = useState("Customer");
   const [error, setError] = useState("--");
   const [token, setToken] = useState("");
+  const isMountedVal = useRef(1);
+
   useFocusEffect(
     React.useCallback(() => {
+      isMountedVal.current = 1;
       if (
         context.stateUser.isAuthenticated === false ||
         context.stateUser.isAuthenticated === null
@@ -38,6 +41,11 @@ const PostSignup = (props) => {
       }
       setUserProfile(context.stateUser.userProfile);
       setToken(context.stateUser.token);
+      return (() => {
+        isMountedVal.current = 0;
+        /* setToken();
+        setUserProfile(); */
+      })
     }, [context.stateUser.isAuthenticated])
   );
   function validatePhoneNumber(phoneno) {
@@ -87,7 +95,7 @@ const PostSignup = (props) => {
       }
     }
   };
-  if (userProfile.phoneNo && userProfile.role && userProfile.password == "true")
+  if (userProfile && userProfile.phoneNo && userProfile.role && userProfile.password == "true")
     // props.navigation.navigate("Home");
     props.navigation.reset({
       index: 0,

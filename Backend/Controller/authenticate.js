@@ -51,11 +51,10 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
 
 exports.verifyUser = //passport.authenticate('jwt', { session: false });
         /* function */ (req, res, next) => {
-        console.log("REQUEST");
 
         let { authorization } = req.headers;
         if (!authorization) {
-            console.log("NO AUTHORIZATION",req.headers);
+            console.log("NO AUTH",req.headers)
             return res.status(401).send({ error: "you must be logged in" })
         }
         // const token = authorization.replace("Bearer ", "");

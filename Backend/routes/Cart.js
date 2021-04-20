@@ -3,6 +3,7 @@ const router = express.Router();
 const cors = require("./cors");
 const authenticate = require("./../Controller/authenticate");
 const Cart = require("../Models/Cart");
+
 var mongoose = require('mongoose');
 router.use(express.json());
 router.use(
@@ -22,7 +23,7 @@ router.get(
 	authenticate.verifyUser,
 	(req, res, next) => {
 		try {
-			Cart.findOne({ CustomerID: mongoose.Types.ObjectId(req.user._id) }).populate({ path: "Items",populate:{path: "Item", model: 'Items'} }
+			Cart.findOne({ CustomerID: req.user._id }).populate({ path: "Items", populate: { path: "Item", model: 'Items' } }
 			).then((cart) => {
 				console.log("After Populating", cart);
 				res.status(200).send(cart);
@@ -40,16 +41,16 @@ router.post(
 		console.log(req.body);
 		try {
 			const item = {
-				Item: mongoose.Types.ObjectId(req.body.Item),
+				Item: req.body.Item,
 				Sellers: [],
 			}
 			const seller = {
-				Seller: mongoose.Types.ObjectId(req.body.seller.seller),
-				Price:req.body.seller.price,
-				Name:req.body.seller.Name	
+				Seller: req.body.seller.seller,
+				Price: req.body.seller.price,
+				Name: req.body.seller.Name
 				// Quantity_to_buy:req.body.seller.Quantity_to_buy
 			}
-			Cart.findOne({ CustomerID: mongoose.Types.ObjectId(req.user._id) }).then(cart => {
+			Cart.findOne({ CustomerID: req.user._id }).then(cart => {
 				var NOTADDED = true;
 				var NOTADDED2 = true;
 				if (cart) {
@@ -91,7 +92,7 @@ router.post(
 				} else {
 					console.log("CREATOMG");
 					Cart.create({
-						CustomerID: mongoose.Types.ObjectId(req.user._id),
+						CustomerID: req.user._id,
 						TotalPrice: req.body.seller.Quantity_to_buy * req.body.seller.price
 					}).then(cart => {
 						console.log(cart);
@@ -115,13 +116,38 @@ router.post(
 router.delete("/", cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
-
+		Cart.findOneAndDelete({ CustomerID: req.user._id }).then(() => { return res.sendStatus(200) })
 	});
 
-router.delete("/", cors.corsWithOptions,
+router.delete("/:itemID", cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
+		var item = req.params.itemID;
+		console.log(req.body)
+		Cart.findOne({ CustomerID: req.user._id }).populate({ path: "Items", populate: { path: "Item", model: 'Items' } }).then(cart => {
+			console.log(cart.Items[1]);
+			var flag=true;
+			for (var i = 0; i<cart.Items.length; i++) {
+				console.log(cart.Items[i]);
+				if (cart.Items[i].Item._id == item) {
+					flag=false;
+					var items= cart.Items;
+					console.log(items);
+					var deletedItem = items.splice(i, 1)[0];
+					console.log(items);
+					cart.Items = items;
+					console.log("deleted",deletedItem)
+					for(var i = 0 ;i<deletedItem.Sellers.length;i++)
+					cart.TotalPrice -= deletedItem.Sellers[i].Quantity_to_buy * deletedItem.Sellers[i].Price
+					cart.save().then(() => {
+						return res.send(cart);
+					})
+				}
+			}
+			if(flag)
+				return res.sendStatus(404);
 
+		})
 	});
 
 module.exports = router;

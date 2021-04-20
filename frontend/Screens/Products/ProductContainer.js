@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -11,6 +11,7 @@ import { Container, Header, Icon, Item, Input, Text } from "native-base";
 import { useFocusEffect } from "@react-navigation/native";
 import baseUrl from "../../assets/common/baseUrl";
 import axios from "axios";
+import { Ionicons } from '@expo/vector-icons';
 
 import ProductList from "./ProductList";
 import SearchedProduct from "./SearchedProducts";
@@ -18,6 +19,7 @@ import Banner from "../../Shared/Banner";
 import CategoryFilter from "./CategoryFilter";
 import baseURL from "../../assets/common/baseUrl";
 import AsyncStorage from "@react-native-community/async-storage";
+import { getUserProfile } from "../../Context/actions/Auth.actions";
 
 var { height } = Dimensions.get("window");
 
@@ -30,15 +32,17 @@ const ProductContainer = (props) => {
   const [active, setActive] = useState();
   const [initialState, setInitialState] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isMountedVal = useRef(1);
 
   useFocusEffect(
     useCallback(() => {
+      isMountedVal.current = 1;
+
       setFocus(false);
       setActive(-1);
 
       // Products
       AsyncStorage.getItem("jwt").then((res) => {
-        console.log("token", res);
         axios
           .get(`${baseURL}products`, {
             headers: { Authorization: `Bearer ${res}` },
@@ -60,7 +64,6 @@ const ProductContainer = (props) => {
             headers: { Authorization: `Bearer ${res}` },
           })
           .then((res) => {
-            console.log("Categories",res.data);
             setCategories(res.data);
           })
           .catch((error) => {
@@ -69,6 +72,7 @@ const ProductContainer = (props) => {
       });
 
       return () => {
+        isMountedVal.current = 0;
         setProducts([]);
         setProductsFiltered([]);
         setFocus();
@@ -82,7 +86,7 @@ const ProductContainer = (props) => {
   // Product Methods
   const searchProduct = (text) => {
     setProductsFiltered(
-      products.filter((i) => i.name.toLowerCase().includes(text.toLowerCase()))
+      products.filter((i) => i.Name.toLowerCase().includes(text.toLowerCase()))
     );
   };
 
@@ -100,11 +104,11 @@ const ProductContainer = (props) => {
       ctg === "all"
         ? [setProductsCtg(initialState), setActive(true)]
         : [
-            setProductsCtg(
-              products.filter((i) => i.category._id === ctg),
-              setActive(true)
-            ),
-          ];
+          setProductsCtg(
+            products.filter((i) => i.Category._id === ctg),
+            setActive(true)
+          ),
+        ];
     }
   };
 
@@ -113,15 +117,15 @@ const ProductContainer = (props) => {
       {loading == false ? (
         <Container>
           <Header searchBar rounded>
-            <Item>
-              <Icon name="ios-search" />
+            <Item style={{ paddingLeft: 10 }}>
+              <Ionicons name="ios-search" />
               <Input
                 placeholder="Search"
                 onFocus={openList}
                 onChangeText={(text) => searchProduct(text)}
               />
               {focus == true ? (
-                <Icon onPress={onBlur} name="ios-close" />
+                <Ionicons onPress={onBlur} name="ios-close" />
               ) : null}
             </Item>
           </Header>
@@ -151,7 +155,7 @@ const ProductContainer = (props) => {
                       return (
                         <ProductList
                           navigation={props.navigation}
-                          key={item._id}
+                          key={item.id}
                           item={item}
                         />
                       );

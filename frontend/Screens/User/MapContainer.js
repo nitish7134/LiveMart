@@ -3,7 +3,7 @@ import { View } from "react-native";
 import MapInput from './MapInput';
 import MyMapView from './MyMapView';
 import getLocation from '../../Shared/getLocation'
-
+import Geocoder from 'react-native-geocoding'
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
@@ -13,11 +13,23 @@ class MapContainer extends React.Component {
         region: {},
         location: null,
         geocode: null,
-        errorMessage: ""
+        errorMessage: "",
+        address:{}
     };
 
     componentDidMount() {
         this.getInitialState();
+       /*  Geocoder.init(config.apiKey);
+        Geocoder.from(this.state.region.latitude, this.state.region.longitude)
+        .then(json => {
+            json.results[0].address_components.forEach((value,index) => {
+                this.state.setState({
+                    address: json.results[0].formatted_address
+                })
+            })
+        }).catch((err) => {
+            console.log(err);
+        }); */
     }
 
     getInitialState() {
