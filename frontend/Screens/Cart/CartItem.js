@@ -21,20 +21,20 @@ const CartItem = (props) => {
 						/>
 						<Text style={{ fontWeight: "bold" }}>   {data.Item.Name}</Text>
 					</CardItem>
-
+					<CardItem>
+						<Left>
+							<Text>Sellers: </Text>
+						</Left>
+					</CardItem>
 					{data.Sellers.map((x) => {
 						return (
 							<>
-								<CardItem>
-									<Left>
-										<Text>Sellers: </Text>
-									</Left>
-								</CardItem>
+
 								<CardItem>
 									<Left>
 										<Text>{x.Name}</Text>
 									</Left>
-									
+
 									<Right>
 										<Text> ₹ {x.Price} X {x.Quantity_to_buy} </Text>
 									</Right>
@@ -55,14 +55,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: 'white',
 		justifyContent: 'center',
-
+		marginBottom:5
 	},
 	card: {
 		width: 0.8 * width
 	},
 	body: {
 		width: width,
-		// alignItems: 'center',
+		alignItems: 'center',
 		flexDirection: 'row'
 	}
 })

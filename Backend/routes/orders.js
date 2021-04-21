@@ -31,6 +31,23 @@ router.get(
 		);
 	}
 );
+router.put('/', cors.corsWithOptions,
+	authenticate.verifyUser,
+	function (req, res, next) {
+		console.log("*******",req.body)
+		CustomerOrders.findById(req.body.orderID).then(order => {
+			order.Order.statusCode = req.body.statusCode;
+			order.save().then(() => {
+				SellerOrders.findOne({ orderID: req.body.orderID,Seller:req.user._id }).then(sellerOrder => {
+					sellerOrder.statusCode = req.body.statusCode;
+					sellerOrder.save().then(() => {
+						return res.sendStatus(200);
+					}, err => next(err)).catch(err => next(err))
+				}, err => next(err)).catch(err => next(err))
+
+			}, err => next(err)).catch(err => next(err))
+		}, err => next(err)).catch(err => next(err))
+	});
 router.get(
 	"/seller",
 	cors.corsWithOptions,
@@ -64,7 +81,7 @@ router.post("/",
 					// console.error("\n\nError After " + i + " : " + j, sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].TotalPrice);
 					sellerOrders[req.body.orderItems.Items[i].Sellers[j].Seller].Items.push({
 						Item: req.body.orderItems.Items[i].Item.id,
-						Price:req.body.orderItems.Items[i].Sellers[j].Price,
+						Price: req.body.orderItems.Items[i].Sellers[j].Price,
 						QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
 					})
 				}
@@ -78,7 +95,7 @@ router.post("/",
 						TotalPrice: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy * req.body.orderItems.Items[i].Sellers[j].Price,
 						Items: [{
 							Item: req.body.orderItems.Items[i].Item.id,
-							Price:req.body.orderItems.Items[i].Sellers[j].Price,
+							Price: req.body.orderItems.Items[i].Sellers[j].Price,
 							QuantityBought: req.body.orderItems.Items[i].Sellers[j].Quantity_to_buy
 						}],
 					};

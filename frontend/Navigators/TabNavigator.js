@@ -28,45 +28,40 @@ const MyStack = (props) => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName={(context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer") ?  "Home" : "Admin"}
       tabBarOptions={{
         keyboardHidesTabBar: true,
         showLabel: false,
         activeTintColor: "#e91e63",
       }}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeNavigator}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Image source={require("../assets/HomeIcon.png")} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Cart"
-        component={CartNavigator}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <View>
-              <Image source={require("../assets/CartIcon.png")} />
-              <CartIcon />
+      {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Wholeasaler" ? (
+        <>
+          <Tab.Screen
+            name="Home"
+            component={HomeNavigator}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <Image source={require("../assets/HomeIcon.png")} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Cart"
+            component={CartNavigator}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <View>
+                  <Image source={require("../assets/CartIcon.png")} />
+                  <CartIcon />
 
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="User Profile"
-        component={ProfileNavigator}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Image source={require("../assets/UserIcon.png")} />
-          ),
-        }}
-      />
-      {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer" ? (
+                </View>
+              ),
+            }}
+          />
+        </>
+      ) : null}
+       {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer" ? (
         <Tab.Screen
           name="Admin"
           component={AdminNavigator}
@@ -77,9 +72,19 @@ const MyStack = (props) => {
           }}
         />
       ) : null}
+      <Tab.Screen
+        name="User Profile"
+        component={ProfileNavigator}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Image source={require("../assets/UserIcon.png")} />
+          ),
+        }}
+      />
+     
     </Tab.Navigator>
   );
 }
 export default function TabNavigator(props) {
-  return <MyStack navigation={props.navigation}/>;
+  return <MyStack navigation={props.navigation} />;
 }

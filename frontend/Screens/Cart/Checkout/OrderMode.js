@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { View, Button } from 'react-native'
 import {
+    View, Button,
     Container,
     Header,
     Content,
@@ -12,7 +12,6 @@ import {
     Body,
     Title
 } from 'native-base';
-
 const methods = [
     { name: 'Online', value: 'Online' },
     { name: 'Offline', value: 'Offline' },

@@ -19,10 +19,10 @@ passport.deserializeUser(function (id, done) {
 });
 
 exports.getToken = function (user) {
-    return jwt.sign(user, config.jwtKey, { expiresIn: 60 * 60 });
+    return jwt.sign(user, config.jwtKey, { expiresIn: 10 * 60 });
 };
 exports.getOTPToken = function (user) {
-    var token = jwt.sign(user, config.jwtOTPKey, { expiresIn: 60 * 60 });
+    var token = jwt.sign(user, config.jwtOTPKey);
     console.log("SIGNING WITH TOKEN " + token + "using " + config.jwtOTPKey);
     return token
 };

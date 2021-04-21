@@ -40,6 +40,7 @@ const Cart = (props) => {
         <Container>
           <H1 style={{ alignSelf: "center" }}>Cart</H1>
           <SwipeListView
+            style={{marginBottom:50}}
             data={props.cartItems.Items}
             renderItem={(data) => (
               <CartItem item={data} />
@@ -50,7 +51,7 @@ const Cart = (props) => {
                 <TouchableOpacity
                   style={styles.hiddenButton}
                   onPress={() => {
-                    console.log("item",data.item.Item.Name)
+                    console.log("item", data.item.Item.Name)
                     AsyncStorage.getItem("jwt").then((token) => {
                       axios.delete(baseURL + 'cart/' + data.item.Item.id,
                         {
@@ -59,7 +60,7 @@ const Cart = (props) => {
                           }
                         }
                       ).then(res => {
-                        console.log("response",res.data)
+                        console.log("response", res.data)
                         props.updateCart(res.data);
                         Toast.show({
                           topOffset: 60,
@@ -83,6 +84,7 @@ const Cart = (props) => {
             stopLeftSwipe={75}
             rightOpenValue={-75}
           />
+
           <View style={styles.bottomContainer}>
             <Left>
               <Text style={styles.price}>₹ {props.cartItems.TotalPrice}</Text>
@@ -150,7 +152,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const styles = StyleSheet.create({
   emptyContainer: {
-    height: height,
+    // height: height,
     alignItems: "center",
     justifyContent: "center",
   },

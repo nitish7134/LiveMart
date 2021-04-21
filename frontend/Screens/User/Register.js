@@ -179,7 +179,7 @@ const Register = (props) => {
 						>
 							<Picker.Item label="Customer" value="Customer" />
 							<Picker.Item label="Retailer" value="Retailer" />
-							<Picker.Item label="Wholeasaler" value="Retailer" />
+							<Picker.Item label="Wholeasaler" value="Wholeasaler" />
 							{/*  itemStyle=
               {{
                 backgroundColor: "grey",

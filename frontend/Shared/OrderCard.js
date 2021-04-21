@@ -14,19 +14,18 @@ import CartItem from "./../Screens/Cart/CartItem"
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 var { width } = Dimensions.get('window');
 const codes = [
-  { name: "pending", code: "3" },
-  { name: "shipped", code: "2" },
-  { name: "delivered", code: "1" },
+  { name: "pending", code: "0" },
+  { name: "shipped", code: "1" },
+  { name: "delivered", code: "2" },
 ];
 
 const OrderCard = (props) => {
   const [orderStatus, setOrderStatus] = useState();
   const [statusText, setStatusText] = useState();
-  const [statusChange, setStatusChange] = useState();
+  const [statusChange, setStatusChange] = useState(props.editMode ? props.Order.statusCode : props.Order.Order.statusCode);
   const [token, setToken] = useState();
   const [cardColor, setCardColor] = useState();
   const [items, setItems] = useState(props.editMode ? props.Order.Items : props.Order.Order.Items)
-  console.log("cartPROPS", JSON.stringify(props))
 
   useEffect(() => {
     if (props.editMode) {
@@ -36,7 +35,6 @@ const OrderCard = (props) => {
         })
         .catch((error) => console.log(error));
     }
-    console.log("props.order", JSON.stringify(props.Order))
     if (props.Order.statusCode == "0") {
       setOrderStatus(<TrafficLight unavailable></TrafficLight>);
       setStatusText("pending");
@@ -72,7 +70,7 @@ const OrderCard = (props) => {
     };
 
     axios
-      .put(`${baseURL}orders/${props.id}`, order, config)
+      .put(`${baseURL}orders/`, order, config)
       .then((res) => {
         if (res.status == 200 || res.status == 201) {
           Toast.show({
@@ -114,7 +112,6 @@ const OrderCard = (props) => {
             </View>
             <Text style={styles.title}>Items:</Text>
             {items.map((data) => {
-              console.log("data", data);
               return (
                 <>
                   {data ? (
@@ -142,7 +139,6 @@ const OrderCard = (props) => {
                             </CardItem>
                           ) : null}
                           {!props.editMode ? data.Sellers.map((x) => {
-                            console.log(x);
                             return (
                               <>
                                 <CardItem>
@@ -193,11 +189,11 @@ const OrderCard = (props) => {
             <Picker
               mode="dropdown"
               iosIcon={<Ionicons color={"#007aff"} name="ios-arrow-down" />}
-              style={{ width: undefined }}
+
               selectedValue={statusChange}
               placeholder="Change Status"
               placeholderIconColor={{ color: "#007aff" }}
-              onValueChange={(e) => setStatusChange(e)}
+              onValueChange={(e) => { setStatusChange(e); console.log(e + "SELECTED", statusChange); }}
             >
               {codes.map((c) => {
                 return (

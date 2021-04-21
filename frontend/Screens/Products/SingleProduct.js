@@ -123,6 +123,7 @@ const SingleProduct = (props) => {
                         return (
                             <ListItem key={x._id}>
                                 <Text style={styles.Name}>{x.SellerName}</Text>
+                                <Text Quantity> * {x.Quantity}  </Text>
                                 <Text style={styles.price}>₹ {x.Price}</Text>
                                 {(!props.route.params.admin) ? (
                                     <EasyButton

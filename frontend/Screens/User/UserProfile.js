@@ -101,8 +101,8 @@ const UserProfile = (props) => {
             <Text>Check Queries</Text>
           </EasyButton>
         </View>
-
-        <View style={styles.order}>
+        {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Wholeasaler" ?
+      (  <View style={styles.order}>
           <Text style={{ fontSize: 20 }}>My Orders</Text>
           <View>
             {orders ? (
@@ -115,7 +115,7 @@ const UserProfile = (props) => {
               </View>
             )}
           </View>
-        </View>
+        </View>):null}
       </ScrollView>
     </Container>
   );

@@ -152,66 +152,56 @@ router.post(
 	}
 );
 
-router.post(
-	"/:ItemID",
-	cors.corsWithOptions,
-	authenticate.verifyUser,
-	(req, res, next) => {
-		try {
-			Item.findById(req.params.ItemID).then((item) => {
-				if ((req.user.role == "Retailer" ? 0 : 1) == item.seller)
-					return res.statusCode(401);
-				var seller = {
-					Price: Number(req.body.item.price),
-					Quantity: Number(req.body.item.Quantity),
-					Name: req.user.Name,
-					Seller: req.user._id,
-				};
-				if (item.price > req.body.item.price)
-					item.price = req.body.item.price
-				item.Sellers.push(seller);
-				item.save();
-				res.statusCode = 200;
-				res.setHeader("Content-Type", "application/json");
-				res.json({ message: "Item Created" });
-			});
-		} catch (err) {
-			console.log(err);
-			next(err);
-		}
-	}
-);
 
-router.post("/update/:ItemID", cors.corsWithOptions,
+
+router.post("/update", cors.corsWithOptions,
 	authenticate.verifyUser,
 	uploadOptions.single("image"), (req, res, next) => {
 		console.log(req.body);
 
-		const file = req.file;
-		if (file) {
-			const fileName = file.filename;
-			const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
-		}
-		Item.findById(req.params.ItemID).then((item) => {
+
+		Items.findById(req.body.itemID).then((item) => {
+			console.log(item)
+			if ((req.user.role == "Retailer" ? 0 : 1) != item.Seller) {
+				return res.sendStatus(401);
+			}
 			item.brand = req.body.brand;
 			item.Name = req.body.name;
 			item.description = req.body.description;
-			rating = req.body.rating;
-			item.numReviews = req.body.numReviews
 			item.isFeatured = req.body.isFeatured
-			item.price = req.body.price
+			if (item.price > req.body.price)
+				item.price = req.body.price
 			item.Seller = req.user.role == "Retailer" ? 0 : 1
 			item.Category = req.body.category
-			if (file)
+			const file = req.file;
+			if (file) {
+				const fileName = file.filename;
+				const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
 				item.image = `${basePath}${fileName}`
+			}
+			let flag = true;
 			for (var i = 0; i < item.Sellers.length; i++) {
-				if (item.Sellers[i]._id == req.user._id) {
+				if (item.Sellers[i].Seller.toString() == req.user._id.toString() && flag) {
+					flag = false;
 					item.TotalQuantity += req.body.countInStock - item.Sellers[i].Quantity;
-					item.Price = req.body.price;
-					item.Quantity = req.body.countInStock
-					item.save();
-					return res.sendStatus(200);
-				}
+					item.Sellers[i].Price = req.body.price;
+					item.Sellers[i].Quantity = req.body.countInStock
+					item.save().then(() => {
+						return res.sendStatus(200)
+					}, err => next(err)).catch(err => next(err))
+
+				} else
+					console.log(req.user._id.toString() + "  :  " + item.Sellers[i].Seller.toString(), item.Sellers[i].Seller.toString() == req.user._id.toString());
+			}
+			if (flag) {
+				item.Sellers.push({
+					Price: req.body.price, Quantity: req.body.countInStock,
+					SellerName: req.user.Name,
+					Seller: req.user._id,
+				})
+				item.save().then(() => {
+					return res.sendStatus(200)
+				}, err => next(err)).catch(err => next(err))
 			}
 		}, err => next(err))
 			.catch(err => next(err))
