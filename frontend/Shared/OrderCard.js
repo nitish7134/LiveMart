@@ -12,7 +12,7 @@ import axios from "axios";
 import baseURL from "../assets/common/baseUrl";
 import CartItem from "./../Screens/Cart/CartItem"
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-const [width] = Dimensions.get("window")
+var { width } = Dimensions.get('window');
 const codes = [
   { name: "pending", code: "3" },
   { name: "shipped", code: "2" },
@@ -57,9 +57,7 @@ const OrderCard = (props) => {
       setCardColor();
     };
   }, []);
-  const handleSubmit = () => {
-    console.log("FEEDBACK?")
-  }
+
   const updateOrder = () => {
     const config = {
       headers: {
