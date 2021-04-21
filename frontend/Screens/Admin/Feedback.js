@@ -11,7 +11,7 @@ import { Picker } from "@react-native-community/picker";
 import AsyncStorage from "@react-native-community/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { getUserProfile } from "../../Context/actions/Auth.actions";
-import FeedbackItem  from "./FeedbackItem";
+import FeedbackItem from "./FeedbackItem";
 
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
@@ -50,7 +50,7 @@ const Feedback = () => {
             extraHeight={200}
             enableOnAndroid={true}
         >
-            <View>
+            <View style={styles.container}>
                 {
                     (feedbacks && feedbacks.length) ?
                         feedbacks.map((x) => {
@@ -66,13 +66,9 @@ const Feedback = () => {
 };
 
 const styles = StyleSheet.create({
-    buttonGroup: {
-        width: "80%",
+    container: {
+        flex: 1,
         alignItems: "center",
-    },
-    middleText: {
-        marginBottom: 20,
-        alignSelf: "center",
     },
 });
 

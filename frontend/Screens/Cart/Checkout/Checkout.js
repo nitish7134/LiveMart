@@ -12,21 +12,16 @@ import { connect } from 'react-redux'
 
 var { width } = Dimensions.get('window');
 
-const countries = require("../../../assets/countries.json");
-
 const Checkout = (props) => {
     const context = useContext(AuthGlobal)
 
     const [flatno, setFlatAdd] = useState("");
     const [orderItems, setOrderItems] = useState();
-    const [address, setAddress] = useState();
-    const [address2, setAddress2] = useState();
-    const [zip, setZip] = useState();
-    const [phone, setPhone] = useState();
-    const [country, setCountry] = useState();
+    const [address, setAddress] = useState("");
+    const [address2, setAddress2] = useState("");
+    const [zip, setZip] = useState("");
+    const [phone, setPhone] = useState("");
     const [user, setUser] = useState();
-
-
     useEffect(() => {
         setOrderItems(props.cartItems)
         if (context.stateUser.isAuthenticated) {
@@ -78,7 +73,7 @@ const Checkout = (props) => {
             dateOrdered: Date.now(),
             orderItems,
             phone,
-            address: flatno + " " + address + " " + address2 + " " + zip,
+            address: flatno + ", " + address + " " + address2 + " " + zip,
             status: "3",
             user,
         }

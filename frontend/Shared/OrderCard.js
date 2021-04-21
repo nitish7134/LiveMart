@@ -25,7 +25,7 @@ const OrderCard = (props) => {
   const [statusChange, setStatusChange] = useState();
   const [token, setToken] = useState();
   const [cardColor, setCardColor] = useState();
-  const [items,setItems] = useState(props.editMode ? props.Order.Items : props.Order.Order.Items)
+  const [items, setItems] = useState(props.editMode ? props.Order.Items : props.Order.Order.Items)
   console.log("cartPROPS", JSON.stringify(props))
 
   useEffect(() => {
@@ -66,18 +66,9 @@ const OrderCard = (props) => {
     };
 
     const order = {
-      city: props.city,
-      country: props.country,
-      dateOrdered: props.dateOrdered,
-      id: props.id,
-      orderItems: props.OrderItems,
-      phone: props.phone,
-      shippingAddress1: props.shippingAddress1,
-      shippingAddress2: props.shippingAddress2,
-      status: statusChange,
-      totalPrice: props.totalPrice,
-      user: props.user,
-      zip: props.zip,
+      orderID: props.Order.orderID,
+      statusCode: statusChange,
+
     };
 
     axios
@@ -107,8 +98,7 @@ const OrderCard = (props) => {
 
   return (
     <View style={[{ backgroundColor: cardColor }, styles.container]}>
-      <View style={styles.container}>
-
+      <View>
         <Text>Order Number: #{props.editMode ? props.Order.orderID : props.Order._id}</Text>
       </View>
       <View style={{ marginTop: 10 }}>
@@ -168,7 +158,7 @@ const OrderCard = (props) => {
                                   </Right>
                                 </CardItem>
                               </>)
-                          }) : <Text> ₹ {data.Price} X {data.QuantityBought} </Text>
+                          }) : (<CardItem><Left><Text>₹ {data.Price} X {data.QuantityBought}</Text></Left><Right><Text>₹ {data.Price * data.QuantityBought}</Text></Right></CardItem>)
                           }
                           {/*       <CardItem>
                             <Left>
@@ -193,12 +183,13 @@ const OrderCard = (props) => {
           </View>
         ) : null}
         <Text>Date Ordered: {props.Order.createdAt.split("T")[0]}</Text>
-        <View style={styles.priceContainer}>
-          <Text>Price: </Text>
-          <Text style={styles.Price}>₹ {props.Order.TotalPrice}</Text>
-        </View>
+
         {props.editMode ? (
           <View>
+            <View style={styles.priceContainer}>
+              <Text>Price: </Text>
+              <Text style={styles.Price}>₹ {props.Order.TotalPrice}</Text>
+            </View>
             <Picker
               mode="dropdown"
               iosIcon={<Ionicons color={"#007aff"} name="ios-arrow-down" />}
@@ -218,7 +209,10 @@ const OrderCard = (props) => {
               <Text style={{ color: "white" }}>Update</Text>
             </EasyButton>
           </View>
-        ) : null}
+        ) : <View style={styles.priceContainer}>
+          <Text>Price: </Text>
+          <Text style={styles.Price}>₹ {props.Order.Order.TotalPrice}</Text>
+        </View>}
       </View>
     </View >
   );
@@ -226,9 +220,8 @@ const OrderCard = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    margin: 10,
-    width:width,
+    padding: 25,
+    width: width,
     borderRadius: 10,
   },
   title: {
