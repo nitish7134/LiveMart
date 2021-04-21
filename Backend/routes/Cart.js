@@ -38,7 +38,7 @@ router.post(
 	cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
-		console.log(req.body);
+		console.log(JSON.stringify(req.body));
 		try {
 			const item = {
 				Item: req.body.Item,
@@ -137,8 +137,8 @@ router.delete("/:itemID", cors.corsWithOptions,
 					console.log(items);
 					cart.Items = items;
 					console.log("deleted",deletedItem)
-					for(var i = 0 ;i<deletedItem.Sellers.length;i++)
-					cart.TotalPrice -= deletedItem.Sellers[i].Quantity_to_buy * deletedItem.Sellers[i].Price
+					for(i = 0 ;i<deletedItem.Sellers.length;i++)
+						cart.TotalPrice -= deletedItem.Sellers[i].Quantity_to_buy * deletedItem.Sellers[i].Price
 					cart.save().then(() => {
 						return res.send(cart);
 					})

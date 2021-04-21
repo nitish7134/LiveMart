@@ -1,34 +1,23 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-var Order = require('./Order').schema
 var SellerOrder = new Schema({
     Seller: mongoose.Schema.ObjectId,
     Customer: mongoose.Schema.ObjectId,
     orderType:String,
     Address: {
-        shippingAddress1: {
-            type: String,
-            required: true,
-        },
-        shippingAddress2: {
-            type: String,
-        },
-        city: {
-            type: String,
-            required: true,
-        },
-        zip: {
-            type: String,
-            required: true,
-        },
-        country: {
-            type: String,
-            required: true,
-        }
+        type:String,
+        required:true
     },
     phoneNo:String,
+    TotalPrice:Number,
+    statusCode:{
+        type:Number,
+        default:0
+    },
+    orderID:mongoose.Schema.ObjectId,
     Items: [{
-        item: mongoose.Schema.ObjectId,
+        Price:Number,
+        Item: mongoose.Schema.ObjectId,
         QuantityBought: Number
     }],
 },{

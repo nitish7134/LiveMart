@@ -2,17 +2,23 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Feedback = new Schema({
-    AddressedTo: {
-        type: String,
-        required: true
-    },
     AddressedToID: mongoose.Schema.ObjectId,
     AddressedFromID: mongoose.Schema.ObjectId,
+    AddressedFromName: String,
+    ItemID: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Items",
+        required: true,
+    },
     Query: {
         type: String,
         required: true
     },
-    Reply: String
+    Reply: String,
+    Replied: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamp: true
 });

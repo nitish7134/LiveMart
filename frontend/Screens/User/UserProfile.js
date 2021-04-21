@@ -15,6 +15,8 @@ import {
   setCurrentUser,
 } from "../../Context/actions/Auth.actions";
 import { useEffect } from "react/cjs/react.development";
+import EasyButton from "../../Shared/StyledComponents/EasyButton";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const UserProfile = (props) => {
   const context = useContext(AuthGlobal);
@@ -40,28 +42,47 @@ const UserProfile = (props) => {
 
               dispatch(setCurrentUser(response.data.token, response.data.user));
             });
-        })
-        .catch((error) => console.log(error));
-      axios
-        .get(`${baseURL}orders`, {
-          headers: { Authorization: "Bearer " + token },
-        })
-        .then((rep) => {
-          const data = rep.data;
-          console.log(data);
-          if (orders.length > 0) setOrders(data);
-        })
-        .catch((error) => console.log(error));
 
-      return () => {
-        setUserProfile();
-        setOrders();
-      };
+          axios
+            .get(`${baseURL}orders`, {
+              headers: { Authorization: `Bearer ${res}` },
+            })
+            .then((rep) => {
+              const data = rep.data;
+              console.log(data);
+              setOrders(data);
+            })
+            .catch((error) => console.log(error));
+        })
+        .catch((error) => console.log(error));
+      /*  return () => {
+         setUserProfile();
+         setOrders();
+       }; */
     }, [context.stateUser.isAuthenticated])
   );
 
   return (
     <Container style={styles.container}>
+
+      <View style={{ flexDirection: "row-reverse", alignContent: "space-between" }}>
+
+        <View>
+          <EasyButton
+            small danger onPress={() => [
+              AsyncStorage.removeItem("jwt"),
+              logoutUser(context.dispatch),
+            ]}>
+            <MaterialCommunityIcons name="logout-variant" size={24} color="black" />
+          </EasyButton>
+        </View>
+
+        <View>
+          <EasyButton small onPress={() => props.navigation.navigate("FeedbackApp")}>
+            <MaterialIcons name="feedback" size={24} color="black" />
+          </EasyButton>
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.subContainer}>
         <Text style={{ fontSize: 30 }}>
           {userProfile ? userProfile.Name : ""}
@@ -74,22 +95,19 @@ const UserProfile = (props) => {
             Phone: {userProfile ? userProfile.phoneNo : ""}
           </Text>
         </View>
-        <View style={{ marginTop: 80 }}>
-          <Button
-            title={"Sign Out"}
-            onPress={() => [
-              AsyncStorage.removeItem("jwt"),
-              logoutUser(context.dispatch),
-              // props.navigation.navigate("Register"),
-            ]}
-          />
+        <View>
+          <EasyButton large primary onPress={() => props.navigation.navigate("FeedbackAll")}>
+            <MaterialIcons name="feedback" size={24} color="black" />
+            <Text>Check Queries</Text>
+          </EasyButton>
         </View>
+
         <View style={styles.order}>
           <Text style={{ fontSize: 20 }}>My Orders</Text>
           <View>
             {orders ? (
               orders.map((x) => {
-                return <OrderCard key={x.id} {...x} />;
+                return <OrderCard key={x.id} Order={x} navigation={props.navigation} />;
               })
             ) : (
               <View style={styles.order}>
@@ -106,7 +124,7 @@ const UserProfile = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
   },
   subContainer: {
     alignItems: "center",

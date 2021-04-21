@@ -116,6 +116,7 @@ const SingleProduct = (props) => {
                     <EasyButton primary style={{ innerHeight: 5 }} onPress={() => handleSendReview()}>
                         <Text style={{ color: "black" }}>Submit Reveiw</Text>
                     </EasyButton>
+                   
                 </View>
                 <View /*style={styles.item} */>
                     {item.Sellers.map((x) => {
@@ -128,10 +129,11 @@ const SingleProduct = (props) => {
                                         primary
                                         medium
                                         onPress={() => {
+                                            console.log("X",x);
                                             axios.post(baseURL + 'cart',
                                                 {
                                                     Item: item.id,
-                                                    seller: { Quantity_to_buy: 1, seller: x._id, price: x.Price, Name: x.SellerName }
+                                                    seller: { Quantity_to_buy: 1, seller: x.Seller, price: x.Price, Name: x.SellerName }
                                                 }, {
                                                 headers: {
                                                     authorization: `Bearer ` + context.stateUser.token,

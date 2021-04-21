@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Picker } from "native-base";
-import {Ionicons} from '@expo/vector-icons';
+import { View, StyleSheet, Dimensions } from "react-native";
+import { Picker, Text, Left, Right, ListItem, Thumbnail, Body, Card, CardItem } from "native-base";
+
 
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
@@ -10,7 +10,9 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import baseURL from "../assets/common/baseUrl";
-
+import CartItem from "./../Screens/Cart/CartItem"
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+const [width] = Dimensions.get("window")
 const codes = [
   { name: "pending", code: "3" },
   { name: "shipped", code: "2" },
@@ -23,6 +25,8 @@ const OrderCard = (props) => {
   const [statusChange, setStatusChange] = useState();
   const [token, setToken] = useState();
   const [cardColor, setCardColor] = useState();
+  const [items,setItems] = useState(props.editMode ? props.Order.Items : props.Order.Order.Items)
+  console.log("cartPROPS", JSON.stringify(props))
 
   useEffect(() => {
     if (props.editMode) {
@@ -32,12 +36,12 @@ const OrderCard = (props) => {
         })
         .catch((error) => console.log(error));
     }
-
-    if (props.status == "3") {
+    console.log("props.order", JSON.stringify(props.Order))
+    if (props.Order.statusCode == "0") {
       setOrderStatus(<TrafficLight unavailable></TrafficLight>);
       setStatusText("pending");
       setCardColor("#E74C3C");
-    } else if (props.status == "2") {
+    } else if (props.Order.statusCode == "1") {
       setOrderStatus(<TrafficLight limited></TrafficLight>);
       setStatusText("shipped");
       setCardColor("#F1C40F");
@@ -53,7 +57,9 @@ const OrderCard = (props) => {
       setCardColor();
     };
   }, []);
-
+  const handleSubmit = () => {
+    console.log("FEEDBACK?")
+  }
   const updateOrder = () => {
     const config = {
       headers: {
@@ -66,7 +72,7 @@ const OrderCard = (props) => {
       country: props.country,
       dateOrdered: props.dateOrdered,
       id: props.id,
-      orderItems: props.orderItems,
+      orderItems: props.OrderItems,
       phone: props.phone,
       shippingAddress1: props.shippingAddress1,
       shippingAddress2: props.shippingAddress2,
@@ -104,27 +110,100 @@ const OrderCard = (props) => {
   return (
     <View style={[{ backgroundColor: cardColor }, styles.container]}>
       <View style={styles.container}>
-        <Text>Order Number: #{props.id}</Text>
+
+        <Text>Order Number: #{props.editMode ? props.Order.orderID : props.Order._id}</Text>
       </View>
       <View style={{ marginTop: 10 }}>
         <Text>
           Status: {statusText} {orderStatus}
         </Text>
-        <Text>
-          Address: {props.shippingAddress1} {props.shippingAddress2}
-        </Text>
-        <Text>City: {props.city}</Text>
-        <Text>Country: {props.country}</Text>
-        <Text>Date Ordered: {props.dateOrdered.split("T")[0]}</Text>
+        {props.Order ? (
+          <View style={{ borderWidth: 1, borderColor: "orange" }}>
+            <Text style={styles.title}>Shipping to:</Text>
+            <View style={{ padding: 8 }}>
+              <Text>Address: {props.Order.address}</Text>
+              <Text>Order Mode: {props.Order.orderType}</Text>
+            </View>
+            <Text style={styles.title}>Items:</Text>
+            {items.map((data) => {
+              console.log("data", data);
+              return (
+                <>
+                  {data ? (
+                    <ListItem style={styles.listItem} key={data._id} avatar>
+                      <Body style={styles.body}>
+                        <Card style={styles.card}>
+                          <CardItem>
+                            <Thumbnail
+                              source={{
+                                uri: data.Item.image
+                                  ? data.Item.image
+                                  : "https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png",
+                              }}
+                            />
+                            <Text style={{ fontWeight: "bold" }}>   {data.Item.Name}</Text>
+                          </CardItem>
+
+                          {/* <CardItem header>	
+                      </CardItem> */}
+                          {!props.editMode ? (
+                            <CardItem>
+                              <Left>
+                                <Text>Sellers: </Text>
+                              </Left>
+                            </CardItem>
+                          ) : null}
+                          {!props.editMode ? data.Sellers.map((x) => {
+                            console.log(x);
+                            return (
+                              <>
+                                <CardItem>
+                                  <Left>
+                                    <Text>{x.Name}</Text>
+                                  </Left>
+
+                                  <Text> ₹ {x.Price} X {x.Quantity_to_buy} </Text>
+                                  <Right>
+                                    <EasyButton small onPress={() => props.navigation.navigate("Product Feedback", { item: data.Item, Seller: x.Seller })}>
+                                      <MaterialIcons name="feedback" size={24} color="black" />
+                                    </EasyButton>
+                                  </Right>
+                                </CardItem>
+                              </>)
+                          }) : <Text> ₹ {data.Price} X {data.QuantityBought} </Text>
+                          }
+                          {/*       <CardItem>
+                            <Left>
+                              <Text>{x.Name}</Text>
+                            </Left>
+
+                            <Text> ₹ {x.Price} X {x.Quantity_to_buy} </Text>
+                            <Right>
+                              <EasyButton small onPress={() => props.navigation.navigate("Product Feedback", { item: data.Item, Seller: x })}>
+                                <MaterialIcons name="feedback" size={24} color="black" />
+                              </EasyButton>
+                            </Right>
+                          </CardItem> */}
+
+                        </Card>
+                      </Body>
+                    </ListItem>
+                  ) : null}
+                </>
+              );
+            })}
+          </View>
+        ) : null}
+        <Text>Date Ordered: {props.Order.createdAt.split("T")[0]}</Text>
         <View style={styles.priceContainer}>
           <Text>Price: </Text>
-          <Text style={styles.price}>$ {props.totalPrice}</Text>
+          <Text style={styles.Price}>₹ {props.Order.TotalPrice}</Text>
         </View>
         {props.editMode ? (
           <View>
             <Picker
               mode="dropdown"
-              iosIcon={<Ionicons color={"#007aff"} name="arrow-down" />}
+              iosIcon={<Ionicons color={"#007aff"} name="ios-arrow-down" />}
               style={{ width: undefined }}
               selectedValue={statusChange}
               placeholder="Change Status"
@@ -143,7 +222,7 @@ const OrderCard = (props) => {
           </View>
         ) : null}
       </View>
-    </View>
+    </View >
   );
 };
 
@@ -151,6 +230,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     margin: 10,
+    width:width,
     borderRadius: 10,
   },
   title: {

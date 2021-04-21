@@ -39,6 +39,13 @@ const PostSignup = (props) => {
           routes: [{ name: "Home" }],
         });
       }
+      if (context.stateUser.userProfile && context.stateUser.userProfile.phoneNo && context.stateUser.userProfile.role && context.stateUser.userProfile.password == "true")
+        // props.navigation.navigate("Home");
+        props.navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      console.log(JSON.stringify(userProfile));
       setUserProfile(context.stateUser.userProfile);
       setToken(context.stateUser.token);
       return (() => {
@@ -95,13 +102,7 @@ const PostSignup = (props) => {
       }
     }
   };
-  if (userProfile && userProfile.phoneNo && userProfile.role && userProfile.password == "true")
-    // props.navigation.navigate("Home");
-    props.navigation.reset({
-      index: 0,
-      routes: [{ name: "Home" }],
-    });
-  console.log(JSON.stringify(userProfile));
+
   return (
     <KeyboardAwareScrollView
       viewIsInsideTabBar={true}

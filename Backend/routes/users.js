@@ -25,6 +25,7 @@ router.get("/", function (req, res, next) {
     res.send(users);
   });
 });
+
 router.put(
   "/",
   cors.corsWithOptions,
@@ -46,7 +47,7 @@ router.put(
             console.log("Saved");
             return res.status(200);
           } else {
-            console.log("COULN'T SAVE");
+            console.log("COULDN'T SAVE");
             return res.status(500).send({ message: "Couldn't Update" });
           }
         });

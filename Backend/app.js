@@ -7,6 +7,7 @@ var passport = require("passport");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var feedbackRouter = require("./routes/feedback");
 const OTP = require("./routes/otp");
 var itemRouter = require("./routes/Item");
 var categoryRouter = require("./routes/Category");
@@ -62,6 +63,7 @@ app.use("/products", itemRouter);
 app.use("/categories", categoryRouter);
 app.use("/orders", orderRouter);
 app.use("/cart", cartRouter);
+app.use("/feedback", feedbackRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

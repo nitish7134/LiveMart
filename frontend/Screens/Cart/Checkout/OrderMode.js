@@ -9,8 +9,6 @@ import {
     Radio,
     Right,
     Left,
-    Picker,
-    Icon,
     Body,
     Title
 } from 'native-base';
