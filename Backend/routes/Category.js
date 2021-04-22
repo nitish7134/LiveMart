@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const cors = require("./cors");
 const authenticate = require("./../Controller/authenticate");
-const Category = require("../models/Category");
+const Category = require("../Models/Category");
 router.use(express.json());
 router.use(
 	express.urlencoded({

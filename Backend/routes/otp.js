@@ -19,7 +19,7 @@ router.options("*", cors.corsWithOptions, (req, res) => {
 });
 
 function sendOtp(PhoneNo, email, otp) {
-  // pingUser.sendMail(email, "OTP FOR YOUR LOGIN IS: " + otp);
+  pingUser.sendMail(email, "OTP FOR YOUR LOGIN IS: " + otp);
   // pingUser.sendSMS(PhoneNo, "OTP FOR YOUR LOGIN IS: " + otp);
 }
 

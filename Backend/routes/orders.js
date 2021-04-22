@@ -9,7 +9,7 @@ const Item = require("../Models/Item");
 var authenticate = require("../Controller/authenticate");
 const Cart = require("../Models/Cart");
 const { update } = require("../Models/User");
-
+var pingUser = require('../Controller/pingUser')
 router.use(express.json());
 router.use(
 	express.urlencoded({
@@ -36,18 +36,20 @@ router.get(
 router.put('/', cors.corsWithOptions,
 	authenticate.verifyUser,
 	function (req, res, next) {
-		// console.log("*******", req.body)
+		console.log("*******", req.body)
 		SellerOrders.findOne({ orderID: req.body.orderID, Seller: req.user._id }).then(sellerOrder => {
 			sellerOrder.statusCode = req.body.statusCode;
 			let message = "Your Order No. " + req.body.orderID + "has a update. Your Order is " + (req.body.statusCode == 1 ? "shipped" : "delivered");
-			if (deliveredBy) {
+			if (req.body.deliveredBy) {
 				sellerOrder.deliveredBy = req.body.deliveredBy
 				sellerOrder.deliveryNo = req.body.deliveredByNo
 				if (req.body.statusCode == 1) {
 					message += "\n " + req.body.deliveredBy + " is bringing your Order. Contact Him on " + req.body.deliveredByNo;
 				}
 			}
+
 			sellerOrder.save().then(() => {
+				pingUser.ping(sellerOrder.Customer)
 				return res.sendStatus(200);
 			}, err => next(err)).catch(err => next(err))
 		});
