@@ -30,9 +30,8 @@ var { height, width } = Dimensions.get("window");
 
 const Cart = (props) => {
 
-  console.log("CART PROPS", props.cartItems);
-  var total = 0;
-  console.log("ITEMS:", props.cartItems.Items)
+  // console.log("CART PROPS", props.cartItems);
+  // console.log("ITEMS:", props.cartItems.Items)
 
   return (
     <>
@@ -51,7 +50,7 @@ const Cart = (props) => {
                 <TouchableOpacity
                   style={styles.hiddenButton}
                   onPress={() => {
-                    console.log("item", data.item.Item.Name)
+                    // console.log("item", data.item.Item.Name)
                     AsyncStorage.getItem("jwt").then((token) => {
                       axios.delete(baseURL + 'cart/' + data.item.Item.id,
                         {
@@ -60,7 +59,7 @@ const Cart = (props) => {
                           }
                         }
                       ).then(res => {
-                        console.log("response", res.data)
+                        // console.log("response", res.data)
                         props.updateCart(res.data);
                         Toast.show({
                           topOffset: 60,

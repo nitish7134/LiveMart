@@ -4,6 +4,8 @@ var SellerOrder = new Schema({
     Seller: mongoose.Schema.ObjectId,
     Customer: mongoose.Schema.ObjectId,
     orderType:String,
+    SellerName:String,
+    CustomerName:String,
     Address: {
         type:String,
         required:true
@@ -14,7 +16,12 @@ var SellerOrder = new Schema({
         type:Number,
         default:0
     },
-    orderID:mongoose.Schema.ObjectId,
+    deliveredBy: String,
+    deliveryNo :String,
+    pickUpDate:{
+        type:Date,
+        default: Date.now()
+    },
     Items: [{
         Price:Number,
         Item: mongoose.Schema.ObjectId,

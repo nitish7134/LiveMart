@@ -37,7 +37,7 @@ var Items = new Schema(
     },
     numReviews: {
       type: Number,
-      default: 0,
+      default: 1,
     },
     image: {
       type: String,

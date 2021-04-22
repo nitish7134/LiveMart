@@ -3,11 +3,9 @@ var Schema = mongoose.Schema;
 
 var Review = new Schema({
     Item: mongoose.Schema.ObjectId,
-    review: {
-        type: [{
-            type: String
-        }],
-        default: []
-    }
+    user: mongoose.Schema.ObjectId,
+    userName: String,
+    Rating: Number,
+    review: String
 });
 module.exports = mongoose.model('Review', Review);

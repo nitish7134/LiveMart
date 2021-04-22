@@ -34,7 +34,7 @@ const Categories = (props) => {
   useEffect(() => {
     AsyncStorage.getItem("jwt")
       .then((res) => {
-        console.log("TOKEN :" + res);
+        // console.log("TOKEN :" + res);
         setToken(res);
         axios
           .get(`${baseURL}categories`, {

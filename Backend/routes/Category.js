@@ -64,7 +64,6 @@ router.post(
 	cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
-		console.log("AUTHENTICATED");
 		Category.create({
 			Name: req.body.name,
 			icon: req.body.icon,

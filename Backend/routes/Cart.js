@@ -25,7 +25,7 @@ router.get(
 		try {
 			Cart.findOne({ CustomerID: req.user._id }).populate({ path: "Items", populate: { path: "Item", model: 'Items' } }
 			).then((cart) => {
-				console.log("After Populating", cart);
+				// console.log("After Populating", cart);
 				res.status(200).send(cart);
 			});
 		} catch (err) {
@@ -38,7 +38,7 @@ router.post(
 	cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
-		console.log(JSON.stringify(req.body));
+		// console.log(JSON.stringify(req.body));
 		try {
 			const item = {
 				Item: req.body.Item,
@@ -54,12 +54,12 @@ router.post(
 				var NOTADDED = true;
 				var NOTADDED2 = true;
 				if (cart) {
-					console.log(cart);
+					// console.log(cart);
 					if (cart.Items) {
 						for (var i = 0; i < cart.Items.length; i++) {
 							if (cart.Items[i].Item == req.body.Item) {
 								NOTADDED = false;
-								console.log(cart.Items[i]);
+								// console.log(cart.Items[i]);
 								for (var j = 0; j < cart.Items[i].Sellers.length; j++) {
 									if (cart.Items[i].Sellers[j].Seller == (req.body.seller.seller)) {
 										NOTADDED2 = false;
@@ -83,24 +83,24 @@ router.post(
 							item.Sellers.push(seller)
 							cart.Items.push(item);
 							cart.TotalPrice += req.body.seller.Quantity_to_buy * req.body.seller.price;
-							console.log(cart);
+							// console.log(cart);
 
 							cart.save();
 							return res.status(200).send(cart);
 						}
 					}
 				} else {
-					console.log("CREATOMG");
+					// console.log("CREATOMG");
 					Cart.create({
 						CustomerID: req.user._id,
 						TotalPrice: req.body.seller.Quantity_to_buy * req.body.seller.price
 					}).then(cart => {
-						console.log(cart);
+						// console.log(cart);
 
 						seller.Quantity_to_buy = req.body.seller.Quantity_to_buy
 						item.Sellers.push(seller)
 						cart.Items.push(item);
-						console.log(cart);
+						// console.log(cart);
 						cart.save();
 						return res.status(200).send(cart);
 
@@ -123,20 +123,20 @@ router.delete("/:itemID", cors.corsWithOptions,
 	authenticate.verifyUser,
 	(req, res, next) => {
 		var item = req.params.itemID;
-		console.log(req.body)
+		// console.log(req.body)
 		Cart.findOne({ CustomerID: req.user._id }).populate({ path: "Items", populate: { path: "Item", model: 'Items' } }).then(cart => {
-			console.log(cart.Items[1]);
+			// console.log(cart.Items[1]);
 			var flag=true;
 			for (var i = 0; i<cart.Items.length; i++) {
-				console.log(cart.Items[i]);
+				// console.log(cart.Items[i]);
 				if (cart.Items[i].Item._id == item) {
 					flag=false;
 					var items= cart.Items;
-					console.log(items);
+					// console.log(items);
 					var deletedItem = items.splice(i, 1)[0];
-					console.log(items);
+					// console.log(items);
 					cart.Items = items;
-					console.log("deleted",deletedItem)
+					// console.log("deleted",deletedItem)
 					for(i = 0 ;i<deletedItem.Sellers.length;i++)
 						cart.TotalPrice -= deletedItem.Sellers[i].Quantity_to_buy * deletedItem.Sellers[i].Price
 					cart.save().then(() => {

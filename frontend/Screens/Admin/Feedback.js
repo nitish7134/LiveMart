@@ -35,8 +35,8 @@ const Feedback = () => {
                     })
                     .then((response) => {
                         setFeedbacks(response.data);
-                        console.log(response.data)
-                        console.log("FEEDBACKS GOT: " + feedbacks.length)
+                        // console.log(response.data)
+                        // console.log("FEEDBACKS GOT: " + feedbacks.length)
                     })
             })
         return (() => {

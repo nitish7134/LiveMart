@@ -45,7 +45,7 @@ const PostSignup = (props) => {
           index: 0,
           routes: [{ name: "Home" }],
         });
-      console.log(JSON.stringify(userProfile));
+      // console.log(JSON.stringify(userProfile));
       setUserProfile(context.stateUser.userProfile);
       setToken(context.stateUser.token);
       return (() => {
@@ -73,8 +73,8 @@ const PostSignup = (props) => {
       }
 
       try {
-        console.log("token " + token);
-        console.log(user);
+        // console.log("token " + token);
+        // console.log(user);
         axios
           .put(
             baseURL + "users",

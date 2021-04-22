@@ -113,7 +113,7 @@ router.post(
 	authenticate.verifyUser,
 	uploadOptions.single("image"),
 	(req, res, next) => {
-		console.log(req.body);
+		// console.log(req.body);
 		try {
 			var seller = {
 				SellerName: req.user.Name,
@@ -157,11 +157,11 @@ router.post(
 router.post("/update", cors.corsWithOptions,
 	authenticate.verifyUser,
 	uploadOptions.single("image"), (req, res, next) => {
-		console.log(req.body);
+		// console.log(req.body);
 
 
 		Items.findById(req.body.itemID).then((item) => {
-			console.log(item)
+			// console.log(item)
 			if ((req.user.role == "Retailer" ? 0 : 1) != item.Seller) {
 				return res.sendStatus(401);
 			}
@@ -190,8 +190,7 @@ router.post("/update", cors.corsWithOptions,
 						return res.sendStatus(200)
 					}, err => next(err)).catch(err => next(err))
 
-				} else
-					console.log(req.user._id.toString() + "  :  " + item.Sellers[i].Seller.toString(), item.Sellers[i].Seller.toString() == req.user._id.toString());
+				}
 			}
 			if (flag) {
 				item.Sellers.push({

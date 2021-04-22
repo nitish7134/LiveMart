@@ -12,9 +12,7 @@ const FeedbackItem = (props) => {
 
     const [reply, setReply] = useState("")
     const [show, setShow] = useState(true);
-    useEffect(() => {
-        console.log("FeedbackItemProps", props);
-    }, [])
+   
     return (
 
         <Card>

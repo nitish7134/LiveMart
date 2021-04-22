@@ -23,7 +23,7 @@ exports.getToken = function (user) {
 };
 exports.getOTPToken = function (user) {
     var token = jwt.sign(user, config.jwtOTPKey);
-    console.log("SIGNING WITH TOKEN " + token + "using " + config.jwtOTPKey);
+    // console.log("SIGNING WITH TOKEN " + token + "using " + config.jwtOTPKey);
     return token
 };
 
@@ -33,10 +33,10 @@ opts.secretOrKey = config.jwtKey;
 
 exports.jwtPassport = passport.use(new JwtStrategy(opts,
     (jwt_payload, done) => {
-        console.log("JWT payload: ", jwt_payload);
+        // console.log("JWT payload: ", jwt_payload);
         User.findOne({ _id: jwt_payload._id }, (err, user) => {
             if (err) {
-                console.log("HI + " + JSON.stringify(err));
+                // console.log("HI + " + JSON.stringify(err));
                 return done(err, false);
             }
             else if (user) {
@@ -54,15 +54,15 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
 
         let { authorization } = req.headers;
         if (!authorization) {
-            console.log("NO AUTH",req.headers)
+            // console.log("NO AUTH",req.headers)
             return res.status(401).send({ error: "you must be logged in" })
         }
         // const token = authorization.replace("Bearer ", "");
         const token = authorization.split(' ')[1];
         jwt.verify(token, config.jwtOTPKey, async (err, payload) => {
             if (err) {
-                console.log("INVALID TOKEN + " + JSON.stringify(err));
-                console.log("TOKEN: {" + token + "} With Key: {" + config.jwtOTPKey + "}");
+                // console.log("INVALID TOKEN + " + JSON.stringify(err));
+                // console.log("TOKEN: {" + token + "} With Key: {" + config.jwtOTPKey + "}");
                 return res.status(401).send({ error: "you must be logged in 2" })
             }
             const userId = payload._id;
@@ -72,8 +72,8 @@ exports.verifyUser = //passport.authenticate('jwt', { session: false });
                 req.token = token;
                 next();
             } else {
-                console.log(payload);
-                console.log("UserNotFound")
+                // console.log(payload);
+                // console.log("UserNotFound")
                 res.status(401).send({ error: "No such User Found" })
             }
         })
@@ -96,7 +96,7 @@ exports.verifyUserWithoutOtp = /* passport.authenticate('jwt', { session: false 
         const userId = payload._id;
         const user = await User.findById(userId)
         if (user) {
-            console.log("USER FOund")
+            // console.log("USER FOund")
             req.user = user;
             next();
         } else {
@@ -112,7 +112,7 @@ exports.facebookPassport = passport.use(new FacebookStrategy({
     callbackURL: config.baseUrl + config.facebook.callbackURL,
     profileFields: ["email", "name"]
 }, (accessToken, refreshToken, profile, done) => {
-    console.log(JSON.stringify(profile))
+    // console.log(JSON.stringify(profile))
     User.findOne({ email: profile.emails[0].value }, (err, user) => {
         if (err) {
             return done(err, false);

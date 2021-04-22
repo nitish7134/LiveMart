@@ -90,7 +90,7 @@ router.post("/signup", cors.corsWithOptions, async (req, res) => {
 });
 
 router.post("/signin", cors.corsWithOptions, async (req, res) => {
-  console.log(req.body.user);
+  // console.log(req.body.user);
   const email = req.body.user.email;
   const password = req.body.user.password;
   if (!email || !password) {

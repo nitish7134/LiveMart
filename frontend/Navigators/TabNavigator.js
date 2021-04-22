@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AdminNavigator from "./AdminNavigator";
 import HomeNavigator from "./HomeNavigator";
 import CartNavigator from "./CartNavigator";
 import UserProfile from "./../Screens/User/UserProfile";
-
+const { width, height } = Dimensions.get('window');
 import CartIcon from "../Shared/CartIcon";
-
 import AuthGlobal from "../Context/store/AuthGlobal";
 import { useEffect } from "react/cjs/react.development";
 import ProfileNavigator from "./ProfileNavigator";
@@ -28,11 +27,13 @@ const MyStack = (props) => {
 
   return (
     <Tab.Navigator
-      initialRouteName={(context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer") ?  "Home" : "Admin"}
+      initialRouteName={(context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer") ? "Home" : "Admin"}
       tabBarOptions={{
         keyboardHidesTabBar: true,
         showLabel: false,
-        activeTintColor: "#e91e63",
+        // activeTintColor: "#e91e63",
+        activeBackgroundColor: "#E2E2E2",
+        inactiveBackgroundColor: "#D5D5D5",
       }}
     >
       {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Wholeasaler" ? (
@@ -42,7 +43,7 @@ const MyStack = (props) => {
             component={HomeNavigator}
             options={{
               tabBarIcon: ({ color }) => (
-                <Image source={require("../assets/HomeIcon.png")} />
+                <Image style={styles.icon} source={require("../assets/HomeIcon.png")} />
               ),
             }}
           />
@@ -52,7 +53,7 @@ const MyStack = (props) => {
             options={{
               tabBarIcon: ({ color }) => (
                 <View>
-                  <Image source={require("../assets/CartIcon.png")} />
+                  <Image style={styles.icon} source={require("../assets/CartIcon.png")} />
                   <CartIcon />
 
                 </View>
@@ -61,13 +62,13 @@ const MyStack = (props) => {
           />
         </>
       ) : null}
-       {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer" ? (
+      {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Customer" ? (
         <Tab.Screen
           name="Admin"
           component={AdminNavigator}
           options={{
             tabBarIcon: ({ color }) => (
-              <Image source={require("../assets/UserIcon.png")} />
+              <Image style={styles.icon} source={require("../assets/seller.png")} />
             ),
           }}
         />
@@ -77,14 +78,22 @@ const MyStack = (props) => {
         component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color }) => (
-            <Image source={require("../assets/UserIcon.png")} />
+            <Image style={styles.icon} source={require("../assets/UserIcon.png")} />
           ),
         }}
       />
-     
+
     </Tab.Navigator>
   );
 }
 export default function TabNavigator(props) {
   return <MyStack navigation={props.navigation} />;
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    height: height * 0.05,
+    // aspectRatio: 1,
+    resizeMode: 'contain',
+  }
+})

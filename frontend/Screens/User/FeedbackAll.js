@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import TrafficLight from "../../Shared/StyledComponents/TrafficLight";
 import { ScrollView } from "react-native";
 function ItemView(props) {
-    console.log(props)
+    // console.log(props)
     return (
         <View>
             <Card>

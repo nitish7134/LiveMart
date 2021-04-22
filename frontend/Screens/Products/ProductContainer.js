@@ -32,11 +32,9 @@ const ProductContainer = (props) => {
   const [active, setActive] = useState();
   const [initialState, setInitialState] = useState([]);
   const [loading, setLoading] = useState(true);
-  const isMountedVal = useRef(1);
 
   useFocusEffect(
     useCallback(() => {
-      isMountedVal.current = 1;
 
       setFocus(false);
       setActive(-1);
@@ -72,7 +70,6 @@ const ProductContainer = (props) => {
       });
 
       return () => {
-        isMountedVal.current = 0;
         setProducts([]);
         setProductsFiltered([]);
         setFocus();
@@ -116,7 +113,7 @@ const ProductContainer = (props) => {
     <>
       {loading == false ? (
         <Container>
-          <Header searchBar rounded>
+        <Header searchBar rounded style={{backgroundColor:"#1D0054"}}>
             <Item style={{ paddingLeft: 10 }}>
               <Ionicons name="ios-search" />
               <Input
@@ -183,7 +180,7 @@ const ProductContainer = (props) => {
 const styles = StyleSheet.create({
   container: {
     flexWrap: "wrap",
-    backgroundColor: "gainsboro",
+    backgroundColor: "#1D0054",
   },
   listContainer: {
     // height: height,

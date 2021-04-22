@@ -55,7 +55,7 @@ const Products = (props) => {
             })
             .then((res) => {
               const prod = Object.values(res.data);
-              console.log("Products:", prod);
+              // console.log("Products:", prod);
 
               setProductList(prod);
               setProductFilter(prod);
@@ -134,7 +134,7 @@ const Products = (props) => {
         </EasyButton>
       </View>
       <View>
-        <Header searchBar rounded>
+        <Header searchBar rounded style={{backgroundColor:"#1D0054"}}>
           <Item style={{ padding: 5 }}>
             <Ionicons name="ios-search" />
             <Input

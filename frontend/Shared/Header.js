@@ -16,10 +16,11 @@ const Header = () => {
 const styles = StyleSheet.create({
     header: {
         width: "100%",
+        backgroundColor:"#1D0054",
         flexDirection: 'row',
         alignContent: "center",
         justifyContent: "center",
-        padding: 20
+        paddingTop: 20,
     }
 })
 

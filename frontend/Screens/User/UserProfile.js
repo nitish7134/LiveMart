@@ -27,20 +27,20 @@ const UserProfile = (props) => {
     React.useCallback(() => {
       AsyncStorage.getItem("jwt")
         .then((res) => {
-          console.log("TOKEN :" + res);
+          // console.log("TOKEN :" + res);
           axios
             .get(`${baseURL}users/profile`, {
               headers: { Authorization: `Bearer ${res}` },
             })
             .then((response) => {
-              console.log("RESPONSE FROM PROFILE", response.data);
+              // console.log("RESPONSE FROM PROFILE", response.data);
               setUserProfile(response.data.user);
-              console.log("userProfile:33", response.data.user);
+              // console.log("userProfile:33", response.data.user);
               setToken(response.data.token);
               // dipatch(response.data.token, response.data.user);
-              console.log("Checking my Context User", context.stateUser);
+              // console.log("Checking my Context User", context.stateUser);
 
-              dispatch(setCurrentUser(response.data.token, response.data.user));
+              context.dispatch(setCurrentUser(response.data.token, response.data.user));
             });
 
           axios
@@ -49,16 +49,16 @@ const UserProfile = (props) => {
             })
             .then((rep) => {
               const data = rep.data;
-              console.log(data);
+              // console.log("Orders", data);
               setOrders(data);
             })
             .catch((error) => console.log(error));
         })
         .catch((error) => console.log(error));
-      /*  return () => {
+       return () => {
          setUserProfile();
          setOrders();
-       }; */
+       };
     }, [context.stateUser.isAuthenticated])
   );
 
@@ -69,7 +69,7 @@ const UserProfile = (props) => {
 
         <View>
           <EasyButton
-            small danger onPress={() => [
+            medium secondary onPress={() => [
               AsyncStorage.removeItem("jwt"),
               logoutUser(context.dispatch),
             ]}>
@@ -102,20 +102,20 @@ const UserProfile = (props) => {
           </EasyButton>
         </View>
         {context.stateUser.userProfile && context.stateUser.userProfile.role && context.stateUser.userProfile.role != "Wholeasaler" ?
-      (  <View style={styles.order}>
-          <Text style={{ fontSize: 20 }}>My Orders</Text>
-          <View>
-            {orders ? (
-              orders.map((x) => {
-                return <OrderCard key={x.id} Order={x} navigation={props.navigation} />;
-              })
-            ) : (
-              <View style={styles.order}>
-                <Text>You have no orders</Text>
-              </View>
-            )}
-          </View>
-        </View>):null}
+          (<View style={styles.order}>
+            <Text style={{ fontSize: 20 }}>My Orders</Text>
+            <View>
+              {orders && orders.length ? (
+                orders.map((x) => {
+                  return <OrderCard key={x.id} Order={x} navigation={props.navigation} />;
+                })
+              ) : (
+                <View style={styles.order}>
+                  <Text>You have no orders</Text>
+                </View>
+              )}
+            </View>
+          </View>) : null}
       </ScrollView>
     </Container>
   );

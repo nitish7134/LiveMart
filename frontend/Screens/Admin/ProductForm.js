@@ -44,7 +44,7 @@ const ProductForm = (props) => {
     if (!props.route.params) {
       setItem(null);
     } else {
-      console.log("props", JSON.stringify(props.route.params));
+      // console.log("props", JSON.stringify(props.route.params));
       setItem(props.route.params.item);
       setBrand(props.route.params.item.brand);
       setName(props.route.params.item.Name);
@@ -64,7 +64,7 @@ const ProductForm = (props) => {
         // Categories
         axios
           .get(`${baseURL}categories`)
-          .then((res) => { setCategories(res.data); console.log(res.data) })
+          .then((res) => { setCategories(res.data); })
           .catch((error) => alert("Error to load categories"));
 
         // Image Picker
@@ -141,14 +141,14 @@ const ProductForm = (props) => {
 
     if (item !== null) {
       var link = baseURL + 'products/update'
-      console.log("HELLOW", link)
+      // console.log("HELLOW", link)
       formData.append("itemID", item.id);
-      console.log(JSON.stringify(formData));
+      // console.log(JSON.stringify(formData));
 
       axios
         .post(link, formData, config)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res.status == 200 || res.status == 201) {
             Toast.show({
               topOffset: 60,
@@ -171,7 +171,7 @@ const ProductForm = (props) => {
           });
         });
     } else {
-      console.log("HI")
+      // console.log("HI")
       axios
         .post(`${baseURL}products`, formData, config)
         .then((res) => {

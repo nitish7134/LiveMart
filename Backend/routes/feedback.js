@@ -15,18 +15,18 @@ router.use(
 router.post("/", cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Feedback.findOne({ AddressedFromID: req.user._id, AddressedToID: req.body.AddressedToID })
         .then(response => {
-            console.log(JSON.stringify(response));
+            // console.log(JSON.stringify(response));
             return res.status(200).send(response);
         })
         .catch((err) => {
-            console.log(err);
+            // console.log(err);
             next(err);
             return res.status(500);
         });
 });
 
 router.put("/reply", cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    console.log(req.body)
+    // console.log(req.body)
     Feedback.findById(req.body.feedbackID)
         .then(feedback => {
             feedback.Reply = req.body.reply;
@@ -44,11 +44,10 @@ router.put("/reply", cors.corsWithOptions, authenticate.verifyUser, (req, res, n
 router.get("/from", cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Feedback.find({ AddressedFromID: req.user._id }).populate({ path: "ItemID", Model: "Items" })
         .then(response => {
-            console.log(JSON.stringify(response));
+            // console.log(JSON.stringify(response));
             return res.status(200).send(response);
         })
         .catch((err) => {
-            console.log(err);
             next(err);
             return res.status(500);
         });
@@ -56,7 +55,7 @@ router.get("/from", cors.corsWithOptions, authenticate.verifyUser, (req, res, ne
 );
 
 router.get("/to", cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    console.log("user", req.user._id);
+    // console.log("user", req.user._id);
     Feedback.find({ AddressedToID: req.user._id, Replied: false }).populate({ path: "ItemID", Model: "Items" })
         .then(feedbacks => {
             if (feedbacks) {

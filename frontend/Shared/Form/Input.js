@@ -24,11 +24,11 @@ const Input = (props) => {
 const styles = StyleSheet.create({
   input: {
     // fontFamily: "roboto-regular",
-    color: "#121212",
+    color: "#1D0054",
     height: 55,
     width: width/2,
     borderWidth: 2,
-    borderColor: "#0b487f",//"rgba(151,203,151,1)",
+    borderColor: "#1D0054",//"rgba(151,203,151,1)",
     //borderStyle: "dotted",
     borderRadius: 10,
     textAlign: "center",

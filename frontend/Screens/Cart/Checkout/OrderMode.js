@@ -12,6 +12,7 @@ import {
     Body,
     Title
 } from 'native-base';
+import EasyButton from '../../../Shared/StyledComponents/EasyButton';
 const methods = [
     { name: 'Online', value: 'Online' },
     { name: 'Offline', value: 'Offline' },
@@ -43,12 +44,12 @@ const Payment = (props) => {
                     )
                 })}
                 <View style={{ marginTop: 60, alignSelf: 'center' }}>
-                    <Button
-                        title={"Confirm"}
+                    <EasyButton
+                        primary large
                         onPress={() => {
                             order.order.orderType = selected;
                             props.navigation.navigate("Confirm", { order })
-                        }} />
+                        }} ><Text>Confirm</Text></EasyButton>
                 </View>
             </Content>
         </Container>

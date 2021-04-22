@@ -21,7 +21,7 @@ const OtpScreen = (props) => {
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    console.log("Sending OTP: " + otp);
+    // console.log("Sending OTP: " + otp);
     axios
       .post(
         baseURL + "otp/verify",
@@ -35,7 +35,7 @@ const OtpScreen = (props) => {
         }
       )
       .then((res) => {
-        console.log(JSON.stringify(res));
+        // console.log(JSON.stringify(res));
 
         switch (res.status) {
           case 401: {
@@ -43,17 +43,17 @@ const OtpScreen = (props) => {
             break;
           }
           case 200: {
-            console.log("Response: " + res.data);
+            // console.log("Response: " + res.data);
             AsyncStorage.setItem("jwt", res.data.token);
             context.dispatch(setCurrentUser(res.data.token, res.data.user));
-            console.log(context.stateUser);
+            // console.log(context.stateUser);
             axios.get(baseURL + 'cart',
               {
                 headers: {
                   authorization: `Bearer ` + res.data.token,
                 }
               }).then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 // dispatch(actions.updateCart(res.data));
                 props.getCart(res.data)
                 props.navigation.navigate("PostSignUp");

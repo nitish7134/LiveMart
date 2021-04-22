@@ -17,7 +17,7 @@ import baseURL from '../../assets/common/baseUrl'
 var { width } = Dimensions.get("window");
 
 const ProductCard = (props) => {
-    console.log(props);
+    // console.log(props);
 
     return (
         <View style={styles.container}>

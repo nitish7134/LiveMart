@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useContext, Component } from 'react'
 import { Image, View, StyleSheet, Text, ScrollView, Dimensions } from 'react-native';
-import { Left, Right, Container, H1, ListItem } from 'native-base';
-import { Header, Content, Item } from 'native-base';
+import { Left, Right, Body, Container, H1, ListItem, Card, CardItem } from 'native-base';
 
 
 //review
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { Rating } from 'react-native-ratings';
 import Input from "../../Shared/Form/Input";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 
 import Toast from 'react-native-toast-message';
 import TrafficLight from '../../Shared/StyledComponents/TrafficLight'
-import { TextInput } from 'react-native-paper';
 import { connect } from 'react-redux';
 import * as actions from '../../Redux/Actions/cartActions';
 import AuthGlobal from '../../Context/store/AuthGlobal';
@@ -27,11 +25,28 @@ const SingleProduct = (props) => {
     const [review, setReview] = useState("");
     const [availability, setAvailability] = useState(null);
     const [availabilityText, setAvailabilityText] = useState("")
-
+    const [rated, setRated] = useState();
+    const [reviews, setReviews] = useState()
     useEffect(() => {
+
+        axios.get(baseURL + "reviews/" + item.id, {
+            headers: {
+                authorization: `Bearer ` + context.stateUser.token,
+            },
+        }).then((response) => {
+            console.log("Reponsed");
+            if (response.data.Reviews.length)
+                setReviews(response.data.Reviews);
+            if (response.data.myRating) {
+                console.log("Seting rated");
+                setRated(response.data.myRating);
+            }
+        });
+
+
         if (props.route.params.item.TotalQuantity == 0) {
             setAvailability(<TrafficLight unavailable></TrafficLight>);
-            setAvailabilityText("Unvailable")
+            setAvailabilityText("Unvailable!\n\n\n Next Available On: ")
         } else if (props.route.params.item.TotalQuantity <= 5) {
             setAvailability(<TrafficLight limited></TrafficLight>);
             setAvailabilityText("Limited Stock")
@@ -43,13 +58,16 @@ const SingleProduct = (props) => {
         return () => {
             setAvailability(null);
             setAvailabilityText("");
+            setRated();
+            setReviews();
         }
     }, [])
     const handleSendReview = () => {
-        axios.post(baseURL + 'cart',
+        axios.post(baseURL + 'reviews/submit',
             {
                 Rating: rating,
-                Review: review
+                Review: review,
+                itemID: item.id
             }, {
             headers: {
                 authorization: `Bearer ` + context.stateUser.token,
@@ -64,7 +82,7 @@ const SingleProduct = (props) => {
         });
     }
     const ratingCompleted = (rating) => {
-        console.log(rating);
+        console.log(rated);
         setRating(rating)
     }
     return (
@@ -81,99 +99,132 @@ const SingleProduct = (props) => {
                     />
                 </View>
                 <View style={styles.contentContainer}>
-                    <H1 style={styles.contentHeader}>{item.name}</H1>
+                    <H1 style={styles.contentHeader}>{item.Name}</H1>
                     <Text style={styles.contentText}>{item.brand}</Text>
+                    <Text style={styles.Name}>Rating: {props.route.params.item.rating / props.route.params.item.numReviews}</Text>
                 </View>
                 <View style={styles.availabilityContainer}>
                     <View style={styles.availability}>
+                        {availability}
                         <Text style={{ marginRight: 10 }}>
                             Availability: {availabilityText}
                         </Text>
-                        {availability}
                     </View>
-                    {item.description != 'undefined' ? (<Text note>{item.description}</Text>
+                    {item.description && item.description != 'undefined' ? (<Text note>{item.description}</Text>
                     ) : null}
                 </View>
-                <View style={styles.availabilityContainer}>
 
-                    <Rating
-                        showRating
-                        ratingCount={5}
-                        defaultRating={rating}
-                        onFinishRating={ratingCompleted}
-                        style={{ paddingVertical: 10 }}
-                    />
-                </View>
-                <View style={styles.availabilityContainer}>
+                {rated ? null : (
+                    <>
+                        <View style={styles.availabilityContainer}>
 
-                    <Input placeholder='Review'
-                        onChangeText={(text) => setReview(text)}
-                        name={"review"}
-                        id={"review"}
-                    />
-                </View>
-                <View style={styles.availabilityContainer}>
-                    <EasyButton primary style={{ innerHeight: 5 }} onPress={() => handleSendReview()}>
-                        <Text style={{ color: "black" }}>Submit Reveiw</Text>
-                    </EasyButton>
-                   
-                </View>
+                            <Rating
+                                showRating
+                                readonly={rated ? true : false}
+                                startingValue={rating}
+                                defaultRating={rating}
+                                onFinishRating={ratingCompleted}
+                                style={{ paddingVertical: 10 }}
+                            />
+                        </View>
+                        <View style={styles.availabilityContainer}>
+
+                            <Input placeholder='Review'
+                                onChangeText={(text) => setReview(text)}
+                                name={"review"}
+                                id={"review"}
+                            />
+                        </View>
+                        <View style={styles.availabilityContainer}>
+                            <EasyButton primary style={{ innerHeight: 5 }} onPress={() => handleSendReview()}>
+                                <Text style={{ color: "black" }}>Submit Reveiw</Text>
+                            </EasyButton>
+
+                        </View>
+                    </>
+                )}
                 <View /*style={styles.item} */>
                     {item.Sellers.map((x) => {
                         return (
                             <ListItem key={x._id}>
-                                <Text style={styles.Name}>{x.SellerName}</Text>
-                                <Text Quantity> * {x.Quantity}  </Text>
-                                <Text style={styles.price}>₹ {x.Price}</Text>
-                                {(!props.route.params.admin) ? (
-                                    <EasyButton
-                                        primary
-                                        medium
-                                        onPress={() => {
-                                            console.log("X",x);
-                                            axios.post(baseURL + 'cart',
-                                                {
-                                                    Item: item.id,
-                                                    seller: { Quantity_to_buy: 1, seller: x.Seller, price: x.Price, Name: x.SellerName }
-                                                }, {
-                                                headers: {
-                                                    authorization: `Bearer ` + context.stateUser.token,
-                                                },
-                                            }).then(() => {
-                                                axios.get(baseURL + 'cart',
-                                                    {
+                                <Left>
+                                    <Text style={styles.Name}>{x.SellerName}</Text>
+                                    <Text> * {x.Quantity}  </Text>
+                                </Left>
+                                <Right>
+                                    <Text style={styles.price}>₹ {x.Price}</Text>
+                                    {(!props.route.params.admin) ? (
+                                        <Right>
+                                            <EasyButton
+                                                primary
+                                                medium
+                                                onPress={() => {
+                                                    // console.log("X",x);
+                                                    axios.post(baseURL + 'cart',
+                                                        {
+                                                            Item: item.id,
+                                                            seller: { Quantity_to_buy: 1, seller: x.Seller, price: x.Price, Name: x.SellerName }
+                                                        }, {
                                                         headers: {
                                                             authorization: `Bearer ` + context.stateUser.token,
-                                                        }
-                                                    }).then(res => {
-                                                        console.log(res.data)
-                                                        props.addItemToCart(res.data);
-                                                        Toast.show({
-                                                            topOffset: 60,
-                                                            type: "success",
-                                                            text1: `${item.Name} added to Cart`,
-                                                            text2: "Go to your cart to complete order"
-                                                        })
-                                                    }).catch((error) => alert(error));
+                                                        },
+                                                    }).then(() => {
+                                                        axios.get(baseURL + 'cart',
+                                                            {
+                                                                headers: {
+                                                                    authorization: `Bearer ` + context.stateUser.token,
+                                                                }
+                                                            }).then(res => {
+                                                                // console.log(res.data)
+                                                                props.addItemToCart(res.data);
+                                                                Toast.show({
+                                                                    topOffset: 60,
+                                                                    type: "success",
+                                                                    text1: `${item.Name} added to Cart`,
+                                                                    text2: "Go to your cart to complete order"
+                                                                })
+                                                            }).catch((error) => alert(error));
 
-                                            })
-                                        }}
-                                    >
-                                        <Text style={{ color: 'white' }}>Add</Text>
-                                    </EasyButton>
-
-                                ) : null}
-
+                                                    })
+                                                }}
+                                            >
+                                                <Text style={{ color: 'white' }}>Add</Text>
+                                            </EasyButton>
+                                        </Right>
+                                    ) : null}
+                                </Right>
                             </ListItem>
                         )
                     })}
                 </View>
 
+                {reviews ? (
+                    <View>
+                        <View>
+                            <H1 style={styles.contentHeader}>Reviews: </H1>
+                        </View>
+                        {reviews.map((x) => {
+                            return (
+
+                                <Card>
+                                    <CardItem>
+                                        <Left>
+                                            <Text>Review By: {x.userName}</Text>
+                                        </Left>
+                                        <Right>
+                                            <Text>Rating : {x.Rating}</Text>
+                                        </Right>
+                                    </CardItem>
+                                    <CardItem><Text>Review : {x.review}</Text></CardItem>
+                                </Card>
+
+                            )
+                        })}
+
+                    </View>
 
 
-
-
-
+                ) : null}
             </ScrollView>
 
         </Container>
@@ -214,7 +265,7 @@ const styles = StyleSheet.create({
     },
     contentHeader: {
         fontWeight: 'bold',
-        marginBottom: 20
+        margin: 20
     },
     contentText: {
         fontSize: 18,

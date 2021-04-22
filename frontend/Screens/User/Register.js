@@ -78,7 +78,7 @@ const Register = (props) => {
 			.then((res) => {
 				const token = res.data.token;
 				if (res.status == 200) {
-					console.log(res);
+					// console.log(res);
 					Toast.show({
 						topOffset: 60,
 						type: "success",
@@ -118,10 +118,10 @@ const Register = (props) => {
 		return match ? match[1] : null;
 	}
 	const handleOpenURL = ({ url }) => {
-		console.log("URL: " + url);
+		// console.log("URL: " + url);
 		var token = extractUrlValue("token", url);
 		token = token.split("#")[0];
-		console.log("token: " + token);
+		// console.log("token: " + token);
 		askForOtp(token);
 
 		props.navigation.navigate("OtpScreen", {
