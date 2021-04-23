@@ -23,15 +23,15 @@ var { width } = Dimensions.get("window");
 const filterData = [
     { title: '5 kms', value: 5 },
     { title: '10 kms', value: 10 },
-    { title: '15 kms', value: 15 },
-    { title: '20 kms', value: 20 }
+    { title: '20 kms', value: 20 },
+    { title: '60 kms', value: 60 }
 ]
 
 const SingleProduct = (props) => {
     const context = useContext(AuthGlobal);
 
     const [item, setItem] = useState(props.route.params.item);
-    const [rating, setRating] = useState((props.route.params.item.rating / props.route.params.item.numReviews).toPrecision(2));
+    const [rating, setRating] = useState((props.route.params.item.rating / props.route.params.item.numReviews));
     const [review, setReview] = useState("");
     const [availability, setAvailability] = useState(null);
     const [availabilityText, setAvailabilityText] = useState("")
@@ -40,18 +40,16 @@ const SingleProduct = (props) => {
     const [region, setRegion] = useState({})
     const [sellers, setSellers] = useState(props.route.params.item.Sellers)
     const [filterDistance, setFilterDistance] = useState();
-    useEffect(() => {
 
+    useEffect(() => {
         axios.get(baseURL + "reviews/" + item.id, {
             headers: {
                 authorization: `Bearer ` + context.stateUser.token,
             },
         }).then((response) => {
-            console.log("Reponsed");
             if (response.data.Reviews.length)
                 setReviews(response.data.Reviews);
             if (response.data.myRating) {
-                console.log("Seting rated");
                 setRated(response.data.myRating);
             }
         });
@@ -80,7 +78,6 @@ const SingleProduct = (props) => {
          ); */
 
         return () => {
-            console.log(sellers);
             setAvailability(null);
             setAvailabilityText("");
             setRated();
@@ -90,19 +87,19 @@ const SingleProduct = (props) => {
     }, [])
 
     const FindDist = (url, i) => {
-        console.log("finding distance for : ",sellers[i])
         axios.get(url)
             .then(data => {
-                sellers[i].distance = data.rows[0].elemets[0].distance.value;;
-                console.log("distance for : " + sellers);
+                data = data.data;
+                var tempSellers = sellers;
+                tempSellers[i].distance = data.rows[0].elements[0].distance.value / 1000;
+                setSellers(tempSellers);
             }).catch(err => {
-                consolde.log(err);
+                console.log(err);
             });
     }
 
-    const getDistanceBwt = () => {
+    const getDistanceBwt = (data) => {
         for (var i = 0; i < sellers.length; i++) {
-            console.log("Sellers address",sellers[i].Address)
             var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${data.latitude},${data.longitude}&destinations=${sellers[i].Address.latitude},${sellers[i].Address.longitude}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
             FindDist(url, i);
         }
@@ -157,7 +154,6 @@ const SingleProduct = (props) => {
         });
     }
     const ratingCompleted = (rating) => {
-        console.log(rated);
         setRating(rating)
     }
     return (
@@ -176,7 +172,7 @@ const SingleProduct = (props) => {
                 <View style={styles.contentContainer}>
                     <H1 style={styles.contentHeader}>{item.Name}</H1>
                     <Text style={styles.contentText}>{item.brand}</Text>
-                    <Text style={styles.Name}>Rating: {item.rating / item.numReviews}</Text>
+                    <Text style={styles.Name}>Rating: {Math.round(item.rating / item.numReviews * 10) / 10}</Text>
                 </View>
                 <View style={styles.availabilityContainer}>
                     <View style={styles.availability}>
@@ -218,13 +214,21 @@ const SingleProduct = (props) => {
                         </View>
                     </>
                 )}
+                <Filter data={filterData}
+                    onValueChange={(id) => {
+                        sellers.sort(function (a, b) {
+                            return a.distance > b.distance;
+                        })
+                        setFilterDistance(filterData[id].value);
+                    }} />
+
                 <View /*style={styles.item} */>
                     {sellers.map((x) => {
-                        if (x.distance <= filterDistance)
+                        if (!filterDistance || x.distance <= filterDistance)
                             return (
                                 <ListItem key={x._id}>
                                     <Left>
-                                        <Text style={styles.Name}>{x.SellerName}</Text>
+                                        <Text style={styles.Name}>{x.SellerName} {x.distance ? Math.round(x.distance * 10) / 10 : null}km</Text>
                                         <Text> * {x.Quantity}  </Text>
                                     </Left>
                                     <Right>
@@ -235,7 +239,6 @@ const SingleProduct = (props) => {
                                                     primary
                                                     medium
                                                     onPress={() => {
-                                                        // console.log("X",x);
                                                         axios.post(baseURL + 'cart',
                                                             {
                                                                 Item: item.id,
@@ -251,7 +254,6 @@ const SingleProduct = (props) => {
                                                                         authorization: `Bearer ` + context.stateUser.token,
                                                                     }
                                                                 }).then(res => {
-                                                                    // console.log(res.data)
                                                                     props.addItemToCart(res.data);
                                                                     Toast.show({
                                                                         topOffset: 60,
@@ -274,14 +276,6 @@ const SingleProduct = (props) => {
                     })}
                 </View>
 
-                <Filter data={filterData}
-                    onValueChange={(id) => {
-                        alert(id)
-                        sellers.sort(function (a, b) {
-                            return a.distance > b.distance;
-                        })
-                        setFilterDistance(filterData[id].value);
-                    }} />
 
                 {reviews ? (
                     <View>
@@ -297,7 +291,7 @@ const SingleProduct = (props) => {
                                             <Text>Review By: {x.userName}</Text>
                                         </Left>
                                         <Right>
-                                            <Text>Rating : {x.Rating}</Text>
+                                            <Text>Rating : {Math.round(x.Rating * 10) / 10}</Text>
                                         </Right>
                                     </CardItem>
                                     <CardItem><Text>Review : {x.review}</Text></CardItem>

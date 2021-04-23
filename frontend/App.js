@@ -1,4 +1,6 @@
 import { StatusBar } from "expo-status-bar";
+import { registerRootComponent } from 'expo';
+
 import React from "react";
 import { LogBox, SafeAreaView } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -23,14 +25,16 @@ export default function App() {
 
   // setupNotif();
   return (
-      <Auth>
-        <Provider store={store}>
-          <NavigationContainer>
-            <Header />
-            <Main />
-            <Toast ref={(ref) => Toast.setRef(ref)} />
-          </NavigationContainer>
-        </Provider>
-      </Auth>
+    <Auth>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Header />
+          <Main />
+          <Toast ref={(ref) => Toast.setRef(ref)} />
+        </NavigationContainer>
+      </Provider>
+    </Auth>
   );
 }
+
+registerRootComponent(App);

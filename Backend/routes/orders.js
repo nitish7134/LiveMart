@@ -10,6 +10,8 @@ var authenticate = require("../Controller/authenticate");
 const Cart = require("../Models/Cart");
 const { update } = require("../Models/User");
 var pingUser = require('../Controller/pingUser')
+const { Expo } = require('expo-server-sdk');
+const {sendNotifications} = require("../Controller/sendNotification")
 router.use(express.json());
 router.use(
 	express.urlencoded({
@@ -38,18 +40,25 @@ router.put('/', cors.corsWithOptions,
 	function (req, res, next) {
 		console.log("*******", req.body)
 		SellerOrders.findOne({ orderID: req.body.orderID, Seller: req.user._id }).then(sellerOrder => {
-			sellerOrder.statusCode = req.body.statusCode;
+			if (sellerOrder.statusCode < req.body.statusCode)
+				sellerOrder.statusCode = req.body.statusCode;
 			let message = "Your Order No. " + req.body.orderID + "has a update. Your Order is " + (req.body.statusCode == 1 ? "shipped" : "delivered");
 			if (req.body.deliveredBy) {
 				sellerOrder.deliveredBy = req.body.deliveredBy
 				sellerOrder.deliveryNo = req.body.deliveredByNo
 				if (req.body.statusCode == 1) {
 					message += "\n " + req.body.deliveredBy + " is bringing your Order. Contact Him on " + req.body.deliveredByNo;
+				} else if (req.body.statusCode == 2) {
+					message += "\n Your Order has been delivered";
 				}
 			}
 
 			sellerOrder.save().then(() => {
-				pingUser.ping(sellerOrder.Customer)
+				User.findById(sellerOrder.Customer).then(customer => {
+					if (customer.notifToken)
+						sendNotifications(customer.notifToken, "Order Update", message);
+				})
+				pingUser.ping(sellerOrder.Customer, message)
 				return res.sendStatus(200);
 			}, err => next(err)).catch(err => next(err))
 		});

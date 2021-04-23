@@ -7,7 +7,7 @@ const FilterButton = ({ callback, text, id, selectedIndex }) => {
 	return (
 		<TouchableOpacity
 			style={[
-				{ borderRadius: 20, borderColor: 'black', borderWidth: 2, padding: 10 },
+				{ borderRadius: 20, borderColor: 'black', borderWidth: 2, padding: 10, margin: 5 },
 				{ backgroundColor: clicked ? 'black' : 'white' },
 			]}
 			onPress={() => {

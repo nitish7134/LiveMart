@@ -120,7 +120,7 @@ router.post(
 				Price: req.body.price,
 				Quantity: req.body.countInStock,
 				Seller: req.user._id,
-				Address:req.user.Address
+				Address: req.user.Address
 			};
 			const file = req.file;
 			if (!file) return res.status(400).send("No image in the request");
@@ -198,6 +198,7 @@ router.post("/update", cors.corsWithOptions,
 					Price: req.body.price, Quantity: req.body.countInStock,
 					SellerName: req.user.Name,
 					Seller: req.user._id,
+					Address: req.user.Address
 				})
 				item.save().then(() => {
 					return res.sendStatus(200)

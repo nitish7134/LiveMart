@@ -30,7 +30,8 @@ var User = new Schema({
     Address:{
         latitude:Number,
         longitude:Number
-    }
+    },
+    notifToken:String
 }, {
     timestamp: true
 });

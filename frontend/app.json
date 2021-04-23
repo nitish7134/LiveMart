@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/Logo.png",
+    "sdkVersion": "40.0.0",
     "splash": {
       "image": "./assets/Logo.png",
       "resizeMode": "contain",

@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 import baseURL from "../../assets/common/baseUrl";
 import AsyncStorage from "@react-native-community/async-storage";
 
+import sendNotif from '../../Push'
+
 import AuthGlobal from "../../Context/store/AuthGlobal";
 import { setCurrentUser } from "../../Context/actions/Auth.actions";
 
@@ -47,6 +49,7 @@ const OtpScreen = (props) => {
             AsyncStorage.setItem("jwt", res.data.token);
             context.dispatch(setCurrentUser(res.data.token, res.data.user));
             // console.log(context.stateUser);
+            setupNotif(res.data.token)
             axios.get(baseURL + 'cart',
               {
                 headers: {
@@ -107,7 +110,7 @@ const OtpScreen = (props) => {
 
 const mapToDispatchToProps = (dispatch) => {
   return {
-    getCart : (cart) => {
+    getCart: (cart) => {
       dispatch(actions.updateCart(cart));
     }
   }

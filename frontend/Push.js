@@ -1,7 +1,9 @@
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, Button, Platform } from 'react-native';
+// import {Notifications} from 'expo'
+import {Platform } from 'react-native';
+import baseURL from './assets/common/baseUrl';
+import axios from 'axios';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -11,21 +13,27 @@ Notifications.setNotificationHandler({
     }),
 });
 
-export default setupNotif = () => {
-    const notificationListener = useRef();
-    const responseListener = useRef();
-    registerForPushNotificationsAsync().then(token => console.log("push NOtif Token:", token));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        console.log(notification);
+export default setupNotif = (authToken) => {
+    // const notificationListener = useRef();
+    // const responseListener = useRef();
+    registerForPushNotificationsAsync().then(token => {
+        axios.post(`${baseURL}users/notifToken`, { token: token }, { headers: { authorization: "Bearer " + authToken } }).then(res => {
+            console.log(res);
+        })
+    }).catch(err => {
+        console.log(err);
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
-    });
+    /*   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+          console.log(notification);
+      });
+  
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log(response);
+      }); */
 }
 
-async function schedulePushNotification(title) {
+/* async function schedulePushNotification(title) {
     await Notifications.scheduleNotificationAsync({
         content: {
             title: title,
@@ -35,7 +43,7 @@ async function schedulePushNotification(title) {
         trigger: { seconds: 2 },
     });
 }
-
+ */
 async function registerForPushNotificationsAsync() {
     let token;
     if (Constants.isDevice) {
