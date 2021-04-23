@@ -40,6 +40,7 @@ const Login = (props) => {
 		if (email === "" || password === "") {
 			setError("Please fill in your credentials");
 		} else {
+			console.log(baseURL);
 			axios({
 				method: "POST",
 				url: baseURL + "users/signin",

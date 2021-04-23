@@ -31,6 +31,7 @@ router.put(
   cors.corsWithOptions,
   authenticate.verifyUser,
   (req, res, next) => {
+    console.log(req.body);
     try {
       User.findById(req.user._id).then((user) => {
         if (!user.role) {
@@ -42,13 +43,15 @@ router.put(
         if (!user.phoneNo) {
           user.phoneNo = req.body.user.phoneNo;
         }
+        user.Address = req.body.Address;
         user.save().then((user) => {
           if (user) {
-            console.log("Saved");
-            return res.status(200);
+
+            console.log("Saved",user);
+            return res.sendStatus(200);
           } else {
             console.log("COULDN'T SAVE");
-            return res.status(500).send({ message: "Couldn't Update" });
+            return res.sendStatus(500)
           }
         });
       });

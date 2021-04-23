@@ -11,27 +11,47 @@ class MapInput extends React.Component {
 
                 placeholder='Search'
 
-                minLength={2}
+                minLength={3}
 
                 autoFocus={true}
 
-                returnkeyType={'search'} 
+                returnkeyType={'search'}
                 listViewDisplayed={'auto'}
 
                 fetchDetails={true}
+                styles={{
+                    textInputContainer: {
+                        backgroundColor: 'grey',
+                    },
+                    textInput: {
+                        height: 38,
+                        color: '#5d5d5d',
+                        fontSize: 16,
+                    },
+                    predefinedPlacesDescription: {
+                        color: '#1faadb',
+                    },
+                }}
 
+                autoFillOnNotFound={true}
+                
                 onPress={(data, details = null) => {
+                    console.log(data, details);
                     this.props.notifyChange(details.geometry.location);
                 }}
                 query={{
                     key: 'AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU',
-                    language: 'en'
+                    language: 'en',
+                    components: 'country:in',
                 }}
-                onFail={error => console.error("Googleplace API ERROR",error)}
+                onFail={error => console.error("Googleplace API ERROR", error)}
 
                 nearbyPlacesAPI='GooglePlacesSearch'
 
                 debounce={200}
+                currentLocation={true}
+                currentLocationLabel='Current location'
+
             />
         );
     }

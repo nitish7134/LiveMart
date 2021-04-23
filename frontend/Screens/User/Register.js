@@ -18,6 +18,7 @@ import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import axios from "axios";
 import AuthGlobal from "../../Context/store/AuthGlobal";
 import baseURL from "../../assets/common/baseUrl";
+import { WebBrowser } from "expo";
 
 //native paper
 
@@ -33,6 +34,15 @@ const Register = (props) => {
 		if (context.stateUser.isAuthenticated === true) {
 			props.navigation.navigate("Home");
 		}
+		/* 
+				async function getInitialUrl() {
+					const initialURL = await Linking.getInitialURL();
+				}
+		
+				Linking.addEventListener("url", handleDeepLink);
+				return (() => {
+					Linking.removeEventListener("url");
+				}) */
 	}, [context.stateUser.isAuthenticated]);
 
 	function validateEmail(email) {
@@ -129,6 +139,7 @@ const Register = (props) => {
 		});
 		Linking.removeEventListener("url", handleOpenURL);
 	};
+
 	return (
 		<KeyboardAwareScrollView
 			viewIsInsideTabBar={true}

@@ -24,7 +24,20 @@
         "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#1D0054"
       },
-      "package": "com.nitish7134.LiveMart"
+      "package": "com.nitish7134.LiveMart",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [{
+            "scheme": "LiveMart://app"
+          }],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+        
+      ]
     },
     "web": {
       "favicon": "./assets/Logo.png"

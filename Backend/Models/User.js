@@ -27,6 +27,10 @@ var User = new Schema({
     facebookId: String,
     googleId: String,
     Notifications: [Notification],
+    Address:{
+        latitude:Number,
+        longitude:Number
+    }
 }, {
     timestamp: true
 });

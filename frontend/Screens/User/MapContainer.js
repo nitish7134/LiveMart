@@ -7,29 +7,26 @@ import Geocoder from 'react-native-geocoding'
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
+var reg = {
+    latitude: 0,
+    longitude: 0
+}
 
 class MapContainer extends React.Component {
-    state = {
-        region: {},
-        location: null,
-        geocode: null,
-        errorMessage: "",
-        address:{}
-    };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            region: {},
+            location: null,
+            geocode: null,
+            errorMessage: "",
+            address: {}
+        };
+    }
 
     componentDidMount() {
         this.getInitialState();
-        // Geocoder.init(AIzaSyCSJg197HNnhk43JQCdkan - AXbtojffOnU);
-        // Geocoder.from(this.state.region.latitude, this.state.region.longitude)
-        // .then(json => {
-        //     json.results[0].address_components.forEach((value,index) => {
-        //         this.state.setState({
-        //             address: json.results[0].formatted_address
-        //         })
-        //     })
-        // }).catch((err) => {
-        //     console.log(err);
-        // });
     }
 
     getInitialState() {
@@ -41,6 +38,7 @@ class MapContainer extends React.Component {
         });
     }
     updateState(location) {
+        reg = this.state.region;
         this.setState({
             region: {
                 latitude: location.latitude,
@@ -58,34 +56,36 @@ class MapContainer extends React.Component {
         console.log(lac.lat, loc.lng);
     }
 
-    getLocationAsync = async () => {
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== 'granted') {
-            this.setState({
-                errorMessage: 'Permission to access location was denied',
-            });
-        }
-
-        let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
-        const { latitude, longitude } = location.coords
-        this.getGeocodeAsync({ latitude, longitude })
-        this.setState({ location: { latitude, longitude } });
-
-    };
-    async onMapRegionChange(region) {
-        this.setState({ region });
-        const { latitude, longitude } = region;
-        Location.reverseGeocodeAsync({
-            latitude,
-            longitude
-        }).then((response) => {
-            console.log("region", latitude);
-            console.log("region", longitude);
-            console.log("response", response);
-        }).catch((err) => {
-            console.log(err)
+    /*  getLocationAsync = async () => {
+         let { status } = await Permissions.askAsync(Permissions.LOCATION);
+         if (status !== 'granted') {
+             this.setState({
+                 errorMessage: 'Permission to access location was denied',
+             });
+         }
+ 
+         let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
+         const { latitude, longitude } = location.coords
+         this.getGeocodeAsync({ latitude, longitude })
+         this.setState({ location: { latitude, longitude } });
+ 
+     }; */
+    onMapRegionChange(region) {
+        this.updateState({
+            latitude: region.latitude,
+            longitude: region.longitude,
         });
-
+        // const { latitude, longitude } = region;
+        /*   Location.reverseGeocodeAsync({
+              latitude,
+              longitude
+          }).then((response) => {
+              console.log("region", latitude);
+              console.log("region", longitude);
+              console.log("response", response);
+          }).catch((err) => {
+              console.log(err)
+          }); */
     }
 
     render() {
@@ -94,7 +94,7 @@ class MapContainer extends React.Component {
 
             <View style={{ flex: 1 }}>
 
-                <View style={{ flex: 0.4 }}>
+                <View style={{ flex: 0.6 }}>
 
                     <MapInput notifyChange={(loc) => this.getCoordsFromName(loc)}
                     />
@@ -114,4 +114,9 @@ class MapContainer extends React.Component {
         );
     }
 }
-export default MapContainer;
+
+function getRegionLatLong() {
+    return reg;
+}
+
+export { getRegionLatLong, MapContainer };

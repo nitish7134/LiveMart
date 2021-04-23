@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, Component } from 'react'
 import { Image, View, StyleSheet, Text, ScrollView, Dimensions } from 'react-native';
 import { Left, Right, Body, Container, H1, ListItem, Card, CardItem } from 'native-base';
+import getLocation from '../../Shared/getLocation'
 
 
 //review
@@ -27,6 +28,8 @@ const SingleProduct = (props) => {
     const [availabilityText, setAvailabilityText] = useState("")
     const [rated, setRated] = useState();
     const [reviews, setReviews] = useState()
+    const [region, setRegion] = useState({})
+
     useEffect(() => {
 
         axios.get(baseURL + "reviews/" + item.id, {
@@ -55,13 +58,44 @@ const SingleProduct = (props) => {
             setAvailabilityText("Available")
         }
 
+        getLocation().then((data) => {
+            setRegion(data);
+        })
+
         return () => {
             setAvailability(null);
             setAvailabilityText("");
             setRated();
             setReviews();
+            setRegion();
         }
     }, [])
+
+    const getDistanceBwt = (regionSeller) => {
+        regionSeller.sort(async function(a,b){
+            var regionA = a.address;
+            var regionB = b.address;
+            var distA = 0, distB = 0;
+            var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionA.lat},${regionA.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+            await axios.get(url)
+                .then(data=>{
+                    distA = data.rows[0].elemets[0].dsitance.value;
+                }).catch(err=>{
+                    consolde.log(err);
+                });
+            var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionB.lat},${regionB.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+            await axios.get(url)
+                .then(data=>{
+                    distB = data.rows[0].elemets[0].dsitance.value;
+                }).catch(err=>{
+                    consolde.log(err);
+                });
+        return distA > distB;
+        });
+        // var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionSeller.lat},${regionSeller.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+        
+    }
+
     const handleSendReview = () => {
         axios.post(baseURL + 'reviews/submit',
             {
@@ -101,7 +135,7 @@ const SingleProduct = (props) => {
                 <View style={styles.contentContainer}>
                     <H1 style={styles.contentHeader}>{item.Name}</H1>
                     <Text style={styles.contentText}>{item.brand}</Text>
-                    <Text style={styles.Name}>Rating: {props.route.params.item.rating / props.route.params.item.numReviews}</Text>
+                    <Text style={styles.Name}>Rating: {item.rating / item.numReviews}</Text>
                 </View>
                 <View style={styles.availabilityContainer}>
                     <View style={styles.availability}>

@@ -12,11 +12,9 @@ const MyMapView = (props) => {
         setMapReady(true)
     }
 
-
-   
     return (
         <MapView
-            style={{ flex: 1, height: 500, width: width }}
+            style={{ flex: 1}}
             region={props.region}
             showsUserLocation={true}
             onMapReady={handleMapReady}

@@ -120,6 +120,7 @@ router.post(
 				Price: req.body.price,
 				Quantity: req.body.countInStock,
 				Seller: req.user._id,
+				Address:req.user.Address
 			};
 			const file = req.file;
 			if (!file) return res.status(400).send("No image in the request");

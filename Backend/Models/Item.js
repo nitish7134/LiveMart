@@ -54,6 +54,10 @@ var Items = new Schema(
         Price: Number,
         Quantity: Number,
         SellerName: String,
+        Address: {
+          longitude: Number,
+          latitude: Number
+        },
         Seller: {
           type: mongoose.Schema.ObjectId
         },
