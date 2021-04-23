@@ -2,16 +2,13 @@ var express = require("express");
 var router = express.Router();
 var User = require("../Models/User");
 var cors = require("./cors");
-const mongoose = require("mongoose");
-const CustomerOrders = require("../Models/CustomerOrders");
 const SellerOrders = require("../Models/SellerOrders");
 const Item = require("../Models/Item");
 var authenticate = require("../Controller/authenticate");
 const Cart = require("../Models/Cart");
 const { update } = require("../Models/User");
 var pingUser = require('../Controller/pingUser')
-const { Expo } = require('expo-server-sdk');
-const {sendNotifications} = require("../Controller/sendNotification")
+const { sendNotifications } = require("../Controller/sendNotification")
 router.use(express.json());
 router.use(
 	express.urlencoded({
@@ -39,20 +36,18 @@ router.put('/', cors.corsWithOptions,
 	authenticate.verifyUser,
 	function (req, res, next) {
 		console.log("*******", req.body)
-		SellerOrders.findOne({ orderID: req.body.orderID, Seller: req.user._id }).then(sellerOrder => {
+		let message = "Your Order No. " + req.body.orderID + "has a update. Your Order is " + (req.body.statusCode == 1 ? "shipped" : "delivered");
+		SellerOrders.findOne({ _id: req.body.orderID/* , Seller: req.user._id */ }).then(sellerOrder => {
+
 			if (sellerOrder.statusCode < req.body.statusCode)
 				sellerOrder.statusCode = req.body.statusCode;
-			let message = "Your Order No. " + req.body.orderID + "has a update. Your Order is " + (req.body.statusCode == 1 ? "shipped" : "delivered");
 			if (req.body.deliveredBy) {
 				sellerOrder.deliveredBy = req.body.deliveredBy
 				sellerOrder.deliveryNo = req.body.deliveredByNo
 				if (req.body.statusCode == 1) {
 					message += "\n " + req.body.deliveredBy + " is bringing your Order. Contact Him on " + req.body.deliveredByNo;
-				} else if (req.body.statusCode == 2) {
-					message += "\n Your Order has been delivered";
 				}
 			}
-
 			sellerOrder.save().then(() => {
 				User.findById(sellerOrder.Customer).then(customer => {
 					if (customer.notifToken)
@@ -62,6 +57,8 @@ router.put('/', cors.corsWithOptions,
 				return res.sendStatus(200);
 			}, err => next(err)).catch(err => next(err))
 		});
+
+
 	});
 router.get(
 	"/seller",

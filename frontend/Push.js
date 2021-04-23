@@ -14,8 +14,8 @@ Notifications.setNotificationHandler({
 });
 
 export default setupNotif = (authToken) => {
-    // const notificationListener = useRef();
-    // const responseListener = useRef();
+    const notificationListener = useRef();
+    const responseListener = useRef();
     registerForPushNotificationsAsync().then(token => {
         axios.post(`${baseURL}users/notifToken`, { token: token }, { headers: { authorization: "Bearer " + authToken } }).then(res => {
             console.log(res);
@@ -24,26 +24,26 @@ export default setupNotif = (authToken) => {
         console.log(err);
     });
 
-    /*   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
           console.log(notification);
       });
   
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
           console.log(response);
-      }); */
+      });
+      schedulePushNotification
 }
 
-/* async function schedulePushNotification(title) {
+async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
         content: {
-            title: title,
-            body: 'Here is the notification body',
-            data: { data: 'goes here' },
+            title: "Order Update",
+            body: 'Your Order has been Delivered',
         },
         trigger: { seconds: 2 },
     });
 }
- */
+
 async function registerForPushNotificationsAsync() {
     let token;
     if (Constants.isDevice) {

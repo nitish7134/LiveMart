@@ -1,24 +1,18 @@
 const { Expo } = require('expo-server-sdk');
 const expo = new Expo();
-const sendNotifications = async (pushTokens, title, body) => {
+const sendNotifications = async (pushToken, title, body) => {
     try {
-        // Create the messages that you want to send to clents
-        let messages = [];
-        for (let pushToken of pushTokens) {
-            // Check that all your push tokens appear to be valid Expo push tokens
-            if (!Expo.isExpoPushToken(pushToken)) {
-                console.error(`Push token ${pushToken} is not a valid Expo push token`);
-                continue;
-            }
-            // Construct a message
-            const message = {
-                to: pushToken,
-                sound: 'default',
-                title,
-                body
-            }
-            messages.push(message)
+        if (!Expo.isExpoPushToken(pushToken)) {
+            console.error(`Push token ${pushToken} is not a valid Expo push token`);
+            return;
         }
+        const message = {
+            to: pushToken,
+            sound: 'default',
+            title,
+            body
+        }
+        const messages = [message]
         // Batching nofications
         let chunks = expo.chunkPushNotifications(messages);
         let tickets = [];

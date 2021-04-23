@@ -80,6 +80,8 @@ const Login = (props) => {
 		}
 	};
 	const askForOtp = (token) => {
+		console.log("Requesting OTP");
+
 		axios.get(baseURL + "otp/send", {
 			headers: {
 				authorization: "Bearer " + token,

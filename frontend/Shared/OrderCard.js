@@ -71,7 +71,7 @@ const OrderCard = (props) => {
 		};
 
 		const orderUpdate = {
-			orderID: props.Order.orderID,
+			orderID: props.Order._id,
 			statusCode: statusChange,
 
 		};
