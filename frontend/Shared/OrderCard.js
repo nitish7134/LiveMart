@@ -48,7 +48,7 @@ const OrderCard = (props) => {
 		}
 
 		return () => {
-			console.log("Order:",props.Order)
+			console.log("Order:", props.Order)
 			setOrderStatus();
 			setStatusText();
 		};
@@ -104,7 +104,7 @@ const OrderCard = (props) => {
 	};
 
 	return (
-		<View style={[/* { backgroundColor: cardColor } */, styles.container, { borderWidth: 1, borderColor: "orange", margin: 15 }]}>
+		<View style={styles.container}>
 			<View>
 				<Text>Order Number: #{props.Order._id}</Text>
 			</View>
@@ -260,9 +260,11 @@ const OrderCard = (props) => {
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 25,
-		width: width,
-		borderRadius: 10,
+		padding: 30,
+		width: 0.9 * width,
+		borderRadius: 20,
+		borderWidth: 1,
+		borderColor:"orange"
 	},
 	title: {
 		backgroundColor: "#62B1F6",

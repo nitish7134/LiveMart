@@ -69,6 +69,7 @@ const OtpScreen = (props) => {
         }
       })
       .catch((err) => {
+        console.log(err);
         setError(err.message);
 
         console.log(err);

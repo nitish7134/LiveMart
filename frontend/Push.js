@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import {Platform } from 'react-native';
 import baseURL from './assets/common/baseUrl';
 import axios from 'axios';
+import { useRef } from 'react/cjs/react.development';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -13,9 +14,10 @@ Notifications.setNotificationHandler({
     }),
 });
 
+
 export default setupNotif = (authToken) => {
-    const notificationListener = useRef();
-    const responseListener = useRef();
+    // const notificationListener = useRef();
+    // const responseListener = useRef();
     registerForPushNotificationsAsync().then(token => {
         axios.post(`${baseURL}users/notifToken`, { token: token }, { headers: { authorization: "Bearer " + authToken } }).then(res => {
             console.log(res);
@@ -31,9 +33,9 @@ export default setupNotif = (authToken) => {
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
           console.log(response);
       });
-      schedulePushNotification
+    //   schedulePushNotification
 }
-
+/* 
 async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
         content: {
@@ -42,7 +44,7 @@ async function schedulePushNotification() {
         },
         trigger: { seconds: 2 },
     });
-}
+} */
 
 async function registerForPushNotificationsAsync() {
     let token;

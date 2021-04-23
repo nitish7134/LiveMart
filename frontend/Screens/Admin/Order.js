@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
-import { View, FlatList, Text, AsyncStorage } from "react-native";
+import { View, FlatList, Text, AsyncStorage, StyleSheet, Dimensions } from "react-native";
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
 import { useFocusEffect } from "@react-navigation/native";
-
 import OrderCard from "../../Shared/OrderCard";
+var { width } = Dimensions.get('window');
 
 const Orders = (props) => {
   const [orderList, setOrderList] = useState();
@@ -35,11 +35,11 @@ const Orders = (props) => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         data={orderList}
         renderItem={({ item }) => (
-          <OrderCard navigation={props.navigation} Order={item} editMode={true} />
+          <OrderCard navigation={props.navigation} key={item._id} Order={item} editMode={true} />
         )}
         keyExtractor={(item) => item.id}
       />
@@ -47,4 +47,13 @@ const Orders = (props) => {
   );
 };
 
+
+const styles = StyleSheet.create({
+  container: {
+    alignContent:"center",
+    justifyContent:"center",
+    marginLeft:15,
+    width: width,
+  },
+})
 export default Orders;
