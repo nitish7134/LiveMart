@@ -19,18 +19,27 @@ import baseURL from '../../assets/common/baseUrl';
 import Filter from './Filter';
 var { width } = Dimensions.get("window");
 
+
+const filterData = [
+    { title: '5 kms', value: 5 },
+    { title: '10 kms', value: 10 },
+    { title: '15 kms', value: 15 },
+    { title: '20 kms', value: 20 }
+]
+
 const SingleProduct = (props) => {
     const context = useContext(AuthGlobal);
 
     const [item, setItem] = useState(props.route.params.item);
-    const [rating, setRating] = useState(props.route.params.item.rating / props.route.params.item.numReviews);
+    const [rating, setRating] = useState((props.route.params.item.rating / props.route.params.item.numReviews).toPrecision(2));
     const [review, setReview] = useState("");
     const [availability, setAvailability] = useState(null);
     const [availabilityText, setAvailabilityText] = useState("")
     const [rated, setRated] = useState();
     const [reviews, setReviews] = useState()
     const [region, setRegion] = useState({})
-
+    const [sellers, setSellers] = useState(props.route.params.item.Sellers)
+    const [filterDistance, setFilterDistance] = useState();
     useEffect(() => {
 
         axios.get(baseURL + "reviews/" + item.id, {
@@ -61,9 +70,17 @@ const SingleProduct = (props) => {
 
         getLocation().then((data) => {
             setRegion(data);
+            getDistanceBwt(data);
         })
 
+        /*  setSellers( //to be added on filter click
+             sellers.sort(function (a, b) {
+                 return a.distance > b.distance;
+             })
+         ); */
+
         return () => {
+            console.log(sellers);
             setAvailability(null);
             setAvailabilityText("");
             setRated();
@@ -72,30 +89,53 @@ const SingleProduct = (props) => {
         }
     }, [])
 
-    const getDistanceBwt = (regionSeller) => {
-        regionSeller.sort(async function(a,b){
-            var regionA = a.address;
-            var regionB = b.address;
-            var distA = 0, distB = 0;
-            var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionA.lat},${regionA.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
-            await axios.get(url)
-                .then(data=>{
-                    distA = data.rows[0].elemets[0].dsitance.value;
-                }).catch(err=>{
-                    consolde.log(err);
-                });
-            var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionB.lat},${regionB.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
-            await axios.get(url)
-                .then(data=>{
-                    distB = data.rows[0].elemets[0].dsitance.value;
-                }).catch(err=>{
-                    consolde.log(err);
-                });
-        return distA > distB;
-        });
-        // var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionSeller.lat},${regionSeller.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
-        
+    const FindDist = (url, i) => {
+        console.log("finding distance for : ",sellers[i])
+        axios.get(url)
+            .then(data => {
+                sellers[i].distance = data.rows[0].elemets[0].distance.value;;
+                console.log("distance for : " + sellers);
+            }).catch(err => {
+                consolde.log(err);
+            });
     }
+
+    const getDistanceBwt = () => {
+        for (var i = 0; i < sellers.length; i++) {
+            console.log("Sellers address",sellers[i].Address)
+            var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${data.latitude},${data.longitude}&destinations=${sellers[i].Address.latitude},${sellers[i].Address.longitude}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+            FindDist(url, i);
+        }
+    }
+
+    /* sellers.sort(function(a,b){
+        return a.distance>b.distance;
+    }) */
+
+    // const getDistanceBwt = (regionSeller) => {
+    //     regionSeller.sort(async function(a,b){
+    //         var regionA = a.address;
+    //         var regionB = b.address;
+    //         var distA = 0, distB = 0;
+    //         var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionA.lat},${regionA.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+    //         await axios.get(url)
+    //             .then(data=>{
+    //                 distA = data.rows[0].elemets[0].distance.value;
+    //             }).catch(err=>{
+    //                 consolde.log(err);
+    //             });
+    //         var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionB.lat},${regionB.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+    //         await axios.get(url)
+    //             .then(data=>{
+    //                 distB = data.rows[0].elemets[0].distance.value;
+    //             }).catch(err=>{
+    //                 consolde.log(err);
+    //             });
+    //     return distA > distB;
+    //     });
+    //     // var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${region.latitude},${region.longitude}&destinations=${regionSeller.lat},${regionSeller.long}&key=AIzaSyCSJg197HNnhk43JQCdkan-AXbtojffOnU`
+    //     return regionSeller;
+    // }
 
     const handleSendReview = () => {
         axios.post(baseURL + 'reviews/submit',
@@ -179,61 +219,69 @@ const SingleProduct = (props) => {
                     </>
                 )}
                 <View /*style={styles.item} */>
-                    {item.Sellers.map((x) => {
-                        return (
-                            <ListItem key={x._id}>
-                                <Left>
-                                    <Text style={styles.Name}>{x.SellerName}</Text>
-                                    <Text> * {x.Quantity}  </Text>
-                                </Left>
-                                <Right>
-                                    <Text style={styles.price}>₹ {x.Price}</Text>
-                                    {(!props.route.params.admin) ? (
-                                        <Right>
-                                            <EasyButton
-                                                primary
-                                                medium
-                                                onPress={() => {
-                                                    // console.log("X",x);
-                                                    axios.post(baseURL + 'cart',
-                                                        {
-                                                            Item: item.id,
-                                                            seller: { Quantity_to_buy: 1, seller: x.Seller, price: x.Price, Name: x.SellerName }
-                                                        }, {
-                                                        headers: {
-                                                            authorization: `Bearer ` + context.stateUser.token,
-                                                        },
-                                                    }).then(() => {
-                                                        axios.get(baseURL + 'cart',
+                    {sellers.map((x) => {
+                        if (x.distance <= filterDistance)
+                            return (
+                                <ListItem key={x._id}>
+                                    <Left>
+                                        <Text style={styles.Name}>{x.SellerName}</Text>
+                                        <Text> * {x.Quantity}  </Text>
+                                    </Left>
+                                    <Right>
+                                        <Text style={styles.price}>₹ {x.Price}</Text>
+                                        {(!props.route.params.admin) ? (
+                                            <Right>
+                                                <EasyButton
+                                                    primary
+                                                    medium
+                                                    onPress={() => {
+                                                        // console.log("X",x);
+                                                        axios.post(baseURL + 'cart',
                                                             {
-                                                                headers: {
-                                                                    authorization: `Bearer ` + context.stateUser.token,
-                                                                }
-                                                            }).then(res => {
-                                                                // console.log(res.data)
-                                                                props.addItemToCart(res.data);
-                                                                Toast.show({
-                                                                    topOffset: 60,
-                                                                    type: "success",
-                                                                    text1: `${item.Name} added to Cart`,
-                                                                    text2: "Go to your cart to complete order"
-                                                                })
-                                                            }).catch((error) => alert(error));
+                                                                Item: item.id,
+                                                                seller: { Quantity_to_buy: 1, seller: x.Seller, price: x.Price, Name: x.SellerName }
+                                                            }, {
+                                                            headers: {
+                                                                authorization: `Bearer ` + context.stateUser.token,
+                                                            },
+                                                        }).then(() => {
+                                                            axios.get(baseURL + 'cart',
+                                                                {
+                                                                    headers: {
+                                                                        authorization: `Bearer ` + context.stateUser.token,
+                                                                    }
+                                                                }).then(res => {
+                                                                    // console.log(res.data)
+                                                                    props.addItemToCart(res.data);
+                                                                    Toast.show({
+                                                                        topOffset: 60,
+                                                                        type: "success",
+                                                                        text1: `${item.Name} added to Cart`,
+                                                                        text2: "Go to your cart to complete order"
+                                                                    })
+                                                                }).catch((error) => alert(error));
 
-                                                    })
-                                                }}
-                                            >
-                                                <Text style={{ color: 'white' }}>Add</Text>
-                                            </EasyButton>
-                                        </Right>
-                                    ) : null}
-                                </Right>
-                            </ListItem>
-                        )
+                                                        })
+                                                    }}
+                                                >
+                                                    <Text style={{ color: 'white' }}>Add</Text>
+                                                </EasyButton>
+                                            </Right>
+                                        ) : null}
+                                    </Right>
+                                </ListItem>
+                            )
                     })}
                 </View>
 
-                <Filter data={[{ title: 'Test' }, { title: 'test2' }]} onValueChange={(id)=>alert(id)}/>
+                <Filter data={filterData}
+                    onValueChange={(id) => {
+                        alert(id)
+                        sellers.sort(function (a, b) {
+                            return a.distance > b.distance;
+                        })
+                        setFilterDistance(filterData[id].value);
+                    }} />
 
                 {reviews ? (
                     <View>
