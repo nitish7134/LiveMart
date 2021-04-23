@@ -16,6 +16,7 @@ import * as actions from '../../Redux/Actions/cartActions';
 import AuthGlobal from '../../Context/store/AuthGlobal';
 import axios from "axios";
 import baseURL from '../../assets/common/baseUrl';
+import Filter from './Filter';
 var { width } = Dimensions.get("window");
 
 const SingleProduct = (props) => {
@@ -231,6 +232,8 @@ const SingleProduct = (props) => {
                         )
                     })}
                 </View>
+
+                <Filter data={[{ title: 'Test' }, { title: 'test2' }]} onValueChange={(id)=>alert(id)}/>
 
                 {reviews ? (
                     <View>
