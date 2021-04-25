@@ -25,6 +25,7 @@
         "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#1D0054"
       },
+      "permissions": ["ACCESS_BACKGROUND_LOCATION"],
       "package": "com.nitish7134.LiveMart",
       "intentFilters": [
         {

@@ -25,14 +25,14 @@ export default setupNotif = (authToken) => {
     }).catch(err => {
         console.log(err);
     });
-
+/* 
       notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
           console.log(notification);
       });
   
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
           console.log(response);
-      });
+      }); */
     //   schedulePushNotification
 }
 /* 

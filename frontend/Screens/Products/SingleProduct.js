@@ -21,6 +21,7 @@ var { width } = Dimensions.get("window");
 
 
 const filterData = [
+    { title: 'All', value: 0 },
     { title: '5 kms', value: 5 },
     { title: '10 kms', value: 10 },
     { title: '20 kms', value: 20 },
@@ -228,7 +229,7 @@ const SingleProduct = (props) => {
                             return (
                                 <ListItem key={x._id}>
                                     <Left>
-                                        <Text style={styles.Name}>{x.SellerName} {x.distance ? Math.round(x.distance * 10) / 10 : null}km</Text>
+                                        <Text style={styles.Name}>{x.SellerName} {x.distance ? Math.round(x.distance * 10) / 10 : null}{x.distance?km:null}</Text>
                                         <Text> * {x.Quantity}  </Text>
                                     </Left>
                                     <Right>
@@ -284,19 +285,19 @@ const SingleProduct = (props) => {
                         </View>
                         {reviews.map((x) => {
                             return (
-
-                                <Card>
-                                    <CardItem>
-                                        <Left>
-                                            <Text>Review By: {x.userName}</Text>
-                                        </Left>
-                                        <Right>
-                                            <Text>Rating : {Math.round(x.Rating * 10) / 10}</Text>
-                                        </Right>
-                                    </CardItem>
-                                    <CardItem><Text>Review : {x.review}</Text></CardItem>
-                                </Card>
-
+                                <ListItem key={x._id}>
+                                    <Card>
+                                        <CardItem>
+                                            <Left>
+                                                <Text>Review By: {x.userName}</Text>
+                                            </Left>
+                                            <Right>
+                                                <Text>Rating : {Math.round(x.Rating * 10) / 10}</Text>
+                                            </Right>
+                                        </CardItem>
+                                        <CardItem><Text>Review : {x.review}</Text></CardItem>
+                                    </Card>
+                                </ListItem>
                             )
                         })}
 

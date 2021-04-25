@@ -50,7 +50,7 @@ const CategoryFilter = (props) => {
           </TouchableOpacity>
         ))}
       </ListItem>
-    </ScrollView>
+      </ScrollView>
   );
 };
 
