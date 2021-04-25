@@ -8,7 +8,8 @@ const FilterButton = ({ callback, text, id, selectedIndex }) => {
 		<ScrollView
 			bounces={true}
 			horizontal={true}
-			style={{ backgroundColor: "#f2f2f2" }}>
+			// style={{ backgroundColor: "#f2f2f2" }}
+			>
 			<TouchableOpacity
 				style={[
 					{ borderRadius: 20, borderColor: 'black', borderWidth: 2, padding: 10, margin: 5 },
